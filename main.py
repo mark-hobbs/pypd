@@ -9,7 +9,7 @@ from solver.simulate import run_simulation
 #           Read input file
 # --------------------------------------
 mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
-                                "Beam_4_UN_DX2pt5mm.mat")
+                                "Beam_4_UN_DX5mm.mat")
 
 
 penetrator = mat['penetrator']  # Structured ndarray
@@ -18,7 +18,6 @@ centre = penetrator['centre'].item()
 radius = penetrator['radius'].item()
 search_radius = penetrator['searchRadius'].item()
 family = penetrator['family'].item()
-
 
 penetrator = Penetrator(ID, centre, radius, search_radius, family)
 bondlist = mat['BONDLIST']

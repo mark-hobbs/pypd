@@ -2,6 +2,9 @@
 Constitutive models - linear / bilinear / trilinear / non-linear
 """
 
+from numba import njit
+
+@njit
 def trilinear_constitutive_model(stretch, s0, s1, sc, bond_damage, beta):
     """
     Trilinear constitutive model

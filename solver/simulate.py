@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import trange
 
 from solver.calculate import calculate_particle_forces, update_particle_positions, calculate_contact_force
 
@@ -13,6 +14,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     u = np.zeros([n_nodes, 3])
     ud = np.zeros([n_nodes, 3])
     udd = np.zeros([n_nodes, 3])
+    particle_force = np.zeros([n_nodes, 3])
 
     bond_damage = np.zeros([n_bonds, ])
     f_x = np.zeros([n_bonds, ])
@@ -20,7 +22,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     f_z = np.zeros([n_bonds, ])
 
     
-    for t in range(100):
+    for t in trange(10000, desc="Simulation Progress", unit="steps"):
         
         displacement_increment = 1
 
@@ -32,7 +34,8 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                   bond_damage,
                                                   bond_stiffness,
                                                   cell_volume,
-                                                  f_x, f_y, f_z)
+                                                  f_x, f_y, f_z,
+                                                  particle_force)
 
         # Update particle positions
         (u,
@@ -50,6 +53,5 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                    dt, particle_density,
                                                    cell_volume)
 
-        print("Time step:", t)
 
     return 0

@@ -1,19 +1,21 @@
 
 import numpy as np
+from numba import njit, prange
 
 from solver.constitutive_model import trilinear_constitutive_model
 
 
+@njit(parallel=True)
 def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
-                              bond_stiffness, cell_volume, f_x, f_y, f_z):
+                              bond_stiffness, cell_volume, f_x, f_y, f_z,
+                              particle_force):
     """
     Calculate particle forces
     """
     n_bonds = np.shape(bondlist)[0]
     n_nodes = np.shape(particle_coordinates)[0]
-    particle_force = np.zeros([n_nodes, 3])
 
-    for k_bond in range(n_bonds):
+    for k_bond in prange(n_bonds):
         
         node_i = bondlist[k_bond, 0] - 1
         node_j = bondlist[k_bond, 1] - 1
@@ -58,7 +60,7 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
 
     return particle_force, bond_damage
 
-
+@njit(parallel=True)
 def update_particle_positions(particle_force, u, ud, udd, damping,
                               particle_density, dt):
     """
@@ -67,7 +69,7 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
 
     n_nodes = np.shape(particle_force)[0]
 
-    for node_i in range(n_nodes):
+    for node_i in prange(n_nodes):
         for dof in range(3):
             udd[node_i, dof] = (particle_force[node_i, dof]
                                 - damping * ud[node_i, dof]) / particle_density
@@ -75,7 +77,6 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
             u[node_i, dof] = u[node_i, dof] + (ud[node_i, dof] * dt)
 
     return u, ud
-
 
 def calculate_contact_force(penetrator, u, ud, displacement_increment,
                             dt, particle_density, cell_volume):
@@ -95,7 +96,7 @@ def calculate_contact_force(penetrator, u, ud, displacement_increment,
     ud_previous = ud
 
     # Move penetrator vertically (z-axis)
-    penetrator.centre = penetrator.centre + displacement_increment
+    penetrator.centre[1] = penetrator.centre[1] + displacement_increment
 
     # Calculate distance between penetrator centre and nodes in penetrator 
     # family
