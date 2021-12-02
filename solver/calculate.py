@@ -78,8 +78,10 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
     return u, ud
 
 @njit
-def calculate_contact_force(penetrator, u, ud, displacement_increment,
-                            dt, particle_density, cell_volume):
+def calculate_contact_force(pen, u, ud, displacement_increment,
+                            dt, particle_density, cell_volume,
+                            particle_coordinates_deformed,
+                            particle_coordinates):
     """
     Calculate contact force between rigid penetrator/support and deformable
     body
@@ -92,24 +94,27 @@ def calculate_contact_force(penetrator, u, ud, displacement_increment,
     penetrator_f_x = 0
     penetrator_f_y = 0
     penetrator_f_z = 0
-    u_previous = u
-    ud_previous = ud
+    u_previous = u.copy()
+    ud_previous = ud.copy()
 
+    tmp = pen.centre[1]
     # Move penetrator vertically (z-axis)
-    penetrator.centre[1] = penetrator.centre[1] + displacement_increment
+    tmp_1 = tmp + displacement_increment
 
     # Calculate distance between penetrator centre and nodes in penetrator 
     # family
 
-    for i in range(len(penetrator.family)):
+    for i in range(len(pen.family)):
 
-        node_i = penetrator.family[i]
+        node_i = pen.family[i]
 
-        distance_x = u[node_i, 0] - penetrator.centre[0]
-        distance_z = u[node_i, 2] - penetrator.centre[1]
+        distance_x = (particle_coordinates_deformed[node_i, 0]
+                      - pen.centre[0])
+        distance_z = (particle_coordinates_deformed[node_i, 2]
+                      - tmp_1)
         distance = np.sqrt(distance_x**2 + distance_z**2)
 
-        if distance < penetrator.radius:
+        if distance < pen.radius:
 
             counter += 1
 
@@ -118,12 +123,19 @@ def calculate_contact_force(penetrator, u, ud, displacement_increment,
             unit_z = distance_z / distance
 
             # Scale unit vector by penetrator radius
-            unit_x_scaled = unit_x * penetrator.radius
-            unit_z_scaled = unit_z * penetrator.radius
+            unit_x_scaled = unit_x * pen.radius
+            unit_z_scaled = unit_z * pen.radius
 
             # Calculate new particle positions
-            u[node_i, 0] = penetrator.centre[0] + unit_x_scaled
-            u[node_i, 2] = penetrator.centre[1] + unit_z_scaled
+            particle_coordinates_deformed[node_i, 0] = (pen.centre[0]
+                                                        + unit_x_scaled)
+            particle_coordinates_deformed[node_i, 2] = (tmp_1
+                                                        + unit_z_scaled)
+
+            u[node_i, 0] = (particle_coordinates_deformed[node_i, 0]
+                            - particle_coordinates[node_i, 0])
+            u[node_i, 2] = (particle_coordinates_deformed[node_i, 2]
+                            - particle_coordinates[node_i, 2])
 
             # Calculate particle velocity
             ud[node_i, 0] = (u[node_i, 0] - u_previous[node_i, 0]) / dt
@@ -140,7 +152,7 @@ def calculate_contact_force(penetrator, u, ud, displacement_increment,
                                * (ud[node_i, 2] - ud_previous[node_i, 2])
                                / dt * cell_volume)
 
-    return u, ud, penetrator_f_z
+    return u, ud, penetrator_f_z, particle_coordinates_deformed
 
 
 @njit

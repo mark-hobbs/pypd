@@ -39,11 +39,11 @@ support_2 = Penetrator(ID, centre, radius, search_radius, family)
 # Parameters
 bondlist = mat['BONDLIST']
 particle_coordinates = mat['undeformedCoordinates']
-bond_stiffness = 4.345e+19
+bond_stiffness = 2.32e+18
 cell_volume = mat['DX']**3
 damping = 1e5
 particle_density = 2346
-dt = 6.459e-07
+dt = 1.3e-6
 
 # --------------------------------------
 #              Simulate
