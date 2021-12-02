@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from input import utilities
 from solver.penetrator import Penetrator
@@ -49,5 +50,11 @@ dt = 1.3e-6
 #              Simulate
 # --------------------------------------
 
-run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
-               damping, particle_density, dt, penetrator, support_1, support_2)
+num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
+                                    bond_stiffness, cell_volume, damping,
+                                    particle_density, dt, penetrator,
+                                    support_1, support_2)
+
+
+plt.plot(num_cmod, num_load, label='Numerical')
+plt.savefig('load_CMOD', dpi=1000)

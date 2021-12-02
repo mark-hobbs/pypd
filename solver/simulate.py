@@ -25,8 +25,11 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     _f_y = np.zeros([_n_bonds, ])
     _f_z = np.zeros([_n_bonds, ])
 
-    n_time_steps = 50000
-    applied_displacement = -5e-4
+    load = []
+    cmod = []
+
+    n_time_steps = 20000
+    applied_displacement = -2e-4
 
     for i_time_step in trange(n_time_steps,
                               desc="Simulation Progress", unit="steps"):
@@ -87,7 +90,8 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                                    _particle_coordinates_deformed,
                                                                    particle_coordinates)
 
-        print(_penetrator_f_z)
+        if i_time_step % 100 == 0:
+            load.append(_penetrator_f_z)
+            cmod.append((_u[24, 0] - _u[9, 0]) * 1000)
 
-
-    return 0
+    return load, cmod
