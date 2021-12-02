@@ -13,7 +13,6 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
     Calculate particle forces
     """
     n_bonds = np.shape(bondlist)[0]
-    n_nodes = np.shape(particle_coordinates)[0]
 
     for k_bond in prange(n_bonds):
         
@@ -78,6 +77,7 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
 
     return u, ud
 
+@njit
 def calculate_contact_force(penetrator, u, ud, displacement_increment,
                             dt, particle_density, cell_volume):
     """
@@ -141,3 +141,17 @@ def calculate_contact_force(penetrator, u, ud, displacement_increment,
                                / dt * cell_volume)
 
     return u, ud, penetrator_f_z
+
+
+@njit
+def smooth_step_data(current_time_step, start_time_step, final_time_step,
+                     start_value, final_value):
+    """
+    Smooth 5th order polynomial
+    """
+    xi = ((current_time_step - start_time_step)
+          / (final_time_step - start_time_step))
+    alpha = (start_value + (final_value - start_value)
+             * xi**3 * (10 - 15 * xi + 6 * xi**2))
+
+    return alpha

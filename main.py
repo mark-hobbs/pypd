@@ -12,14 +12,31 @@ mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/B
                                 "Beam_4_UN_DX5mm.mat")
 
 
+# Penetrator
 penetrator = mat['penetrator']  # Structured ndarray
 ID = penetrator['ID'].item()
 centre = penetrator['centre'].item()
 radius = penetrator['radius'].item()
 search_radius = penetrator['searchRadius'].item()
 family = penetrator['family'].item()
-
 penetrator = Penetrator(ID, centre, radius, search_radius, family)
+
+# Supports
+supports = mat['supports']  # Structured ndarray
+ID = supports['ID'][0]
+centre = supports['centre'][0]
+radius = supports['radius'][0]
+search_radius = supports['searchRadius'][0]
+family = supports['family'][0]
+support_1 = Penetrator(ID, centre, radius, search_radius, family)
+ID = supports['ID'][1]
+centre = supports['centre'][1]
+radius = supports['radius'][1]
+search_radius = supports['searchRadius'][1]
+family = supports['family'][1]
+support_2 = Penetrator(ID, centre, radius, search_radius, family)
+
+# Parameters
 bondlist = mat['BONDLIST']
 particle_coordinates = mat['undeformedCoordinates']
 bond_stiffness = 4.345e+19
@@ -33,4 +50,4 @@ dt = 6.459e-07
 # --------------------------------------
 
 run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
-               damping, particle_density, dt, penetrator)
+               damping, particle_density, dt, penetrator, support_1, support_2)

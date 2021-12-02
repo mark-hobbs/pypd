@@ -1,11 +1,14 @@
 import numpy as np
 from tqdm import trange
 
-from solver.calculate import calculate_particle_forces, update_particle_positions, calculate_contact_force
-
+from solver.calculate import (calculate_particle_forces,
+                              update_particle_positions,
+                              calculate_contact_force,
+                              smooth_step_data)
 
 def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
-                   damping, particle_density, dt, penetrator):
+                   damping, particle_density, dt, penetrator, support_1,
+                   support_2):
 
     # Initialise arrays and variables
     n_nodes = np.shape(particle_coordinates)[0]
@@ -21,10 +24,14 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     f_y = np.zeros([n_bonds, ])
     f_z = np.zeros([n_bonds, ])
 
-    
-    for t in trange(10000, desc="Simulation Progress", unit="steps"):
+    n_time_steps = 10000
+    applied_displacement = -2e-4
+
+    for i_time_step in trange(n_time_steps,
+                              desc="Simulation Progress", unit="steps"):
         
-        displacement_increment = 1
+        displacement_increment = smooth_step_data(i_time_step, 0, n_time_steps,
+                                                  0, applied_displacement)
 
         # Calculate particle forces
         (particle_force,
@@ -53,5 +60,20 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                    dt, particle_density,
                                                    cell_volume)
 
+        (u,
+         ud,
+         support_1_f_z) = calculate_contact_force(support_1, u, ud,
+                                                  0,
+                                                  dt, particle_density,
+                                                  cell_volume)
+
+        (u,
+         ud,
+         support_2_f_z) = calculate_contact_force(support_2, u, ud,
+                                                  0,
+                                                  dt, particle_density,
+                                                  cell_volume)
+
+        print(penetrator_f_z)
 
     return 0
