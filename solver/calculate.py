@@ -15,22 +15,22 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
     n_bonds = np.shape(bondlist)[0]
 
     for k_bond in prange(n_bonds):
-        
+
         node_i = bondlist[k_bond, 0] - 1
         node_j = bondlist[k_bond, 1] - 1
-        
+
         xi_x = particle_coordinates[node_j, 0] - particle_coordinates[node_i, 0]
         xi_y = particle_coordinates[node_j, 1] - particle_coordinates[node_i, 1]
         xi_z = particle_coordinates[node_j, 2] - particle_coordinates[node_i, 2]
-        
+
         xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
         xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
         xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
-        
+
         xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
         stretch = (y - xi) / xi
-        
+
         s0 = 1.05e-4
         s1 = 6.90e-4
         sc = 5.56e-3
@@ -59,6 +59,7 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
 
     return particle_force, bond_damage
 
+
 @njit(parallel=True)
 def update_particle_positions(particle_force, u, ud, udd, damping,
                               particle_density, dt):
@@ -77,6 +78,7 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
 
     return u, ud
 
+
 @njit
 def calculate_contact_force(pen, u, ud, displacement_increment,
                             dt, particle_density, cell_volume,
@@ -90,18 +92,16 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
     # TODO: is u the displacement or the coordinates of the displaced
     # particles?
 
-    counter = 0
     penetrator_f_x = 0
     penetrator_f_y = 0
     penetrator_f_z = 0
     u_previous = u.copy()
     ud_previous = ud.copy()
 
-    tmp = pen.centre[1]
     # Move penetrator vertically (z-axis)
-    tmp_1 = tmp + displacement_increment
+    tmp_1 = pen.centre[1] + displacement_increment
 
-    # Calculate distance between penetrator centre and nodes in penetrator 
+    # Calculate distance between penetrator centre and nodes in penetrator
     # family
 
     for i in range(len(pen.family)):
@@ -115,8 +115,6 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
         distance = np.sqrt(distance_x**2 + distance_z**2)
 
         if distance < pen.radius:
-
-            counter += 1
 
             # Calculate unit vector
             unit_x = distance_x / distance
