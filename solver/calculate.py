@@ -79,7 +79,7 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
     return u, ud
 
 
-# @njit
+@njit
 def calculate_contact_force(pen, u, ud, displacement_increment,
                             dt, particle_density, cell_volume,
                             particle_coordinates_deformed,

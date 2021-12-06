@@ -47,3 +47,11 @@ def build_penetrator():
 
 def build_volume_correction_factors():
     pass
+
+
+def calculate_bond_stiffness(E, delta):
+    c = (12 * E) / (np.pi * delta**4)
+    return c
+
+def calculate_stable_time_step():
+    pass

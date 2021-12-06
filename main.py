@@ -4,18 +4,23 @@ import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 
-from input import utilities
+from input import utilities, tools
+from input.material import Material
 from solver.penetrator import Penetrator
 from solver.simulate import run_simulation
 
 
+
 def main():
+    
     # --------------------------------------
     #           Read input file
     # --------------------------------------
     mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
                                     "Beam_4_UN_DX5mm.mat")
 
+
+    dx = mat['DX']
 
     # Penetrator
     penetrator = mat['penetrator']  # Structured ndarray
@@ -44,10 +49,12 @@ def main():
     # Parameters
     bondlist = mat['BONDLIST']
     particle_coordinates = mat['undeformedCoordinates']
-    bond_stiffness = 2.32e+18
-    cell_volume = mat['DX']**3
+    concrete = Material(youngs_modulus=37e9, fracture_energy=143.2,
+                        density=2346, poissons_ratio=0.2)
+    bond_stiffness = tools.calculate_bond_stiffness(concrete.youngs_modulus,
+                                                    dx * np.pi)
+    cell_volume = dx**3
     damping = 1e5
-    particle_density = 2346
     dt = 1.3e-6
 
     # --------------------------------------
@@ -56,7 +63,7 @@ def main():
 
     num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
                                         bond_stiffness, cell_volume, damping,
-                                        particle_density, dt, penetrator,
+                                        concrete.density, dt, penetrator,
                                         support_1, support_2)
 
 
