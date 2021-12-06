@@ -11,19 +11,19 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                    support_2):
 
     # Initialise arrays and variables
-    _n_nodes = np.shape(particle_coordinates)[0]
-    _n_bonds = np.shape(bondlist)[0]
+    n_nodes = np.shape(particle_coordinates)[0]
+    n_bonds = np.shape(bondlist)[0]
 
-    _u = np.zeros([_n_nodes, 3])
-    _ud = np.zeros([_n_nodes, 3])
-    _udd = np.zeros([_n_nodes, 3])
-    _particle_force = np.zeros([_n_nodes, 3])
-    _particle_coordinates_deformed = np.zeros([_n_nodes, 3])
+    u = np.zeros([n_nodes, 3])
+    ud = np.zeros([n_nodes, 3])
+    udd = np.zeros([n_nodes, 3])
+    particle_force = np.zeros([n_nodes, 3])
+    particle_coordinates_deformed = np.zeros([n_nodes, 3])
 
-    _bond_damage = np.zeros([_n_bonds, ])
-    _f_x = np.zeros([_n_bonds, ])
-    _f_y = np.zeros([_n_bonds, ])
-    _f_z = np.zeros([_n_bonds, ])
+    bond_damage = np.zeros([n_bonds, ])
+    f_x = np.zeros([n_bonds, ])
+    f_y = np.zeros([n_bonds, ])
+    f_z = np.zeros([n_bonds, ])
 
     load = []
     cmod = []
@@ -38,60 +38,58 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                   0, applied_displacement)
 
         # Calculate particle forces
-        (_particle_force_,
-         _bond_damage) = calculate_particle_forces(bondlist,
+        (_particle_force,
+         bond_damage) = calculate_particle_forces(bondlist,
                                                   particle_coordinates,
-                                                  _u,
-                                                  _bond_damage,
+                                                  u,
+                                                  bond_damage,
                                                   bond_stiffness,
                                                   cell_volume,
-                                                  _f_x, _f_y, _f_z,
-                                                  _particle_force.copy())
-
-        # print(np.max(particle_force))
+                                                  f_x, f_y, f_z,
+                                                  particle_force.copy())
 
         # Update particle positions
-        (_u, _ud) = update_particle_positions(_particle_force_,
-                                            _u, _ud, _udd.copy(),
+        (u, ud) = update_particle_positions(_particle_force,
+                                            u, ud, udd,
                                             damping,
                                             particle_density,
                                             dt)
 
-        _particle_coordinates_deformed = particle_coordinates + _u
+        particle_coordinates_deformed = particle_coordinates + u
 
         # Contact model
-        (_u,
-         _ud,
+        (u,
+         ud,
          _penetrator_f_z,
-         _particle_coordinates_deformed) = calculate_contact_force(penetrator, _u, _ud,
+         particle_coordinates_deformed) = calculate_contact_force(penetrator, u, ud,
                                                                    displacement_increment,
                                                                    dt, particle_density,
                                                                    cell_volume,
-                                                                   _particle_coordinates_deformed,
+                                                                   particle_coordinates_deformed,
                                                                    particle_coordinates)
 
-        (_u,
-         _ud,
+        (u,
+         ud,
          _support_1_f_z,
-         _particle_coordinates_deformed) = calculate_contact_force(support_1, _u, _ud,
+         particle_coordinates_deformed) = calculate_contact_force(support_1, u, ud,
                                                                    0,
                                                                    dt, particle_density,
                                                                    cell_volume,
-                                                                   _particle_coordinates_deformed,
+                                                                   particle_coordinates_deformed,
                                                                    particle_coordinates)
 
-        (_u,
-         _ud,
+        (u,
+         ud,
          support_2_f_z,
-         _particle_coordinates_deformed) = calculate_contact_force(support_2, _u, _ud,
+         particle_coordinates_deformed) = calculate_contact_force(support_2, u, ud,
                                                                    0,
                                                                    dt, particle_density,
                                                                    cell_volume,
-                                                                   _particle_coordinates_deformed,
+                                                                   particle_coordinates_deformed,
                                                                    particle_coordinates)
 
         if i_time_step % 100 == 0:
             load.append(_penetrator_f_z)
-            cmod.append((_u[24, 0] - _u[9, 0]) * 1000)
+            cmod.append((u[24, 0] - u[9, 0]) * 1000)
 
     return load, cmod
