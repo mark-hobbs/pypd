@@ -59,6 +59,11 @@ def main():
                                         particle_density, dt, penetrator,
                                         support_1, support_2)
 
+
+    # --------------------------------------
+    #           Post-processing
+    # --------------------------------------
+
     # Plot the experimental data
     exp_data_path = (pathlib.Path(__file__).parent.resolve()
                      / "experimental_data.h5")
