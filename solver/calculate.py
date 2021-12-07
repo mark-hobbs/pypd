@@ -5,60 +5,114 @@ from numba import njit, prange
 from solver.constitutive_model import trilinear_constitutive_model
 
 
+# @njit(parallel=True)
+# def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
+#                               bond_stiffness, cell_volume, f_x, f_y, f_z,
+#                               particle_force):
+#     """
+#     Calculate particle forces
+#     """
+#     n_bonds = np.shape(bondlist)[0]
+
+#     for k_bond in prange(n_bonds):
+
+#         node_i = bondlist[k_bond, 0] - 1
+#         node_j = bondlist[k_bond, 1] - 1
+
+#         xi_x = particle_coordinates[node_j, 0] - particle_coordinates[node_i, 0]
+#         xi_y = particle_coordinates[node_j, 1] - particle_coordinates[node_i, 1]
+#         xi_z = particle_coordinates[node_j, 2] - particle_coordinates[node_i, 2]
+
+#         xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+#         xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+#         xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
+
+#         xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
+#         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
+#         stretch = (y - xi) / xi
+
+#         s0 = 1.05e-4
+#         s1 = 6.90e-4
+#         sc = 5.56e-3
+#         beta = 0.25
+#         bond_damage[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
+#                                                            bond_damage[k_bond],
+#                                                            beta)
+
+#         f = stretch * bond_stiffness * (1 - bond_damage[k_bond]) * cell_volume
+#         f_x[k_bond] = f * xi_eta_x / y
+#         f_y[k_bond] = f * xi_eta_y / y
+#         f_z[k_bond] = f * xi_eta_z / y
+
+#     # Reduce bond forces to particle forces
+#     for k_bond in range(n_bonds):
+
+#         node_i = bondlist[k_bond, 0] - 1
+#         node_j = bondlist[k_bond, 1] - 1
+
+#         particle_force[node_i, 0] += f_x[k_bond]
+#         particle_force[node_j, 0] -= f_x[k_bond]
+#         particle_force[node_i, 1] += f_y[k_bond]
+#         particle_force[node_j, 1] -= f_y[k_bond]
+#         particle_force[node_i, 2] += f_z[k_bond]
+#         particle_force[node_j, 2] -= f_z[k_bond]
+
+#     return particle_force, bond_damage
+
+
 @njit(parallel=True)
-def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
-                              bond_stiffness, cell_volume, f_x, f_y, f_z,
-                              particle_force):
+def calculate_particle_forces(nlist, particle_coordinates, u, bond_damage,
+                              bond_stiffness, cell_volume, particle_force):
     """
     Calculate particle forces
     """
-    n_bonds = np.shape(bondlist)[0]
+    n_nodes = np.shape(particle_coordinates)[0]
+    max_n_family_members = np.shape(nlist)[1]
 
-    for k_bond in prange(n_bonds):
+    for node_i in range(n_nodes):  # TODO: not thread safe
+        for j in range(max_n_family_members):
 
-        node_i = bondlist[k_bond, 0] - 1
-        node_j = bondlist[k_bond, 1] - 1
+            node_j = nlist[node_i, j]
 
-        xi_x = particle_coordinates[node_j, 0] - particle_coordinates[node_i, 0]
-        xi_y = particle_coordinates[node_j, 1] - particle_coordinates[node_i, 1]
-        xi_z = particle_coordinates[node_j, 2] - particle_coordinates[node_i, 2]
+            if (node_j != -1) and (node_i < node_j):
 
-        xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
-        xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
-        xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
+                xi_x = (particle_coordinates[node_j, 0]
+                        - particle_coordinates[node_i, 0])
+                xi_y = (particle_coordinates[node_j, 1]
+                        - particle_coordinates[node_i, 1])
+                xi_z = (particle_coordinates[node_j, 2]
+                        - particle_coordinates[node_i, 2])
 
-        xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
-        y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
-        stretch = (y - xi) / xi
+                xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+                xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+                xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
 
-        s0 = 1.05e-4
-        s1 = 6.90e-4
-        sc = 5.56e-3
-        beta = 0.25
-        bond_damage[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
-                                                           bond_damage[k_bond],
-                                                           beta)
+                xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
+                y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
+                stretch = (y - xi) / xi
 
-        f = stretch * bond_stiffness * (1 - bond_damage[k_bond]) * cell_volume
-        f_x[k_bond] = f * xi_eta_x / y
-        f_y[k_bond] = f * xi_eta_y / y
-        f_z[k_bond] = f * xi_eta_z / y
+                s0 = 1.05e-4
+                s1 = 6.90e-4
+                sc = 5.56e-3
+                beta = 0.25
+                bond_damage[node_i, j] = trilinear_constitutive_model(stretch, s0, s1, sc,
+                                                                    bond_damage[node_i, j],
+                                                                    beta)
 
-    # Reduce bond forces to particle forces
-    for k_bond in range(n_bonds):
+                f = (stretch * bond_stiffness * (1 - bond_damage[node_i, j])
+                     * cell_volume)
+                f_x = f * xi_eta_x / y
+                f_y = f * xi_eta_y / y
+                f_z = f * xi_eta_z / y
 
-        node_i = bondlist[k_bond, 0] - 1
-        node_j = bondlist[k_bond, 1] - 1
-
-        particle_force[node_i, 0] += f_x[k_bond]
-        particle_force[node_j, 0] -= f_x[k_bond]
-        particle_force[node_i, 1] += f_y[k_bond]
-        particle_force[node_j, 1] -= f_y[k_bond]
-        particle_force[node_i, 2] += f_z[k_bond]
-        particle_force[node_j, 2] -= f_z[k_bond]
+                particle_force[node_i, 0] += f_x
+                particle_force[node_j, 0] -= f_x
+                particle_force[node_i, 1] += f_y
+                particle_force[node_j, 1] -= f_y
+                particle_force[node_i, 2] += f_z
+                particle_force[node_j, 2] -= f_z
 
     return particle_force, bond_damage
-
 
 @njit(parallel=True)
 def update_particle_positions(particle_force, u, ud, udd, damping,

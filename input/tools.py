@@ -40,8 +40,7 @@ def build_particle_families(particle_coordinates, horizon):
     n_family_members = [len(neighbour_list[i]) for i in range(nnodes)]
     n_family_members = np.array(n_family_members, dtype = np.intc)
 
-    # TODO: Is this safe because 0 is used as a node ID?
-    nlist = np.zeros((nnodes, n_family_members.max()), dtype=np.intc)
+    nlist = np.ones((nnodes, n_family_members.max()), dtype=np.intc) * -1
     
     for i in range(nnodes):
         nlist[i, :n_family_members[i]] = neighbour_list[i]

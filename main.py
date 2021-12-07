@@ -59,7 +59,7 @@ def main():
     horizon = np.pi * dx
 
     nlist = tools.build_particle_families(particle_coordinates,
-                                                       horizon)
+                                          horizon)
 
 
     # --------------------------------------
@@ -69,7 +69,7 @@ def main():
     num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
                                         bond_stiffness, cell_volume, damping,
                                         concrete.density, dt, penetrator,
-                                        support_1, support_2)
+                                        support_1, support_2, nlist)
 
 
     # --------------------------------------
