@@ -25,19 +25,30 @@ def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
 
 def build_particle_families(particle_coordinates, horizon):
 
+    # neighbour_list is a list of numpy arrays
+
     nnodes = np.shape(particle_coordinates)[0]
 
     tree = neighbors.KDTree(particle_coordinates, leaf_size=160)
     neighbour_list = tree.query_radius(particle_coordinates, r = horizon)
+    print(np.shape(neighbour_list))
 
     # Remove identity values, as there is no bond between a node and itself
     neighbour_list = [neighbour_list[i][neighbour_list[i] != i]
-                      for i in range(nnodes)]
+                      for i in range(nnodes)]  # list comprehension
 
     n_family_members = [len(neighbour_list[i]) for i in range(nnodes)]
     n_family_members = np.array(n_family_members, dtype = np.intc)
 
-    return neighbour_list, n_family_members
+    # TODO: Is this safe because 0 is used as a node ID?
+    nlist = np.zeros((nnodes, n_family_members.max()), dtype=np.intc)
+    
+    for i in range(nnodes):
+        nlist[i, :n_family_members[i]] = neighbour_list[i]
+
+    nlist = nlist.astype(np.intc)
+
+    return nlist
 
 
 def build_penetrator():

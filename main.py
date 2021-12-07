@@ -56,6 +56,11 @@ def main():
     cell_volume = dx**3
     damping = 1e5
     dt = 1.3e-6
+    horizon = np.pi * dx
+
+    nlist = tools.build_particle_families(particle_coordinates,
+                                                       horizon)
+
 
     # --------------------------------------
     #              Simulate
