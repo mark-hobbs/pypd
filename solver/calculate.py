@@ -62,14 +62,15 @@ from solver.constitutive_model import trilinear_constitutive_model
 
 @njit(parallel=True)
 def calculate_particle_forces(nlist, particle_coordinates, u, bond_damage,
-                              bond_stiffness, cell_volume, particle_force):
+                              bond_stiffness, cell_volume, f_x, f_y, f_z,
+                              particle_force):
     """
     Calculate particle forces
     """
     n_nodes = np.shape(particle_coordinates)[0]
     max_n_family_members = np.shape(nlist)[1]
 
-    for node_i in range(n_nodes):  # TODO: not thread safe
+    for node_i in prange(n_nodes):
         for j in range(max_n_family_members):
 
             node_j = nlist[node_i, j]
@@ -101,16 +102,19 @@ def calculate_particle_forces(nlist, particle_coordinates, u, bond_damage,
 
                 f = (stretch * bond_stiffness * (1 - bond_damage[node_i, j])
                      * cell_volume)
-                f_x = f * xi_eta_x / y
-                f_y = f * xi_eta_y / y
-                f_z = f * xi_eta_z / y
+                f_x[node_i, j] = f * xi_eta_x / y
+                f_y[node_i, j] = f * xi_eta_y / y
+                f_z[node_i, j] = f * xi_eta_z / y
 
-                particle_force[node_i, 0] += f_x
-                particle_force[node_j, 0] -= f_x
-                particle_force[node_i, 1] += f_y
-                particle_force[node_j, 1] -= f_y
-                particle_force[node_i, 2] += f_z
-                particle_force[node_j, 2] -= f_z
+    for node_i in range(n_nodes):  # TODO: not thread safe
+        for j in range(max_n_family_members):
+
+            particle_force[node_i, 0] += f_x[node_i, j]
+            particle_force[node_i, 0] -= f_x[node_i, j]
+            particle_force[node_i, 1] += f_y[node_i, j]
+            particle_force[node_i, 1] -= f_y[node_i, j]
+            particle_force[node_i, 2] += f_z[node_i, j]
+            particle_force[node_i, 2] -= f_z[node_i, j]
 
     return particle_force, bond_damage
 

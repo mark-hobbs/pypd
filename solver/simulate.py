@@ -21,11 +21,15 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     udd = np.zeros([n_nodes, 3])
     particle_force = np.zeros([n_nodes, 3])
     particle_coordinates_deformed = np.zeros([n_nodes, 3])
+    f_x = np.zeros([n_nodes, tmp])
+    f_y = np.zeros([n_nodes, tmp])
+    f_z = np.zeros([n_nodes, tmp])
+    bond_damage = np.zeros([n_nodes, tmp])
 
-    bond_damage = np.zeros([n_bonds, tmp])
-    f_x = np.zeros([n_bonds, ])
-    f_y = np.zeros([n_bonds, ])
-    f_z = np.zeros([n_bonds, ])
+    # bond_damage = np.zeros([n_bonds, ])
+    # f_x = np.zeros([n_bonds, ])
+    # f_y = np.zeros([n_bonds, ])
+    # f_z = np.zeros([n_bonds, ])
 
     load = []
     cmod = []
@@ -57,6 +61,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                   bond_damage,
                                                   bond_stiffness,
                                                   cell_volume,
+                                                  f_x, f_y, f_z,
                                                   particle_force.copy())
 
         # Update particle positions
