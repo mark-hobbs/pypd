@@ -1,6 +1,8 @@
 import numpy as np
 from tqdm import trange
 
+from input import tools
+
 from solver.calculate import (calculate_particle_forces,
                               update_particle_positions,
                               calculate_contact_force,
@@ -8,28 +10,27 @@ from solver.calculate import (calculate_particle_forces,
 
 def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                    damping, particle_density, dt, penetrator, support_1,
-                   support_2, nlist):
+                   support_2):
 
     # Initialise arrays and variables
     n_nodes = np.shape(particle_coordinates)[0]
     n_bonds = np.shape(bondlist)[0]
-    tmp = np.shape(nlist)[1]
-
+    # tmp = np.shape(nlist)[1]
 
     u = np.zeros([n_nodes, 3])
     ud = np.zeros([n_nodes, 3])
     udd = np.zeros([n_nodes, 3])
     particle_force = np.zeros([n_nodes, 3])
     particle_coordinates_deformed = np.zeros([n_nodes, 3])
-    f_x = np.zeros([n_nodes, tmp])
-    f_y = np.zeros([n_nodes, tmp])
-    f_z = np.zeros([n_nodes, tmp])
-    bond_damage = np.zeros([n_nodes, tmp])
+    # f_x = np.zeros([n_nodes, tmp])
+    # f_y = np.zeros([n_nodes, tmp])
+    # f_z = np.zeros([n_nodes, tmp])
+    # bond_damage = np.zeros([n_nodes, tmp])
 
-    # bond_damage = np.zeros([n_bonds, ])
-    # f_x = np.zeros([n_bonds, ])
-    # f_y = np.zeros([n_bonds, ])
-    # f_z = np.zeros([n_bonds, ])
+    bond_damage = np.zeros([n_bonds, ])
+    f_x = np.zeros([n_bonds, ])
+    f_y = np.zeros([n_bonds, ])
+    f_z = np.zeros([n_bonds, ])
 
     load = []
     cmod = []
@@ -44,18 +45,8 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                   0, applied_displacement)
 
         # Calculate particle forces
-        # (_particle_force,
-        #  bond_damage) = calculate_particle_forces(bondlist,
-        #                                           particle_coordinates,
-        #                                           u,
-        #                                           bond_damage,
-        #                                           bond_stiffness,
-        #                                           cell_volume,
-        #                                           f_x, f_y, f_z,
-        #                                           particle_force.copy())
-
         (_particle_force,
-         bond_damage) = calculate_particle_forces(nlist,
+         bond_damage) = calculate_particle_forces(bondlist,
                                                   particle_coordinates,
                                                   u,
                                                   bond_damage,
@@ -63,6 +54,16 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                                                   cell_volume,
                                                   f_x, f_y, f_z,
                                                   particle_force.copy())
+
+        # (_particle_force,
+        #  bond_damage) = calculate_particle_forces(nlist,
+        #                                           particle_coordinates,
+        #                                           u,
+        #                                           bond_damage,
+        #                                           bond_stiffness,
+        #                                           cell_volume,
+        #                                           f_x, f_y, f_z,
+        #                                           particle_force.copy())
 
         # Update particle positions
         (u, ud) = update_particle_positions(_particle_force,

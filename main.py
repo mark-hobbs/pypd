@@ -1,3 +1,7 @@
+# --------------------------------------
+#        Three-point bending test
+# --------------------------------------
+
 import pathlib
 
 import h5py
@@ -10,15 +14,13 @@ from solver.penetrator import Penetrator
 from solver.simulate import run_simulation
 
 
-
 def main():
-    
+
     # --------------------------------------
     #           Read input file
     # --------------------------------------
     mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
                                     "Beam_4_UN_DX5mm.mat")
-
 
     dx = mat['DX']
 
@@ -58,9 +60,8 @@ def main():
     dt = 1.3e-6
     horizon = np.pi * dx
 
-    nlist = tools.build_particle_families(particle_coordinates,
-                                          horizon)
-
+    # nlist = tools.build_particle_families(particle_coordinates,
+    #                                       horizon)
 
     # --------------------------------------
     #              Simulate
@@ -69,8 +70,7 @@ def main():
     num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
                                         bond_stiffness, cell_volume, damping,
                                         concrete.density, dt, penetrator,
-                                        support_1, support_2, nlist)
-
+                                        support_1, support_2)
 
     # --------------------------------------
     #           Post-processing
@@ -101,5 +101,6 @@ def main():
 
     plt.plot(num_cmod, num_load, label='Numerical')
     plt.savefig('load_CMOD', dpi=1000)
+
 
 main()

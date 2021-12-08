@@ -59,6 +59,29 @@ def build_volume_correction_factors():
     pass
 
 
+def build_bond_length(x, bondlist):
+    """Build the bond length array"""
+    n_bonds = np.shape(bondlist)[0]
+    xi = np.zeros([n_bonds, ])
+    xi_x = np.zeros([n_bonds, ])
+    xi_y = np.zeros([n_bonds, ])
+    xi_z = np.zeros([n_bonds, ])
+
+    for k_bond in range(n_bonds):
+
+        node_i = bondlist[k_bond, 0] - 1
+        node_j = bondlist[k_bond, 1] - 1
+
+        xi_x[k_bond] = x[node_j, 0] - x[node_i, 0]
+        xi_y[k_bond] = x[node_j, 1] - x[node_i, 1]
+        xi_z[k_bond] = x[node_j, 2] - x[node_i, 2]
+        xi[k_bond] = np.sqrt(xi_x[k_bond]**2
+                             + xi_y[k_bond]**2
+                             + xi_z[k_bond]**2)
+
+    return xi, xi_x, xi_y, xi_z
+
+
 def calculate_bond_stiffness(E, delta):
     c = (12 * E) / (np.pi * delta**4)
     return c
