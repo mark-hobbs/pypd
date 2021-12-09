@@ -1,3 +1,11 @@
+"""
+Solver calculate functions
+--------------------------
+
+This module contains functions to calculate...
+
+"""
+
 
 import numpy as np
 from numba import njit, prange
@@ -8,9 +16,35 @@ from solver.constitutive_model import trilinear_constitutive_model
 @njit(parallel=True)
 def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
                               s0, s1, sc, beta, f_x, f_y, f_z,
-                              particle_force):
+                              node_force):
     """
     Calculate particle forces
+
+    Parameters
+    ----------
+    bondlist : ndarray (int)
+               Array of pairwise interactions (bond list)
+    x : ndarray (float)
+        Material point coordinates in the reference configuration
+    u : ndarray (float)
+        Nodal displacement
+    d : ndarray (float)
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
+    c : float
+        Bond stiffness
+
+    Returns
+    -------
+    node_force : ndarray (float)
+    d : ndarray (float)
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
+
+    Notes
+    -----
     """
     n_bonds = np.shape(bondlist)[0]
 
@@ -45,14 +79,14 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
         node_i = bondlist[k_bond, 0] - 1
         node_j = bondlist[k_bond, 1] - 1
 
-        particle_force[node_i, 0] += f_x[k_bond]
-        particle_force[node_j, 0] -= f_x[k_bond]
-        particle_force[node_i, 1] += f_y[k_bond]
-        particle_force[node_j, 1] -= f_y[k_bond]
-        particle_force[node_i, 2] += f_z[k_bond]
-        particle_force[node_j, 2] -= f_z[k_bond]
+        node_force[node_i, 0] += f_x[k_bond]
+        node_force[node_j, 0] -= f_x[k_bond]
+        node_force[node_i, 1] += f_y[k_bond]
+        node_force[node_j, 1] -= f_y[k_bond]
+        node_force[node_i, 2] += f_z[k_bond]
+        node_force[node_j, 2] -= f_z[k_bond]
 
-    return particle_force, d
+    return node_force, d
 
 
 # @njit(parallel=True)
@@ -114,18 +148,28 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
 #     return particle_force, bond_damage
 
 @njit(parallel=True)
-def update_particle_positions(particle_force, u, ud, udd, damping,
-                              particle_density, dt):
+def update_particle_positions(node_force, u, ud, udd, damping,
+                              node_density, dt):
     """
     Update particle positions using an Euler-Cromer time integration scheme
+    
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    Notes
+    -----
+
     """
 
-    n_nodes = np.shape(particle_force)[0]
+    n_nodes = np.shape(node_force)[0]
 
     for node_i in prange(n_nodes):
         for dof in range(3):
-            udd[node_i, dof] = (particle_force[node_i, dof]
-                                - damping * ud[node_i, dof]) / particle_density
+            udd[node_i, dof] = (node_force[node_i, dof]
+                                - damping * ud[node_i, dof]) / node_density
             ud[node_i, dof] = ud[node_i, dof] + (udd[node_i, dof] * dt)
             u[node_i, dof] = u[node_i, dof] + (ud[node_i, dof] * dt)
 
@@ -134,11 +178,21 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
 
 @njit
 def calculate_contact_force(pen, u, ud, displacement_increment,
-                            dt, particle_density, cell_volume,
+                            dt, node_density, cell_volume,
                             x_deformed, x):
     """
     Calculate contact force between rigid penetrator/support and deformable
     body
+    
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    Notes
+    -----
+    
     """
 
     # TODO: is u the displacement or the coordinates of the displaced
@@ -187,11 +241,11 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
 
             # Calculate the reaction force from a particle on the penetrator
             # F = ma
-            penetrator_f_x += (particle_density * cell_volume
+            penetrator_f_x += (node_density * cell_volume
                                * (ud[node_i, 0] - ud_previous[node_i, 0]) / dt)
-            penetrator_f_y += (particle_density * cell_volume
+            penetrator_f_y += (node_density * cell_volume
                                * (ud[node_i, 1] - ud_previous[node_i, 1]) / dt)
-            penetrator_f_z += (particle_density * cell_volume
+            penetrator_f_z += (node_density * cell_volume
                                * (ud[node_i, 2] - ud_previous[node_i, 2]) / dt)
 
     return u, ud, penetrator_f_z, x_deformed
@@ -202,6 +256,16 @@ def smooth_step_data(current_time_step, start_time_step, final_time_step,
                      start_value, final_value):
     """
     Smooth 5th order polynomial
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    Notes
+    -----
+    
     """
     xi = ((current_time_step - start_time_step)
           / (final_time_step - start_time_step))
