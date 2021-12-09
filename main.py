@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from input import utilities, tools
+from input.input_file import InputFile
 from input.material import Material
 from solver.penetrator import Penetrator
 from solver.simulate import run_simulation
@@ -49,16 +50,28 @@ def main():
     support_2 = Penetrator(ID, centre, radius, search_radius, family)
 
     # Parameters
+    horizon = np.pi * dx
     bondlist = mat['BONDLIST']
     particle_coordinates = mat['undeformedCoordinates']
-    concrete = Material(youngs_modulus=37e9, fracture_energy=143.2,
-                        density=2346, poissons_ratio=0.2)
+    concrete = Material(youngs_modulus=37e9,
+                        fracture_energy=143.2,
+                        density=2346,
+                        poissons_ratio=0.2,
+                        tensile_strength=3.9e6)
     bond_stiffness = tools.calculate_bond_stiffness(concrete.youngs_modulus,
-                                                    dx * np.pi)
+                                                    horizon)
     cell_volume = dx**3
     damping = 1e5
     dt = 1.3e-6
-    horizon = np.pi * dx
+
+    s0 = concrete.tensile_strength / concrete.youngs_modulus
+    beta = 0.25
+    gamma = (3 + (2 * beta)) / ((2 * beta) * (1 - beta))
+    sc_numerator = (10 * gamma * concrete.fracture_energy)
+    sc_denominator = (np.pi * horizon**5 * bond_stiffness * s0
+                      * (1 + (gamma * beta)))
+    sc = (sc_numerator / sc_denominator)  + s0
+    s1 = s0 + (sc - s0) / gamma
 
     # nlist = tools.build_particle_families(particle_coordinates,
     #                                       horizon)
@@ -70,7 +83,7 @@ def main():
     num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
                                         bond_stiffness, cell_volume, damping,
                                         concrete.density, dt, penetrator,
-                                        support_1, support_2)
+                                        support_1, support_2, s0, s1, sc, beta)
 
     # --------------------------------------
     #           Post-processing

@@ -6,8 +6,8 @@ from solver.constitutive_model import trilinear_constitutive_model
 
 
 @njit(parallel=True)
-def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
-                              bond_stiffness, cell_volume, f_x, f_y, f_z,
+def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
+                              s0, s1, sc, beta, f_x, f_y, f_z,
                               particle_force):
     """
     Calculate particle forces
@@ -19,12 +19,9 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
         node_i = bondlist[k_bond, 0] - 1
         node_j = bondlist[k_bond, 1] - 1
 
-        xi_x = (particle_coordinates[node_j, 0]
-                - particle_coordinates[node_i, 0])
-        xi_y = (particle_coordinates[node_j, 1]
-                - particle_coordinates[node_i, 1])
-        xi_z = (particle_coordinates[node_j, 2]
-                - particle_coordinates[node_i, 2])
+        xi_x = x[node_j, 0] - x[node_i, 0]
+        xi_y = x[node_j, 1] - x[node_i, 1]
+        xi_z = x[node_j, 2] - x[node_i, 2]
 
         xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
         xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
@@ -34,15 +31,10 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
         stretch = (y - xi) / xi
 
-        s0 = 1.05e-4
-        s1 = 6.90e-4
-        sc = 5.56e-3
-        beta = 0.25
-        bond_damage[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
-                                                           bond_damage[k_bond],
-                                                           beta)
+        d[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
+                                                 d[k_bond], beta)
 
-        f = stretch * bond_stiffness * (1 - bond_damage[k_bond]) * cell_volume
+        f = stretch * c * (1 - d[k_bond]) * cell_volume
         f_x[k_bond] = f * xi_eta_x / y
         f_y[k_bond] = f * xi_eta_y / y
         f_z[k_bond] = f * xi_eta_z / y
@@ -60,7 +52,7 @@ def calculate_particle_forces(bondlist, particle_coordinates, u, bond_damage,
         particle_force[node_i, 2] += f_z[k_bond]
         particle_force[node_j, 2] -= f_z[k_bond]
 
-    return particle_force, bond_damage
+    return particle_force, d
 
 
 # @njit(parallel=True)
@@ -143,8 +135,7 @@ def update_particle_positions(particle_force, u, ud, udd, damping,
 @njit
 def calculate_contact_force(pen, u, ud, displacement_increment,
                             dt, particle_density, cell_volume,
-                            particle_coordinates_deformed,
-                            particle_coordinates):
+                            x_deformed, x):
     """
     Calculate contact force between rigid penetrator/support and deformable
     body
@@ -169,10 +160,8 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
 
         node_i = pen.family[i]
 
-        distance_x = (particle_coordinates_deformed[node_i, 0]
-                      - pen.centre[0])
-        distance_z = (particle_coordinates_deformed[node_i, 2]
-                      - pen_displacement)
+        distance_x = x_deformed[node_i, 0] - pen.centre[0]
+        distance_z = x_deformed[node_i, 2] - pen_displacement
         distance = np.sqrt(distance_x**2 + distance_z**2)
 
         if distance < pen.radius:
@@ -186,32 +175,26 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
             unit_z_scaled = unit_z * pen.radius
 
             # Calculate new particle positions
-            particle_coordinates_deformed[node_i, 0] = (pen.centre[0]
-                                                        + unit_x_scaled)
-            particle_coordinates_deformed[node_i, 2] = (pen_displacement
-                                                        + unit_z_scaled)
+            x_deformed[node_i, 0] = pen.centre[0] + unit_x_scaled
+            x_deformed[node_i, 2] = pen_displacement + unit_z_scaled
 
-            u[node_i, 0] = (particle_coordinates_deformed[node_i, 0]
-                            - particle_coordinates[node_i, 0])
-            u[node_i, 2] = (particle_coordinates_deformed[node_i, 2]
-                            - particle_coordinates[node_i, 2])
+            u[node_i, 0] = x_deformed[node_i, 0] - x[node_i, 0]
+            u[node_i, 2] = x_deformed[node_i, 2] - x[node_i, 2]
 
             # Calculate particle velocity
             ud[node_i, 0] = (u[node_i, 0] - u_previous[node_i, 0]) / dt
             ud[node_i, 2] = (u[node_i, 2] - u_previous[node_i, 2]) / dt
 
             # Calculate the reaction force from a particle on the penetrator
-            penetrator_f_x += (-1 * particle_density
-                               * (ud[node_i, 0] - ud_previous[node_i, 0])
-                               / dt * cell_volume)
-            penetrator_f_y += (-1 * particle_density
-                               * (ud[node_i, 1] - ud_previous[node_i, 1])
-                               / dt * cell_volume)
-            penetrator_f_z += (-1 * particle_density
-                               * (ud[node_i, 2] - ud_previous[node_i, 2])
-                               / dt * cell_volume)
+            # F = ma
+            penetrator_f_x += (particle_density * cell_volume
+                               * (ud[node_i, 0] - ud_previous[node_i, 0]) / dt)
+            penetrator_f_y += (particle_density * cell_volume
+                               * (ud[node_i, 1] - ud_previous[node_i, 1]) / dt)
+            penetrator_f_z += (particle_density * cell_volume
+                               * (ud[node_i, 2] - ud_previous[node_i, 2]) / dt)
 
-    return u, ud, penetrator_f_z, particle_coordinates_deformed
+    return u, ud, penetrator_f_z, x_deformed
 
 
 @njit
