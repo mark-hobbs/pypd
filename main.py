@@ -73,8 +73,8 @@ def main():
     sc = (sc_numerator / sc_denominator)  + s0
     s1 = s0 + (sc - s0) / gamma
 
-    # nlist = tools.build_particle_families(particle_coordinates,
-    #                                       horizon)
+    nlist = tools.build_particle_families(particle_coordinates,
+                                          horizon)
 
     # --------------------------------------
     #              Simulate
@@ -83,7 +83,8 @@ def main():
     num_load, num_cmod = run_simulation(bondlist, particle_coordinates,
                                         bond_stiffness, cell_volume, damping,
                                         concrete.density, dt, penetrator,
-                                        support_1, support_2, s0, s1, sc, beta)
+                                        support_1, support_2, s0, s1, sc, beta,
+                                        nlist)
 
     # --------------------------------------
     #           Post-processing

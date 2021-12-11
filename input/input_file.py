@@ -1,6 +1,7 @@
 
 import numpy as np
 
+# Create a HDF5 file
 
 class InputFile():
     """This class defines the most basic possible input file for the solver"""

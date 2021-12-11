@@ -2,7 +2,7 @@
 Solver calculate functions
 --------------------------
 
-This module contains functions to calculate...
+This module contains the core functions that are employed during a simulation.
 
 """
 
@@ -90,28 +90,29 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
 
 
 # @njit(parallel=True)
-# def calculate_particle_forces(nlist, particle_coordinates, u, bond_damage,
-#                               bond_stiffness, cell_volume, f_x, f_y, f_z,
+# def calculate_particle_forces(nlist, x, u, d, c, cell_volume,
 #                               particle_force):
 #     """
 #     Calculate particle forces
 #     """
-#     n_nodes = np.shape(particle_coordinates)[0]
+#     n_nodes = np.shape(x)[0]
 #     max_n_family_members = np.shape(nlist)[1]
 
 #     for node_i in prange(n_nodes):
+
+#         local_cache_f_x = np.zeros(max_n_family_members)
+#         local_cache_f_y = local_cache_f_x.copy()
+#         local_cache_f_z = local_cache_f_x.copy()
+
 #         for j in range(max_n_family_members):
 
 #             node_j = nlist[node_i, j]
 
-#             if (node_j != -1) and (node_i < node_j):
+#             if (node_j != -1):
 
-#                 xi_x = (particle_coordinates[node_j, 0]
-#                         - particle_coordinates[node_i, 0])
-#                 xi_y = (particle_coordinates[node_j, 1]
-#                         - particle_coordinates[node_i, 1])
-#                 xi_z = (particle_coordinates[node_j, 2]
-#                         - particle_coordinates[node_i, 2])
+#                 xi_x = x[node_j, 0] - x[node_i, 0]
+#                 xi_y = x[node_j, 1] - x[node_i, 1]
+#                 xi_z = x[node_j, 2] - x[node_i, 2]
 
 #                 xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
 #                 xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
@@ -125,27 +126,22 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
 #                 s1 = 6.90e-4
 #                 sc = 5.56e-3
 #                 beta = 0.25
-#                 bond_damage[node_i, j] = trilinear_constitutive_model(stretch, s0, s1, sc,
-#                                                                     bond_damage[node_i, j],
-#                                                                     beta)
+#                 d[node_i, j] = trilinear_constitutive_model(stretch,
+#                                                             s0, s1, sc,
+#                                                             d[node_i, j],
+#                                                             beta)
 
-#                 f = (stretch * bond_stiffness * (1 - bond_damage[node_i, j])
+#                 f = (stretch * c * (1 - d[node_i, j])
 #                      * cell_volume)
-#                 f_x[node_i, j] = f * xi_eta_x / y
-#                 f_y[node_i, j] = f * xi_eta_y / y
-#                 f_z[node_i, j] = f * xi_eta_z / y
+#                 local_cache_f_x[j] = f * xi_eta_x / y
+#                 local_cache_f_y[j] = f * xi_eta_y / y
+#                 local_cache_f_z[j] = f * xi_eta_z / y
 
-#     for node_i in range(n_nodes):
-#         for j in range(max_n_family_members):
+#         particle_force[node_i, 0] = np.sum(local_cache_f_x)
+#         particle_force[node_i, 1] = np.sum(local_cache_f_y)
+#         particle_force[node_i, 2] = np.sum(local_cache_f_z)
 
-#             particle_force[node_i, 0] += f_x[node_i, j]
-#             particle_force[node_i, 0] -= f_x[node_i, j]
-#             particle_force[node_i, 1] += f_y[node_i, j]
-#             particle_force[node_i, 1] -= f_y[node_i, j]
-#             particle_force[node_i, 2] += f_z[node_i, j]
-#             particle_force[node_i, 2] -= f_z[node_i, j]
-
-#     return particle_force, bond_damage
+#     return particle_force, d
 
 @njit(parallel=True)
 def update_particle_positions(node_force, u, ud, udd, damping,

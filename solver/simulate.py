@@ -10,12 +10,12 @@ from solver.calculate import (calculate_particle_forces,
 
 def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
                    damping, particle_density, dt, penetrator, support_1,
-                   support_2, s0, s1, sc, beta):
+                   support_2, s0, s1, sc, beta, nlist):
 
     # Initialise arrays and variables
     n_nodes = np.shape(particle_coordinates)[0]
     n_bonds = np.shape(bondlist)[0]
-    # tmp = np.shape(nlist)[1]
+    tmp = np.shape(nlist)[1]
 
     u = np.zeros([n_nodes, 3])
     ud = np.zeros([n_nodes, 3])
@@ -25,7 +25,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     # f_x = np.zeros([n_nodes, tmp])
     # f_y = np.zeros([n_nodes, tmp])
     # f_z = np.zeros([n_nodes, tmp])
-    # bond_damage = np.zeros([n_nodes, tmp])
+    #  bond_damage = np.zeros([n_nodes, tmp])
 
     bond_damage = np.zeros([n_bonds, ])
     f_x = np.zeros([n_bonds, ])
@@ -35,7 +35,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     load = []
     cmod = []
 
-    n_time_steps = 20000
+    n_time_steps = 100000
     applied_displacement = -2e-4
 
     for i_time_step in trange(n_time_steps,
@@ -63,7 +63,6 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
         #                                           bond_damage,
         #                                           bond_stiffness,
         #                                           cell_volume,
-        #                                           f_x, f_y, f_z,
         #                                           particle_force.copy())
 
         # Update particle positions
