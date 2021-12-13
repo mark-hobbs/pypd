@@ -15,17 +15,14 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     # Initialise arrays and variables
     n_nodes = np.shape(particle_coordinates)[0]
     n_bonds = np.shape(bondlist)[0]
-    tmp = np.shape(nlist)[1]
+    n_dimensions = np.shape(particle_coordinates)[1]
 
-    u = np.zeros([n_nodes, 3])
-    ud = np.zeros([n_nodes, 3])
-    udd = np.zeros([n_nodes, 3])
-    particle_force = np.zeros([n_nodes, 3])
-    particle_coordinates_deformed = np.zeros([n_nodes, 3])
-    # f_x = np.zeros([n_nodes, tmp])
-    # f_y = np.zeros([n_nodes, tmp])
-    # f_z = np.zeros([n_nodes, tmp])
-    #  bond_damage = np.zeros([n_nodes, tmp])
+    u = np.zeros([n_nodes, n_dimensions])
+    ud = np.zeros([n_nodes, n_dimensions])
+    udd = np.zeros([n_nodes, n_dimensions])
+    particle_force = np.zeros([n_nodes, n_dimensions])
+    particle_coordinates_deformed = np.zeros([n_nodes, n_dimensions])
+    # bond_damage = np.zeros([n_nodes, np.shape(nlist)[1]])
 
     bond_damage = np.zeros([n_bonds, ])
     f_x = np.zeros([n_bonds, ])
@@ -63,6 +60,7 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
         #                                           bond_damage,
         #                                           bond_stiffness,
         #                                           cell_volume,
+        #                                           s0, s1, sc, beta,
         #                                           particle_force.copy())
 
         # Update particle positions

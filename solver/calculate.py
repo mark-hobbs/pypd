@@ -18,7 +18,7 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
                               s0, s1, sc, beta, f_x, f_y, f_z,
                               node_force):
     """
-    Calculate particle forces
+    Calculate particle forces - employs bondlist
 
     Parameters
     ----------
@@ -91,9 +91,35 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
 
 # @njit(parallel=True)
 # def calculate_particle_forces(nlist, x, u, d, c, cell_volume,
-#                               particle_force):
+#                               s0, s1, sc, beta, node_force):
 #     """
-#     Calculate particle forces
+#     Calculate particle forces - employs neighbour list
+
+#     Parameters
+#     ----------
+#     nlist : ndarray (int)
+#             Array of...
+#     x : ndarray (float)
+#         Material point coordinates in the reference configuration
+#     u : ndarray (float)
+#         Nodal displacement
+#     d : ndarray (float)
+#         Bond damage (softening parameter). The value of d will range from 0
+#         to 1, where 0 indicates that the bond is still in the elastic range,
+#         and 1 represents a bond that has failed
+#     c : float
+#         Bond stiffness
+
+#     Returns
+#     -------
+#     node_force : ndarray (float)
+#     d : ndarray (float)
+#         Bond damage (softening parameter). The value of d will range from 0
+#         to 1, where 0 indicates that the bond is still in the elastic range,
+#         and 1 represents a bond that has failed
+
+#     Notes
+#     -----
 #     """
 #     n_nodes = np.shape(x)[0]
 #     max_n_family_members = np.shape(nlist)[1]
@@ -122,26 +148,21 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
 #                 y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
 #                 stretch = (y - xi) / xi
 
-#                 s0 = 1.05e-4
-#                 s1 = 6.90e-4
-#                 sc = 5.56e-3
-#                 beta = 0.25
 #                 d[node_i, j] = trilinear_constitutive_model(stretch,
 #                                                             s0, s1, sc,
 #                                                             d[node_i, j],
 #                                                             beta)
 
-#                 f = (stretch * c * (1 - d[node_i, j])
-#                      * cell_volume)
+#                 f = stretch * c * (1 - d[node_i, j]) * cell_volume
 #                 local_cache_f_x[j] = f * xi_eta_x / y
 #                 local_cache_f_y[j] = f * xi_eta_y / y
 #                 local_cache_f_z[j] = f * xi_eta_z / y
 
-#         particle_force[node_i, 0] = np.sum(local_cache_f_x)
-#         particle_force[node_i, 1] = np.sum(local_cache_f_y)
-#         particle_force[node_i, 2] = np.sum(local_cache_f_z)
+#         node_force[node_i, 0] = np.sum(local_cache_f_x)
+#         node_force[node_i, 1] = np.sum(local_cache_f_y)
+#         node_force[node_i, 2] = np.sum(local_cache_f_z)
 
-#     return particle_force, d
+#     return node_force, d
 
 @njit(parallel=True)
 def update_particle_positions(node_force, u, ud, udd, damping,
@@ -161,9 +182,10 @@ def update_particle_positions(node_force, u, ud, udd, damping,
     """
 
     n_nodes = np.shape(node_force)[0]
+    n_dimensions = np.shape(node_force)[1]
 
     for node_i in prange(n_nodes):
-        for dof in range(3):
+        for dof in range(n_dimensions):
             udd[node_i, dof] = (node_force[node_i, dof]
                                 - damping * ud[node_i, dof]) / node_density
             ud[node_i, dof] = ud[node_i, dof] + (udd[node_i, dof] * dt)
