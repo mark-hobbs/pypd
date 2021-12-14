@@ -17,7 +17,7 @@ def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
                 coord_z = dx * i_z
                 particle_coordinates[counter, 0] = coord_x
                 particle_coordinates[counter, 1] = coord_y
-                particle_coordinates[counter, 1] = coord_z
+                particle_coordinates[counter, 2] = coord_z
                 counter += 1
 
     return particle_coordinates

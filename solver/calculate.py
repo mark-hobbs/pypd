@@ -14,9 +14,9 @@ from solver.constitutive_model import trilinear_constitutive_model
 
 
 @njit(parallel=True)
-def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
-                              s0, s1, sc, beta, f_x, f_y, f_z,
-                              node_force):
+def calculate_nodal_forces_bondlist(bondlist, x, u, d, c, cell_volume,
+                                    s0, s1, sc, beta, f_x, f_y, f_z,
+                                    node_force):
     """
     Calculate particle forces - employs bondlist
 
@@ -65,6 +65,8 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
         stretch = (y - xi) / xi
 
+        # TODO: allow the user to load different constitutive models or define
+        # a new law that describes the interaction between two particles
         d[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
                                                  d[k_bond], beta)
 
@@ -89,83 +91,83 @@ def calculate_particle_forces(bondlist, x, u, d, c, cell_volume,
     return node_force, d
 
 
-# @njit(parallel=True)
-# def calculate_particle_forces(nlist, x, u, d, c, cell_volume,
-#                               s0, s1, sc, beta, node_force):
-#     """
-#     Calculate particle forces - employs neighbour list
+@njit(parallel=True)
+def calculate_nodal_forces_nlist(nlist, x, u, d, c, cell_volume,
+                                 s0, s1, sc, beta, node_force):
+    """
+    Calculate particle forces - employs neighbour list
 
-#     Parameters
-#     ----------
-#     nlist : ndarray (int)
-#             Array of...
-#     x : ndarray (float)
-#         Material point coordinates in the reference configuration
-#     u : ndarray (float)
-#         Nodal displacement
-#     d : ndarray (float)
-#         Bond damage (softening parameter). The value of d will range from 0
-#         to 1, where 0 indicates that the bond is still in the elastic range,
-#         and 1 represents a bond that has failed
-#     c : float
-#         Bond stiffness
+    Parameters
+    ----------
+    nlist : ndarray (int)
+            Array of...
+    x : ndarray (float)
+        Material point coordinates in the reference configuration
+    u : ndarray (float)
+        Nodal displacement
+    d : ndarray (float)
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
+    c : float
+        Bond stiffness
 
-#     Returns
-#     -------
-#     node_force : ndarray (float)
-#     d : ndarray (float)
-#         Bond damage (softening parameter). The value of d will range from 0
-#         to 1, where 0 indicates that the bond is still in the elastic range,
-#         and 1 represents a bond that has failed
+    Returns
+    -------
+    node_force : ndarray (float)
+    d : ndarray (float)
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
 
-#     Notes
-#     -----
-#     """
-#     n_nodes = np.shape(x)[0]
-#     max_n_family_members = np.shape(nlist)[1]
+    Notes
+    -----
+    """
+    n_nodes = np.shape(x)[0]
+    max_n_family_members = np.shape(nlist)[1]
 
-#     for node_i in prange(n_nodes):
+    for node_i in prange(n_nodes):
 
-#         local_cache_f_x = np.zeros(max_n_family_members)
-#         local_cache_f_y = local_cache_f_x.copy()
-#         local_cache_f_z = local_cache_f_x.copy()
+        local_cache_f_x = np.zeros(max_n_family_members)
+        local_cache_f_y = local_cache_f_x.copy()
+        local_cache_f_z = local_cache_f_x.copy()
 
-#         for j in range(max_n_family_members):
+        for j in range(max_n_family_members):
 
-#             node_j = nlist[node_i, j]
+            node_j = nlist[node_i, j]
 
-#             if (node_j != -1):
+            if (node_j != -1):
 
-#                 xi_x = x[node_j, 0] - x[node_i, 0]
-#                 xi_y = x[node_j, 1] - x[node_i, 1]
-#                 xi_z = x[node_j, 2] - x[node_i, 2]
+                xi_x = x[node_j, 0] - x[node_i, 0]
+                xi_y = x[node_j, 1] - x[node_i, 1]
+                xi_z = x[node_j, 2] - x[node_i, 2]
 
-#                 xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
-#                 xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
-#                 xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
+                xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+                xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+                xi_eta_z = xi_z + (u[node_j, 2] - u[node_i, 2])
 
-#                 xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
-#                 y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
-#                 stretch = (y - xi) / xi
+                xi = np.sqrt(xi_x**2 + xi_y**2 + xi_z**2)
+                y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
+                stretch = (y - xi) / xi
 
-#                 d[node_i, j] = trilinear_constitutive_model(stretch,
-#                                                             s0, s1, sc,
-#                                                             d[node_i, j],
-#                                                             beta)
+                d[node_i, j] = trilinear_constitutive_model(stretch,
+                                                            s0, s1, sc,
+                                                            d[node_i, j],
+                                                            beta)
 
-#                 f = stretch * c * (1 - d[node_i, j]) * cell_volume
-#                 local_cache_f_x[j] = f * xi_eta_x / y
-#                 local_cache_f_y[j] = f * xi_eta_y / y
-#                 local_cache_f_z[j] = f * xi_eta_z / y
+                f = stretch * c * (1 - d[node_i, j]) * cell_volume
+                local_cache_f_x[j] = f * xi_eta_x / y
+                local_cache_f_y[j] = f * xi_eta_y / y
+                local_cache_f_z[j] = f * xi_eta_z / y
 
-#         node_force[node_i, 0] = np.sum(local_cache_f_x)
-#         node_force[node_i, 1] = np.sum(local_cache_f_y)
-#         node_force[node_i, 2] = np.sum(local_cache_f_z)
+        node_force[node_i, 0] = np.sum(local_cache_f_x)
+        node_force[node_i, 1] = np.sum(local_cache_f_y)
+        node_force[node_i, 2] = np.sum(local_cache_f_z)
 
-#     return node_force, d
+    return node_force, d
 
 @njit(parallel=True)
-def update_particle_positions(node_force, u, ud, udd, damping,
+def update_nodal_positions(node_force, u, ud, udd, damping,
                               node_density, dt):
     """
     Update particle positions using an Euler-Cromer time integration scheme

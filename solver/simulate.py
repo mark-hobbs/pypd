@@ -3,8 +3,8 @@ from tqdm import trange
 
 from input import tools
 
-from solver.calculate import (calculate_particle_forces,
-                              update_particle_positions,
+from solver.calculate import (calculate_nodal_forces_bondlist,
+                              update_nodal_positions,
                               calculate_contact_force,
                               smooth_step_data)
 
@@ -43,32 +43,22 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
 
         # Calculate particle forces
         (_particle_force,
-         bond_damage) = calculate_particle_forces(bondlist,
-                                                  particle_coordinates,
-                                                  u,
-                                                  bond_damage,
-                                                  bond_stiffness,
-                                                  cell_volume,
-                                                  s0, s1, sc, beta,
-                                                  f_x, f_y, f_z,
-                                                  particle_force.copy())
-
-        # (_particle_force,
-        #  bond_damage) = calculate_particle_forces(nlist,
-        #                                           particle_coordinates,
-        #                                           u,
-        #                                           bond_damage,
-        #                                           bond_stiffness,
-        #                                           cell_volume,
-        #                                           s0, s1, sc, beta,
-        #                                           particle_force.copy())
+         bond_damage) = calculate_nodal_forces_bondlist(bondlist,
+                                                        particle_coordinates,
+                                                        u,
+                                                        bond_damage,
+                                                        bond_stiffness,
+                                                        cell_volume,
+                                                        s0, s1, sc, beta,
+                                                        f_x, f_y, f_z,
+                                                        particle_force.copy())
 
         # Update particle positions
-        (u, ud) = update_particle_positions(_particle_force,
-                                            u, ud, udd,
-                                            damping,
-                                            particle_density,
-                                            dt)
+        (u, ud) = update_nodal_positions(_particle_force,
+                                         u, ud, udd,
+                                         damping,
+                                         particle_density,
+                                         dt)
 
         particle_coordinates_deformed = particle_coordinates + u
 

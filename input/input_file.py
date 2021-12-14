@@ -10,7 +10,7 @@ class InputFile():
         self.coordinates = coordinates
         self.horizon = horizon
 
-    def build_particle():
+    def build_particles():
         pass
 
     def build_boundary_conditions():
