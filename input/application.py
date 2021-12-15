@@ -66,13 +66,25 @@ class Application():
     # -------------------------------------------------------------------------
 
     @classmethod
-    def read_from_file(cls):
+    def read_from_txt_file(cls):
         """
-        Create new class instance by reading from file
+        Create new class instance by reading from txt file
 
         Examples
         --------
-        Application.read_from_file('input_data.txt')
+        Application.read_from_txt_file('input_data.txt')
+
+        """
+        pass
+
+    @classmethod
+    def read_from_mat_file(cls):
+        """
+        Create new class instance by reading from mat file
+
+        Examples
+        --------
+        Application.read_from_mat_file('input_data.mat')
 
         """
         pass
