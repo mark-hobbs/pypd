@@ -23,7 +23,7 @@ def calculate_nodal_forces_bondlist(bondlist, x, u, d, c, cell_volume,
     Parameters
     ----------
     bondlist : ndarray (int)
-               Array of pairwise interactions (bond list)
+        Array of pairwise interactions (bond list)
     x : ndarray (float)
         Material point coordinates in the reference configuration
     u : ndarray (float)
@@ -38,6 +38,7 @@ def calculate_nodal_forces_bondlist(bondlist, x, u, d, c, cell_volume,
     Returns
     -------
     node_force : ndarray (float)
+        Nodal force array
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
@@ -115,6 +116,7 @@ def calculate_nodal_forces_nlist(nlist, x, u, d, c, cell_volume,
     Returns
     -------
     node_force : ndarray (float)
+        Nodal force array
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
