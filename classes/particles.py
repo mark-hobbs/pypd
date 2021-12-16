@@ -3,19 +3,22 @@ Particle array class
 --------------------
 """
 
-# Particles, ParticleArray, ParticleSet?
+# Particles, ParticleArray, or ParticleSet?
 class Particles():
     """
     The main class for storing the particle (node) set.
 
-    Parameters
+    Attributes
     ----------
     mesh_file : str
-        Name of the mesh file defining the system of particles
+        Name of the mesh file defining the system of particles (attribute or
+        parameter for __init__?)
     n_nodes : int
         Number of particles
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
+    n_family_members: ndarray (int)
+        Number of family members 
     x : ndarray (float)
         Material point coordinates in the reference configuration
     u : ndarray (float)
@@ -29,6 +32,13 @@ class Particles():
     cell_volume: ndarray (float)
         Volume... If a regular mesh is employed, this value will be a constant
         for all nodes.
+    boundary_condition_flag : ndarray (int)
+        Flag to... 1 if a boundary condition is applied, 0 if no...
+    boundary_condition_value : ndarray (float)
+    
+
+    Methods
+    -------
     
     Notes
     -----
