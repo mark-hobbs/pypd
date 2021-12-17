@@ -11,14 +11,14 @@ class Particles():
     Attributes
     ----------
     mesh_file : str
-        Name of the mesh file defining the system of particles (attribute or
-        parameter for __init__?)
+        Name of the mesh file defining the system of particles
+        (TODO: attribute or parameter for __init__?)
     n_nodes : int
         Number of particles
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
     n_family_members: ndarray (int)
-        Number of family members 
+        Number of family members
     x : ndarray (float)
         Material point coordinates in the reference configuration
     u : ndarray (float)
@@ -30,8 +30,8 @@ class Particles():
     material_flag : ndarray (int)
         Flag to identify the material type. The flag is set by the user.
     cell_volume: ndarray (float)
-        Volume... If a regular mesh is employed, this value will be a constant
-        for all nodes.
+        Cell area / volume. If a regular mesh is employed, this value will be
+        a constant for all nodes.
     boundary_condition_flag : ndarray (int)
         Flag to... 1 if a boundary condition is applied, 0 if no...
     boundary_condition_value : ndarray (float)
