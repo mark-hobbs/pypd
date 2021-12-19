@@ -7,7 +7,7 @@ Bond array class
 
 
 class Bonds():
-        """
+    """
     The main class for storing the bond set.
 
     Attributes
@@ -44,6 +44,18 @@ class Bonds():
         pass
 
     def build_particle_families():
+        pass
+
+    def calculate_bond_stiffness():
+        pass
+
+    def calculate_bond_length():
+        pass
+    
+    def calculate_bond_stretch():
+        pass
+
+    def calculate_bond_force():
         pass
 
     def calculate_bond_damage(self):
