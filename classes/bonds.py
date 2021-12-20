@@ -56,6 +56,9 @@ class Bonds():
         pass
 
     def calculate_bond_force():
+        """
+        bonds.calculate_bond_force(particles)
+        """
         pass
 
     def calculate_bond_damage(self):

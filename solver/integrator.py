@@ -29,7 +29,13 @@ class Euler(Integrator):
 
 
 class EulerCromer(Integrator):
-    pass
+    
+    def one_timestep():
+        """
+        particles.calculate_particle_forces(bonds)
+        particles.update_particle_positions()
+        """
+        pass
 
 
 class VelocityVerlet(Integrator):

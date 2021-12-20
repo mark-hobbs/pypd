@@ -60,7 +60,26 @@ class Particles():
     # TODO: this would require passing in a instance of the bonds class. Would
     # this lead to circular references?
     def calculate_particle_forces():
+        """
+        Calculate particle forces
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        particle_forces: ndarray (float)
+
+        Notes
+        -----
+        bonds.calculate_bond_stretch(particles)
+        bonds.calculate_bond_damage(particles)
+        bonds.calculate_bond_force(particles)
+        """
         pass
 
     def update_particle_positions():
+        """
+        Euler / Euler-Cromer / Velocity-Verlet scheme
+        """
         pass
