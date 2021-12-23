@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from input import utilities, tools
-from input.application import InputFile
+# from input.application import InputFile
 from input.material import Material
 from solver.penetrator import Penetrator
 from solver.simulate import run_simulation
@@ -36,12 +36,14 @@ def main():
 
     # Supports
     supports = mat['supports']  # Structured ndarray
+
     ID = supports['ID'][0]
     centre = supports['centre'][0]
     radius = supports['radius'][0]
     search_radius = supports['searchRadius'][0]
     family = supports['family'][0]
     support_1 = Penetrator(ID, centre, radius, search_radius, family)
+
     ID = supports['ID'][1]
     centre = supports['centre'][1]
     radius = supports['radius'][1]
@@ -51,8 +53,13 @@ def main():
 
     # Parameters
     horizon = np.pi * dx
+    cell_volume = dx**3
+    damping = 1e5
+    dt = 1.3e-6
     bondlist = mat['BONDLIST']
     particle_coordinates = mat['undeformedCoordinates']
+
+    # Material properties / constitutive law
     concrete = Material(youngs_modulus=37e9,
                         fracture_energy=143.2,
                         density=2346,
@@ -60,10 +67,6 @@ def main():
                         tensile_strength=3.9e6)
     bond_stiffness = tools.calculate_bond_stiffness(concrete.youngs_modulus,
                                                     horizon)
-    cell_volume = dx**3
-    damping = 1e5
-    dt = 1.3e-6
-
     s0 = concrete.tensile_strength / concrete.youngs_modulus
     beta = 0.25
     gamma = (3 + (2 * beta)) / ((2 * beta) * (1 - beta))

@@ -18,10 +18,17 @@ class ConstitutiveLaw():
         pass
 
     def required_parameters():
+        """
+        Define the required parameters
+        """
         pass
 
     def calculate_parameter_values():
-        pass
+        """
+        Determine the parameter values for the implemented constitutive law
+        """
+        raise NotImplementedError("This method must be implemented!")
+
 
     def calculate_damage_parameter():
         """

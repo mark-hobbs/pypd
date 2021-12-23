@@ -1,4 +1,5 @@
 
+import itertools
 from numba import int16, float64
 from numba.experimental import jitclass
 
@@ -12,6 +13,9 @@ spec = [
 
 @jitclass(spec)
 class Penetrator():
+
+    # Use a structured numpy array to avoid issues with passing an instance of
+    # a class to a jit compiled function
 
     def __init__(self, ID, centre, radius, search_radius, family):
 

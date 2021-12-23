@@ -208,6 +208,8 @@ def calculate_contact_force(pen, u, ud, displacement_increment,
     
     Parameters
     ----------
+    pen : Penetrator instance (solver.penetrator.Penetrator)
+        Instance of a rigid penetrator object
 
     Returns
     -------
