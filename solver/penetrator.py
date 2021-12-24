@@ -14,6 +14,10 @@ spec = [
 @jitclass(spec)
 class Penetrator():
 
+    # Numba doesn't support class members (class parameters). Therefore it is
+    # not currently possible to assign a unique ID to every class instance by
+    # incrementing a counter
+
     # Use a structured numpy array to avoid issues with passing an instance of
     # a class to a jit compiled function
 

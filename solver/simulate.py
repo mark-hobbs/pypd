@@ -36,7 +36,8 @@ def run_simulation(bondlist, particle_coordinates, bond_stiffness, cell_volume,
     applied_displacement = -2e-4
 
     for i_time_step in trange(n_time_steps,
-                              desc="Simulation Progress", unit="steps"):
+                              desc="Simulation Progress",
+                              unit="steps"):
 
         displacement_increment = smooth_step_data(i_time_step, 0, n_time_steps,
                                                   0, applied_displacement)

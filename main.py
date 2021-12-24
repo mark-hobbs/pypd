@@ -24,6 +24,8 @@ def main():
                                     "Beam_4_UN_DX5mm.mat")
 
     dx = mat['DX']
+    particle_coordinates = mat['undeformedCoordinates']
+    bondlist = mat['BONDLIST']
 
     # Penetrator
     penetrator = mat['penetrator']  # Structured ndarray
@@ -56,8 +58,6 @@ def main():
     cell_volume = dx**3
     damping = 1e5
     dt = 1.3e-6
-    bondlist = mat['BONDLIST']
-    particle_coordinates = mat['undeformedCoordinates']
 
     # Material properties / constitutive law
     concrete = Material(youngs_modulus=37e9,

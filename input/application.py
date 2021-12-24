@@ -16,11 +16,12 @@ class Application():
     important methods that this class provides."""
 
     def __init__(self, coordinates, horizon, input_file=None, solver=None):
+        
         self.coordinates = coordinates
         self.horizon = horizon
         self.input_file = input_file
         self.solver = solver
-
+        # degress of freedom
         
         if self.input_file is not None:
             #  Read input file in a number of formats
