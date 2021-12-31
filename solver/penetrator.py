@@ -11,6 +11,9 @@ spec = [
     ('family', int16[:])
 ]
 
+
+# TODO: should Penetrator be a base class? Create a subclass for supports
+
 @jitclass(spec)
 class Penetrator():
 
@@ -28,3 +31,19 @@ class Penetrator():
         self.radius = radius
         self.search_radius = search_radius
         self.family = family
+
+    def build_family():
+        pass
+
+    def calculate_contact_force():
+        """
+        Calculate the contact force between a rigid penetrator and deformable
+        peridynamic body
+        """
+        pass
+
+    def update_penetrator_position():
+        """
+        Update the penetrator position
+        """
+        pass

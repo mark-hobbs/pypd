@@ -27,3 +27,5 @@ def read_mat_file(filepath, filename):
 
     # Build constitutive model
 
+    # Build solver
+

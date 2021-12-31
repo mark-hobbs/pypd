@@ -27,6 +27,8 @@ def main():
     particle_coordinates = mat['undeformedCoordinates']
     bondlist = mat['BONDLIST']
 
+    # TODO: store all instances of Penetrator in a list
+
     # Penetrator
     penetrator = mat['penetrator']  # Structured ndarray
     ID = penetrator['ID'].item()
