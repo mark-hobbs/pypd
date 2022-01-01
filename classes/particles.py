@@ -57,6 +57,21 @@ class Particles():
     def add_constant():
         pass
 
+    def build_particle_families():
+        """
+        Build particle families
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+        """
+        pass
+
     # TODO: this would require passing in a instance of the bonds class. Would
     # this lead to circular references?
     def calculate_particle_forces():

@@ -44,6 +44,7 @@ class Bonds():
         pass
 
     def build_particle_families():
+        # TODO: which class does this method belong to?
         pass
 
     def calculate_bond_stiffness():
