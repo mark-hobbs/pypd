@@ -23,15 +23,31 @@ def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
     return particle_coordinates
 
 
-def build_particle_families(particle_coordinates, horizon):
+def build_particle_families(x, horizon):
+    """
+    Build particle families
 
-    # neighbour_list is a list of numpy arrays
+    Parameters
+    ----------
+    x : ndarray (float)
+        Material point coordinates in the reference configuration
 
-    nnodes = np.shape(particle_coordinates)[0]
+    horizon : float
+        Material point horizon (non-local length scale)
 
-    tree = neighbors.KDTree(particle_coordinates, leaf_size=160)
-    neighbour_list = tree.query_radius(particle_coordinates, r = horizon)
-    print(np.shape(neighbour_list))
+    Returns
+    -------
+    nlist : list of numpy arrays (int)
+        TODO: define a new name and description
+
+    Notes
+    -----
+    TODO: include a discussion of the algorithm
+    """
+    nnodes = np.shape(x)[0]
+
+    tree = neighbors.KDTree(x, leaf_size=160)
+    neighbour_list = tree.query_radius(x, r = horizon)
 
     # Remove identity values, as there is no bond between a node and itself
     neighbour_list = [neighbour_list[i][neighbour_list[i] != i]

@@ -3,9 +3,9 @@ Bond array class
 ----------------
 """
 
+
+
 # Bonds, BondArray, or BondSet?
-
-
 class Bonds():
     """
     The main class for storing the bond set.
@@ -16,6 +16,7 @@ class Bonds():
         Array of pairwise interactions (bond list)
     nlist : ndarray (int)
         TODO: define a new name and description
+        TODO: ndarray or list of numpy arrays?
     bond_type: ndarray (int)
         Array defining the material type of every bond
     c : ndarray (float)

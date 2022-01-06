@@ -3,8 +3,13 @@ Particle array class
 --------------------
 """
 
+import numpy as np
+
+from input.tools import build_particle_families
+
+
 # Particles, ParticleArray, or ParticleSet?
-class Particles():
+class ParticleSet():
     """
     The main class for storing the particle (node) set.
 
@@ -44,11 +49,17 @@ class Particles():
     -----
     """
 
-    def __init__(self, coordinates):
+    def __init__(self, coordinates, nlist=None):
         self.coordinates = coordinates
+        self.n_nodes = np.shape(self.coordinates)[0]
+        self.horizon = (5/1000) * 3.14  # TODO: fix this line
+        self.nlist = nlist
         # self.u = np.zeros([n_nodes, n_dim])
         # self.v = np.zeros([n_nodes, n_dim])
         # self.a = np.zeros([n_nodes, n_dim])
+
+        if self.nlist is None:
+            self.nlist = self._build_particle_families()
 
     # TODO: see PySPH
     def add_property():
@@ -57,7 +68,7 @@ class Particles():
     def add_constant():
         pass
 
-    def build_particle_families():
+    def _build_particle_families(self):
         """
         Build particle families
 
@@ -70,7 +81,7 @@ class Particles():
         Notes
         -----
         """
-        pass
+        return build_particle_families(self.coordinates, self.horizon)
 
     # TODO: this would require passing in a instance of the bonds class. Would
     # this lead to circular references?

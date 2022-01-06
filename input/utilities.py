@@ -1,6 +1,8 @@
 
 import scipy.io
 
+from classes.particles import ParticleSet
+
 
 def read_input_file(filepath, filename):
     mat = scipy.io.loadmat(filepath + filename, squeeze_me=True)
@@ -21,11 +23,12 @@ def read_mat_file(filepath, filename):
     particles = ParticleSet(mat['undeformedCoordinates'])
 
     # Build bond set
-    bonds = BondSet()
+    # bonds = BondSet()
 
     # Build penetrators
 
     # Build constitutive model
 
-    # Build solver
+    # Build solver / time integrator
 
+    return particles

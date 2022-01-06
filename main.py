@@ -23,6 +23,13 @@ def main():
     mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
                                     "Beam_4_UN_DX5mm.mat")
 
+    test = utilities.read_mat_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
+                                   "Beam_4_UN_DX5mm.mat")
+
+    print(test.coordinates)
+
+    return
+
     dx = mat['DX']
     particle_coordinates = mat['undeformedCoordinates']
     bondlist = mat['BONDLIST']
