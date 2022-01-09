@@ -44,7 +44,7 @@ class Bonds():
     def __init__(self):
         pass
 
-    def build_particle_families():
+    def build_bond_list():
         # TODO: which class does this method belong to?
         pass
 
