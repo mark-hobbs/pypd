@@ -3,10 +3,11 @@ Bond array class
 ----------------
 """
 
+from input.tools import build_bond_list
 
 
 # Bonds, BondArray, or BondSet?
-class Bonds():
+class BondSet():
     """
     The main class for storing the bond set.
 
@@ -41,19 +42,38 @@ class Bonds():
     -----
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, nlist, bondlist=None):
 
-    def build_bond_list():
-        # TODO: which class does this method belong to?
-        pass
+        self.bondlist = bondlist
+
+        if self.bondlist is None:
+            self.bondlist = self._build_bond_list(nlist)
+
+    def _build_bond_list(self, nlist):
+        """
+        Build bond list
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        bondlist : ndarray (int)
+            Array of pairwise interactions (bond list)
+
+        Notes
+        -----
+        TODO: is this programming pattern good practice?
+
+        """
+        return build_bond_list(nlist)
 
     def calculate_bond_stiffness():
         pass
 
     def calculate_bond_length():
         pass
-    
+
     def calculate_bond_stretch():
         pass
 

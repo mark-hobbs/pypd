@@ -66,6 +66,17 @@ def build_particle_families(x, horizon):
     return nlist
 
 
+def build_bond_list(nlist):
+    """
+    Build bond list
+    """
+    bondlist = [[i, j] for i, nlist_i in enumerate(nlist)
+                for j in nlist_i if i < j]
+    bondlist = np.array(bondlist, dtype=np.intc)
+    
+    return bondlist
+
+
 def build_penetrator():
     """Build rigid penetrator"""
     pass

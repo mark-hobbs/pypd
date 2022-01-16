@@ -2,6 +2,7 @@
 import scipy.io
 
 from classes.particles import ParticleSet
+from classes.bonds import BondSet
 
 
 def read_input_file(filepath, filename):
@@ -23,7 +24,7 @@ def read_mat_file(filepath, filename):
     particles = ParticleSet(mat['undeformedCoordinates'])
 
     # Build bond set
-    # bonds = BondSet()
+    bonds = BondSet(particles.nlist)
 
     # Build penetrators
 
@@ -31,4 +32,4 @@ def read_mat_file(filepath, filename):
 
     # Build solver / time integrator
 
-    return particles
+    return particles, bonds

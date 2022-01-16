@@ -22,6 +22,8 @@ class ParticleSet():
         Number of particles
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
+    nlist : ndarray
+        TODO: write description
     n_family_members: ndarray (int)
         Number of family members
     x : ndarray (float)
