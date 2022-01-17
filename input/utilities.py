@@ -21,7 +21,7 @@ def read_mat_file(filepath, filename):
     mat = scipy.io.loadmat(filepath + filename, squeeze_me=True)
 
     # Build particle set
-    particles = ParticleSet(mat['undeformedCoordinates'])
+    particles = ParticleSet(mat['undeformedCoordinates'], mat['DX'])
 
     # Build bond set
     bonds = BondSet(particles.nlist)

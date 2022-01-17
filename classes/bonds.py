@@ -49,6 +49,8 @@ class BondSet():
         if self.bondlist is None:
             self.bondlist = self._build_bond_list(nlist)
 
+        self.n_bonds = len(self.bondlist)
+
     def _build_bond_list(self, nlist):
         """
         Build bond list
@@ -77,9 +79,33 @@ class BondSet():
     def calculate_bond_stretch():
         pass
 
-    def calculate_bond_force():
+    def calculate_bond_force(self):
         """
-        bonds.calculate_bond_force(particles)
+        Calculate bond forces
+        
+        Parameters
+        ----------
+        x : ndarray (float)
+            Material point coordinates in the reference configuration
+
+        Returns
+        -------
+        d : ndarray (float)
+            Bond damage (softening parameter). The value of d will range from 0
+            to 1, where 0 indicates that the bond is still in the elastic range,
+            and 1 represents a bond that has failed
+
+        Notes
+        -----
+        TODO: it would be inefficient to define this as a class method. A more
+        efficient approach would be to implement the following methods as a
+        single method in the particles class.
+
+        1. bonds.calculate_bond_stretch(particles)
+        2. bonds.calculate_bond_damage(particles)
+        3. bonds.calculate_bond_force(particles)
+
+        1. particles.calculate_particle_forces(bonds)
         """
         pass
 

@@ -6,6 +6,7 @@ Particle array class
 import numpy as np
 
 from input.tools import build_particle_families
+from solver.calculate import calculate_nodal_forces_bondlist
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -49,12 +50,34 @@ class ParticleSet():
     
     Notes
     -----
+    * Class should accept both regular and irregular meshes
+
     """
 
-    def __init__(self, coordinates, nlist=None):
-        self.coordinates = coordinates
-        self.n_nodes = np.shape(self.coordinates)[0]
-        self.horizon = (5/1000) * 3.14  # TODO: fix this line
+    def __init__(self, x, dx, m=np.pi, nlist=None):
+        """
+        ParticleSet class constructor
+
+        Parameters
+        ----------
+        x : ndarray (float)
+            Material point coordinates in the reference configuration
+        dx : float
+            Mesh resolution (only valid for regular meshes)
+        m : float
+            Ratio between the horizon radius and grid resolution (default
+            value is pi)
+
+        Returns
+        -------
+
+        Notes
+        -----
+        """
+
+        self.x = x
+        self.n_nodes = np.shape(self.x)[0]
+        self.horizon = m * dx
         self.nlist = nlist
         # self.u = np.zeros([n_nodes, n_dim])
         # self.v = np.zeros([n_nodes, n_dim])
@@ -83,16 +106,19 @@ class ParticleSet():
         Notes
         -----
         """
-        return build_particle_families(self.coordinates, self.horizon)
+        return build_particle_families(self.x, self.horizon)
 
     # TODO: this would require passing in a instance of the bonds class. Would
     # this lead to circular references?
-    def calculate_particle_forces():
+    def calculate_particle_forces(self, bonds):
         """
         Calculate particle forces
 
         Parameters
         ----------
+        bonds : BondSet
+            TODO: write a description
+        constitutive_law
 
         Returns
         -------
@@ -104,7 +130,8 @@ class ParticleSet():
         bonds.calculate_bond_damage(particles)
         bonds.calculate_bond_force(particles)
         """
-        pass
+        return calculate_nodal_forces_bondlist()
+        
 
     def update_particle_positions():
         """
