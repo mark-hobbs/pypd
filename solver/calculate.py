@@ -168,9 +168,10 @@ def calculate_nodal_forces_nlist(nlist, x, u, d, c, cell_volume,
 
     return node_force, d
 
+
 @njit(parallel=True)
 def update_nodal_positions(node_force, u, ud, udd, damping,
-                              node_density, dt):
+                           node_density, dt):
     """
     Update particle positions using an Euler-Cromer time integration scheme
     

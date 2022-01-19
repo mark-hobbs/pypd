@@ -6,7 +6,7 @@ Particle array class
 import numpy as np
 
 from input.tools import build_particle_families
-from solver.calculate import calculate_nodal_forces_bondlist
+from solver.calculate import calculate_nodal_forces_bondlist, update_nodal_positions
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -129,12 +129,34 @@ class ParticleSet():
         bonds.calculate_bond_stretch(particles)
         bonds.calculate_bond_damage(particles)
         bonds.calculate_bond_force(particles)
-        """
-        return calculate_nodal_forces_bondlist()
-        
 
-    def update_particle_positions():
+        * TODO: should bonds.c and bonds.beta be attributes of a constitutive 
+        model class?
+        * TODO: give users the option to use bondlist or neighbourlist
         """
-        Euler / Euler-Cromer / Velocity-Verlet scheme
+        return calculate_nodal_forces_bondlist(bonds.bondlist, self.x, self.u,
+                                               bonds.d, bonds.c, bonds.beta,
+                                               bonds.f_x, bonds.f_y, bonds.f_z,
+                                               self.node_force)
+
+    def update_particle_positions(self, simulation):
         """
-        pass
+        Update particle positions using an Euler-Cromer time integration scheme
+        
+        Parameters
+        ----------
+        simulation : Simulation class
+            Defines simulation parameters
+
+        Returns
+        -------
+
+        Notes
+        -----
+        * Euler / Euler-Cromer / Velocity-Verlet scheme
+        * TODO: should the naming be consistent? 
+                update_particle_positions() / update_nodal_positions()
+        """
+        return update_nodal_positions(self.node_force, self.u, self.ud,
+                                      self.ud, self.udd, simulation.damping,
+                                      self.node_density, simulation.dt)
