@@ -1,6 +1,8 @@
 """
 Particle array class
 --------------------
+
+TODO: rename classes as base or baseclasses?
 """
 
 import numpy as np
@@ -154,7 +156,7 @@ class ParticleSet():
         Notes
         -----
         * Euler / Euler-Cromer / Velocity-Verlet scheme
-        * TODO: should the naming be consistent? 
+        * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
         """
         return update_nodal_positions(self.node_force, self.u, self.ud,
