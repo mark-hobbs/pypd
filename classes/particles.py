@@ -69,6 +69,7 @@ class ParticleSet():
         m : float
             Ratio between the horizon radius and grid resolution (default
             value is pi)
+        material : Material class
 
         Returns
         -------
@@ -132,7 +133,7 @@ class ParticleSet():
         bonds.calculate_bond_damage(particles)
         bonds.calculate_bond_force(particles)
 
-        * TODO: should bonds.c and bonds.beta be attributes of a constitutive 
+        * TODO: should bonds.c and bonds.beta be attributes of a constitutive
         model class?
         * TODO: give users the option to use bondlist or neighbourlist
         """

@@ -3,6 +3,7 @@ import scipy.io
 
 from classes.particles import ParticleSet
 from classes.bonds import BondSet
+from classes.model import Model
 
 
 def read_input_file(filepath, filename):
@@ -32,4 +33,7 @@ def read_mat_file(filepath, filename):
 
     # Build solver / time integrator
 
-    return particles, bonds
+    # Build model
+    model = Model(particles, bonds)
+
+    return model

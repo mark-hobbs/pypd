@@ -23,11 +23,10 @@ def main():
     mat = utilities.read_input_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
                                     "Beam_4_UN_DX5mm.mat")
 
-    particles, bonds = utilities.read_mat_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
-                                               "Beam_4_UN_DX5mm.mat")
+    model = utilities.read_mat_file("/Users/mark/Documents/PhD/2 Code/2.1 PhD Code/BB_PD/input/inputdatafiles/",
+                                    "Beam_4_UN_DX5mm.mat")
 
-    # print(particles.__dict__)
-    # print(bonds.__dict__)
+    print(model.__dict__)
 
     return
 
