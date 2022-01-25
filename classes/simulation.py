@@ -1,6 +1,8 @@
 
 class Simulation():
 
+    # Define a config file (yaml file)
+
     def __init__(self, model, config):
         self.model = model
         self.config = config

@@ -43,6 +43,21 @@ class BondSet():
     """
 
     def __init__(self, nlist, bondlist=None):
+        """
+        BondSet class constructor
+
+        Parameters
+        ----------
+        nlist : ndarray
+            TODO: write description
+        material : Material class
+
+        Returns
+        -------
+
+        Notes
+        -----
+        """
 
         self.bondlist = bondlist
 

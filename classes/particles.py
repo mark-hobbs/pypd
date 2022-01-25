@@ -70,6 +70,7 @@ class ParticleSet():
             Ratio between the horizon radius and grid resolution (default
             value is pi)
         material : Material class
+        boundary_conditions : BoundaryConditions class
 
         Returns
         -------
@@ -110,6 +111,9 @@ class ParticleSet():
         -----
         """
         return build_particle_families(self.x, self.horizon)
+
+    def _build_boundary_conditions():
+        pass
 
     # TODO: this would require passing in a instance of the bonds class. Would
     # this lead to circular references?

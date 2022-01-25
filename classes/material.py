@@ -1,9 +1,43 @@
+"""
+Material class
+--------------
+
+"""
 
 class Material():
+    """
+    The main class for defining material properties
 
-    def __init__(self, youngs_modulus, fracture_energy,
+    Attributes
+    ----------
+
+    Methods
+    -------
+    
+    Notes
+    -----
+
+    """
+
+    def __init__(self, name, youngs_modulus, fracture_energy,
                  density, poissons_ratio, tensile_strength):
+        """
+        Material class constructor
 
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+        * define a constitutive model?
+            - glass.constitutive_law = linear
+
+        """
+
+        self.name = name
         self.youngs_modulus = youngs_modulus
         self.fracture_energy = fracture_energy
         self.density = density
