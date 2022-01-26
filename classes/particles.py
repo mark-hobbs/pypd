@@ -56,7 +56,7 @@ class ParticleSet():
 
     """
 
-    def __init__(self, x, dx, m=np.pi, nlist=None):
+    def __init__(self, x, dx, bc, material, m=np.pi, nlist=None):
         """
         ParticleSet class constructor
 
@@ -69,8 +69,8 @@ class ParticleSet():
         m : float
             Ratio between the horizon radius and grid resolution (default
             value is pi)
+        bc : BoundaryConditions class
         material : Material class
-        boundary_conditions : BoundaryConditions class
 
         Returns
         -------
@@ -81,14 +81,20 @@ class ParticleSet():
 
         self.x = x
         self.n_nodes = np.shape(self.x)[0]
+        self.n_dim = np.shape(self.x)[1]
         self.horizon = m * dx
-        self.nlist = nlist
-        # self.u = np.zeros([n_nodes, n_dim])
-        # self.v = np.zeros([n_nodes, n_dim])
-        # self.a = np.zeros([n_nodes, n_dim])
+        self.bc = bc
+        self.material = material
 
+        self.nlist = nlist
         if self.nlist is None:
             self.nlist = self._build_particle_families()
+
+        # TODO: move the following to an initisalise method in Model or
+        # Simulation?
+        self.u = np.zeros([self.n_nodes, self.n_dim])
+        self.v = np.zeros([self.n_nodes, self.n_dim])
+        self.a = np.zeros([self.n_nodes, self.n_dim])
 
     # TODO: see PySPH
     def add_property():
@@ -113,6 +119,7 @@ class ParticleSet():
         return build_particle_families(self.x, self.horizon)
 
     def _build_boundary_conditions():
+        # TODO: probably not needed?
         pass
 
     # TODO: this would require passing in a instance of the bonds class. Would

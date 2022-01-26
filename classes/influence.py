@@ -5,6 +5,8 @@ Influence function base class
 
 Notes
 -----
+* see pysph / solver / solver.py
+    - kernel : pysph.base.kernels.Kernel
 """
 
 

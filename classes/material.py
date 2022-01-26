@@ -19,13 +19,24 @@ class Material():
 
     """
 
-    def __init__(self, name, youngs_modulus, fracture_energy,
-                 density, poissons_ratio, tensile_strength):
+    def __init__(self, name, E, Gf, density, ft, nu=None):
         """
         Material class constructor
 
         Parameters
         ----------
+        name : str
+            Material name (steel etc)
+        E : float
+            Young's modulus (or modulus of elasticity) (units)
+        Gf : float
+            Fracture energy (N/m)
+        density : float
+            Material density (kg/m^3)
+        ft : float
+            Tensile strength (units)
+        nu : float
+            Poisson's ratio (default = None)
 
         Returns
         -------
@@ -35,11 +46,13 @@ class Material():
         * define a constitutive model?
             - glass.constitutive_law = linear
 
+        * material_flag - flag the material type of every particle
+
         """
 
         self.name = name
-        self.youngs_modulus = youngs_modulus
-        self.fracture_energy = fracture_energy
+        self.E = E
+        self.Gf = Gf
         self.density = density
-        self.poissons_ratio = poissons_ratio
-        self.tensile_strength = tensile_strength
+        self.ft = ft
+        self.nu = nu

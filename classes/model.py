@@ -5,7 +5,7 @@ Model class
 TODO: rename classes as base or baseclasses?
 """
 
-from classes.simulation import Simulation
+from .simulation import Simulation
 from .particles import ParticleSet
 from .bonds import BondSet
 
@@ -22,6 +22,7 @@ class Model():
     
     Notes
     -----
+    * see pysph / solver / solver.py
 
     """
 
@@ -46,6 +47,24 @@ class Model():
         self.bonds = bonds
         self.simulation = simulation
 
+    def _single_time_step(self):
+        """
+        Single time step
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+        * rename as _integration_step?
+        """
+
+        self.particles.calculate_particle_forces(self.bonds)
+        self.particles.update_particle_positions(self.simulation)
+
     def run_simulation(self):
         """
         Run the simulation
@@ -58,11 +77,8 @@ class Model():
 
         Notes
         -----
-        * Should I have a seperate method _single_time_step()?
-        
+
         """
 
-        self.particles.calculate_particle_forces(self.bonds)
-        self.particles.update_particle_positions(self.simulation)
-
-
+        for i in range(self.simulation.n_time_steps):
+            self._single_time_step(self)

@@ -10,22 +10,25 @@ class BoundaryConditions():
 
     Attributes
     ----------
-    bc_flag : ndarray
+    flag : ndarray
         0 - no boundary condition
         1 - the node is subject to a boundary condition
-    bc_unit_vector : ndarray
-    bc_magnitude : float
+    unit_vector : ndarray
+    constraint : ndarray
+    magnitude : float
+        TODO: should this be a simulation parameter?
 
     Methods
     -------
     
     Notes
     -----
-    * Should this class inherit from the ParticleSet class (i.e. child class)? 
+    * Should this class inherit from the ParticleSet class (i.e. child class)?
+    * applied displacement / applied force / constraint
 
     """
 
-    def __init__(self):
+    def __init__(self, flag, unit_vector):
         """
         BoundaryConditions class constructor
 
@@ -38,4 +41,5 @@ class BoundaryConditions():
         Notes
         -----
         """
-        pass
+        self.flag = flag
+        self.unit_vector = unit_vector

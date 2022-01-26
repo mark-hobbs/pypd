@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from input import utilities, tools
 # from input.application import InputFile
-from input.material import Material
+from classes.material import Material
 from solver.penetrator import Penetrator
 from solver.simulate import run_simulation
 
