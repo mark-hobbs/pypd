@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from input import utilities, tools
 # from input.application import InputFile
 from classes.material import Material
-from solver.penetrator import Penetrator
+from classes.penetrator import Penetrator
 from solver.simulate import run_simulation
 
 

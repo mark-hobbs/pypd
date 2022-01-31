@@ -3,7 +3,10 @@ Bond array class
 ----------------
 """
 
+import numpy as np
+
 from input.tools import build_bond_list
+from solver.constitutive_model import linear
 
 
 # Bonds, BondArray, or BondSet?
@@ -65,6 +68,7 @@ class BondSet():
             self.bondlist = self._build_bond_list(nlist)
 
         self.n_bonds = len(self.bondlist)
+        self.d = np.zeros(self.n_bonds)
 
     def _build_bond_list(self, nlist):
         """
@@ -86,6 +90,9 @@ class BondSet():
         return build_bond_list(nlist)
 
     def calculate_bond_stiffness():
+        """
+        * Should this be part of the ConstitutiveModel class?
+        """
         pass
 
     def calculate_bond_length():
@@ -145,7 +152,8 @@ class BondSet():
 
         Notes
         -----
-        * User must select or define a constitutive law (linear / bilinear / 
+        * User must select or define a constitutive law (linear / bilinear /
         trilinear / non-linear)
+        * from solver.constitutive_model import trilinear
         """
-        pass
+        return linear(self)

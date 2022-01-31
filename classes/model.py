@@ -80,5 +80,5 @@ class Model():
 
         """
 
-        for i in range(self.simulation.n_time_steps):
+        for time_step in range(self.simulation.n_time_steps):
             self._single_time_step(self)

@@ -171,6 +171,6 @@ class ParticleSet():
         * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
         """
-        return update_nodal_positions(self.node_force, self.u, self.ud,
-                                      self.ud, self.udd, simulation.damping,
-                                      self.node_density, simulation.dt)
+        return update_nodal_positions(self.node_force, self.u, self.v, self.a,
+                                      simulation.damping, self.node_density,
+                                      simulation.dt)

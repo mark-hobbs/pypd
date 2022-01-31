@@ -10,7 +10,7 @@ This module contains the core functions that are employed during a simulation.
 import numpy as np
 from numba import njit, prange
 
-from solver.constitutive_model import trilinear_constitutive_model
+from solver.constitutive_model import trilinear
 
 
 @njit(parallel=True)
@@ -51,8 +51,8 @@ def calculate_nodal_forces_bondlist(bondlist, x, u, d, c, cell_volume,
 
     for k_bond in prange(n_bonds):
 
-        node_i = bondlist[k_bond, 0] - 1
-        node_j = bondlist[k_bond, 1] - 1
+        node_i = bondlist[k_bond, 0]
+        node_j = bondlist[k_bond, 1]
 
         xi_x = x[node_j, 0] - x[node_i, 0]
         xi_y = x[node_j, 1] - x[node_i, 1]
@@ -68,8 +68,7 @@ def calculate_nodal_forces_bondlist(bondlist, x, u, d, c, cell_volume,
 
         # TODO: allow the user to load different constitutive models or define
         # a new law that describes the interaction between two particles
-        d[k_bond] = trilinear_constitutive_model(stretch, s0, s1, sc,
-                                                 d[k_bond], beta)
+        d[k_bond] = trilinear(stretch, s0, s1, sc, d[k_bond], beta)
 
         f = stretch * c * (1 - d[k_bond]) * cell_volume
         f_x[k_bond] = f * xi_eta_x / y
@@ -152,10 +151,8 @@ def calculate_nodal_forces_nlist(nlist, x, u, d, c, cell_volume,
                 y = np.sqrt(xi_eta_x**2 + xi_eta_y**2 + xi_eta_z**2)
                 stretch = (y - xi) / xi
 
-                d[node_i, j] = trilinear_constitutive_model(stretch,
-                                                            s0, s1, sc,
-                                                            d[node_i, j],
-                                                            beta)
+                d[node_i, j] = trilinear(stretch, s0, s1, sc,
+                                         d[node_i, j], beta)
 
                 f = stretch * c * (1 - d[node_i, j]) * cell_volume
                 local_cache_f_x[j] = f * xi_eta_x / y
