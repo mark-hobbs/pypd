@@ -8,7 +8,7 @@ TODO: rename classes as base or baseclasses?
 import numpy as np
 
 from input.tools import build_particle_families
-from solver.calculate import calculate_nodal_forces_bondlist, update_nodal_positions
+from solver.calculate import calculate_nodal_forces, update_nodal_positions
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -85,6 +85,8 @@ class ParticleSet():
         self.horizon = m * dx
         self.bc = bc
         self.material = material
+        self.cell_volume = dx**3
+        self.node_density = 1
 
         self.nlist = nlist
         if self.nlist is None:
@@ -92,6 +94,7 @@ class ParticleSet():
 
         # TODO: move the following to an initisalise method in Model or
         # Simulation?
+        self.node_force = np.zeros([self.n_nodes, self.n_dim])
         self.u = np.zeros([self.n_nodes, self.n_dim])
         self.v = np.zeros([self.n_nodes, self.n_dim])
         self.a = np.zeros([self.n_nodes, self.n_dim])
@@ -148,10 +151,10 @@ class ParticleSet():
         model class?
         * TODO: give users the option to use bondlist or neighbourlist
         """
-        return calculate_nodal_forces_bondlist(bonds.bondlist, self.x, self.u,
-                                               bonds.d, bonds.c, bonds.beta,
-                                               bonds.f_x, bonds.f_y, bonds.f_z,
-                                               self.node_force)
+        return calculate_nodal_forces(bonds.bondlist, self.x, self.u,
+                                      bonds.d, bonds.c, self.cell_volume,
+                                      bonds.sc, bonds.f_x, bonds.f_y,
+                                      self.node_force)
 
     def update_particle_positions(self, simulation):
         """
@@ -173,4 +176,5 @@ class ParticleSet():
         """
         return update_nodal_positions(self.node_force, self.u, self.v, self.a,
                                       simulation.damping, self.node_density,
-                                      simulation.dt)
+                                      simulation.dt, self.bc.flag,
+                                      self.bc.magnitude, self.bc.unit_vector)

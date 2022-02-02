@@ -28,7 +28,7 @@ class BoundaryConditions():
 
     """
 
-    def __init__(self, flag, unit_vector):
+    def __init__(self, flag, unit_vector, magnitude):
         """
         BoundaryConditions class constructor
 
@@ -43,3 +43,4 @@ class BoundaryConditions():
         """
         self.flag = flag
         self.unit_vector = unit_vector
+        self.magnitude = magnitude

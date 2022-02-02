@@ -3,9 +3,12 @@ class Simulation():
 
     # Define a config file (yaml file)
 
-    def __init__(self, model, config):
-        self.model = model
-        self.config = config
+    def __init__(self, dt, n_time_steps, damping):
+        self.dt = dt
+        self.n_time_steps = n_time_steps
+        self.damping = damping
+        # self.model = model
+        # self.config = config
 
     def initiate_arrays():
         pass
@@ -27,9 +30,10 @@ class Simulation():
         """
         Run the simulation - step through time
         """
-        for t in range(n_time_steps):
-            self.calculate_nodal_force()
-            self.update_nodal_positions()
+        # for t in range(n_time_steps):
+        #     self.calculate_nodal_force()
+        #     self.update_nodal_positions()
+        pass
 
 
 class Simulation_2D(Simulation):
