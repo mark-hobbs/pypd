@@ -3,7 +3,7 @@ from tqdm import trange
 
 from input import tools
 
-from solver.calculate import (calculate_nodal_forces_bondlist,
+from solver.SS_calculate import (calculate_nodal_forces_bondlist,
                               update_nodal_positions,
                               calculate_contact_force,
                               smooth_step_data)

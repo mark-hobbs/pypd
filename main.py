@@ -12,7 +12,7 @@ from input import utilities, tools
 # from input.application import InputFile
 from classes.material import Material
 from classes.penetrator import Penetrator
-from solver.simulate import run_simulation
+from solver.SS_simulate import run_simulation
 
 
 def main():

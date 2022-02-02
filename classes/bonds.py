@@ -70,14 +70,12 @@ class BondSet():
 
         self.n_bonds = len(self.bondlist)
         self.d = np.zeros(self.n_bonds)
+        self.f_x = np.zeros(self.n_bonds)
+        self.f_y = np.zeros(self.n_bonds)
+
+        # Constitutive model
         self.c = 1
-        self.s0 = 1
-        self.s1 = 1
         self.sc = 1
-        self.beta = 1
-        self.f_x = np.zeros([self.n_bonds, ])
-        self.f_y = np.zeros([self.n_bonds, ])
-        self.f_z = np.zeros([self.n_bonds, ])
 
     def _build_bond_list(self, nlist):
         """
