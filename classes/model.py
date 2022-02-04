@@ -5,9 +5,8 @@ Model class
 TODO: rename classes as base or baseclasses?
 """
 
-from time import time
-
 from tqdm import trange
+import numpy as np
 
 from .simulation import Simulation
 from .particles import ParticleSet
@@ -51,7 +50,7 @@ class Model():
         self.bonds = bonds
         self.simulation = simulation
 
-    def _single_time_step(self):
+    def _single_time_step(self, i_time_step):
         """
         Single time step
 
@@ -67,7 +66,7 @@ class Model():
         """
 
         self.particles.calculate_particle_forces(self.bonds)
-        self.particles.update_particle_positions(self.simulation)
+        self.particles.update_particle_positions(self.simulation, i_time_step)
 
     def run_simulation(self):
         """
@@ -87,4 +86,4 @@ class Model():
         for i_time_step in trange(self.simulation.n_time_steps,
                                   desc="Simulation Progress",
                                   unit="steps"):
-            self._single_time_step()
+            self._single_time_step(i_time_step)

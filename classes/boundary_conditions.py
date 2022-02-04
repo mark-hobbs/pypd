@@ -44,3 +44,9 @@ class BoundaryConditions():
         self.flag = flag
         self.unit_vector = unit_vector
         self.magnitude = magnitude
+
+    def _applied_displacement_magnitude():
+        """
+        self.magnitude = smooth_step_data()
+        """
+        pass

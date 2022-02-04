@@ -8,7 +8,7 @@ TODO: rename classes as base or baseclasses?
 import numpy as np
 
 from input.tools import build_particle_families
-from solver.calculate import calculate_nodal_forces, update_nodal_positions
+from solver.calculate import calculate_nodal_forces, smooth_step_data, update_nodal_positions
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -156,7 +156,7 @@ class ParticleSet():
                                       bonds.sc, bonds.f_x, bonds.f_y,
                                       self.node_force)
 
-    def update_particle_positions(self, simulation):
+    def update_particle_positions(self, simulation, i_time_step):
         """
         Update particle positions using an Euler-Cromer time integration scheme
         
@@ -173,7 +173,13 @@ class ParticleSet():
         * Euler / Euler-Cromer / Velocity-Verlet scheme
         * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
+        * TODO: pass bc.magnitude as a function
         """
+
+        self.bc.magnitude = smooth_step_data(i_time_step, 0,
+                                             simulation.n_time_steps,
+                                             0, 1E-3)
+
         return update_nodal_positions(self.node_force, self.u, self.v, self.a,
                                       simulation.damping, self.node_density,
                                       simulation.dt, self.bc.flag,
