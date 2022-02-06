@@ -15,7 +15,7 @@ from solver.constitutive_model import linear
 
 @njit(parallel=True)
 def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume,
-                           sc, f_x, f_y, node_force):
+                           sc, f_x, f_y):
     """
     Calculate particle forces - employs bondlist
 
@@ -52,7 +52,10 @@ def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume,
     
     """
 
+    n_nodes = np.shape(x)[0]
+    n_dimensions = np.shape(x)[1]
     n_bonds = np.shape(bondlist)[0]
+    node_force = np.zeros((n_nodes, n_dimensions))
 
     for k_bond in prange(n_bonds):
 

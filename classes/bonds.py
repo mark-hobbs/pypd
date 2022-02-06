@@ -74,7 +74,7 @@ class BondSet():
         self.f_y = np.zeros(self.n_bonds)
 
         # Constitutive model
-        self.c = 1
+        self.c = 8.75e+19
         self.sc = 1
 
     def _build_bond_list(self, nlist):

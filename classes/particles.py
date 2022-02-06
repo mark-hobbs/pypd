@@ -85,12 +85,12 @@ class ParticleSet():
         self.horizon = m * dx
         self.bc = bc
         self.material = material
-        self.cell_volume = dx**3
-        self.node_density = 1
+        self.cell_volume = dx**2    # TODO: 2D or 3D problem?
+        self.node_density = self.material.density
 
         self.nlist = nlist
         if self.nlist is None:
-            self.nlist = self._build_particle_families()
+            self.nlist, self.n_family_members = self._build_particle_families()
 
         # TODO: move the following to an initisalise method in Model or
         # Simulation?
@@ -153,8 +153,7 @@ class ParticleSet():
         """
         return calculate_nodal_forces(bonds.bondlist, self.x, self.u,
                                       bonds.d, bonds.c, self.cell_volume,
-                                      bonds.sc, bonds.f_x, bonds.f_y,
-                                      self.node_force)
+                                      bonds.sc, bonds.f_x, bonds.f_y)
 
     def update_particle_positions(self, simulation, i_time_step):
         """
@@ -178,7 +177,7 @@ class ParticleSet():
 
         self.bc.magnitude = smooth_step_data(i_time_step, 0,
                                              simulation.n_time_steps,
-                                             0, 1E-3)
+                                             0, 1e-3)
 
         return update_nodal_positions(self.node_force, self.u, self.v, self.a,
                                       simulation.damping, self.node_density,

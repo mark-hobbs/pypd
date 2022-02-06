@@ -4,6 +4,7 @@ import sklearn.neighbors as neighbors
 
 # TODO: should this be a class (Particles)?
 
+
 def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
 
     particle_coordinates = np.zeros([n_div_x * n_div_y * n_div_z, 3])
@@ -43,37 +44,38 @@ def build_particle_families(x, horizon):
     Notes
     -----
     TODO: include a discussion of the algorithm
+
     """
-    nnodes = np.shape(x)[0]
+    n_nodes = np.shape(x)[0]
 
     tree = neighbors.KDTree(x, leaf_size=160)
-    neighbour_list = tree.query_radius(x, r = horizon)
+    neighbour_list = tree.query_radius(x, r=horizon)
 
     # Remove identity values, as there is no bond between a node and itself
     neighbour_list = [neighbour_list[i][neighbour_list[i] != i]
-                      for i in range(nnodes)]  # list comprehension
+                      for i in range(n_nodes)]
 
-    n_family_members = [len(neighbour_list[i]) for i in range(nnodes)]
-    n_family_members = np.array(n_family_members, dtype = np.intc)
+    n_family_members = [len(neighbour_list[i]) for i in range(n_nodes)]
+    n_family_members = np.array(n_family_members, dtype=np.intc)
 
-    nlist = np.ones((nnodes, n_family_members.max()), dtype=np.intc) * -1
-    
-    for i in range(nnodes):
+    nlist = np.ones((n_nodes, n_family_members.max()), dtype=np.intc) * -1
+
+    for i in range(n_nodes):
         nlist[i, :n_family_members[i]] = neighbour_list[i]
 
     nlist = nlist.astype(np.intc)
 
-    return nlist
+    return nlist, n_family_members
 
 
 def build_bond_list(nlist):
     """
     Build bond list
     """
-    bondlist = [[i, j] for i, nlist_i in enumerate(nlist)
-                for j in nlist_i if i < j]
+    bondlist = [[i, j] for i, neighbours in enumerate(nlist)
+                for j in neighbours if i < j]
     bondlist = np.array(bondlist, dtype=np.intc)
-    
+
     return bondlist
 
 
@@ -112,6 +114,7 @@ def build_bond_length(x, bondlist):
 def calculate_bond_stiffness(E, delta):
     c = (12 * E) / (np.pi * delta**4)
     return c
+
 
 def calculate_stable_time_step():
     pass

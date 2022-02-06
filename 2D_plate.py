@@ -37,29 +37,65 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
     return particle_coordinates
 
 
-def build_boundary_conditions(particles):
+def build_boundary_conditions(particles, dx):
 
     bc_flag = np.zeros((len(particles), 2), dtype=np.intc)
     bc_unit_vector = np.zeros((len(particles), 2), dtype=np.intc)
 
+    tol = 1e-6
+
     for i, particle in enumerate(particles):
-        if particle[0] < 50:
+        if particle[0] < (0.02 + tol):
             bc_flag[i, 0] = 1
             bc_unit_vector[i, 0] = -1
-        if particle[0] > 450:
+        if particle[0] > (0.48 - dx - tol):
             bc_flag[i, 0] = 1
             bc_unit_vector[i, 0] = 1
 
     return bc_flag, bc_unit_vector
 
 
-def main():
+def build_hole(particles, centre, radius):
+    """
+    Build hole in 2D plate
     
+    Parameters
+    ----------
+    
+    Returns
+    -------
+
+    Notes
+    -----    
+    """
+
+    counter = 0
+    mask = []
+
+    for particle in particles:
+
+        distance = np.sqrt((particle[0] - centre[0])
+                           ** 2 + (particle[1] - centre[1])**2)
+
+        if distance < radius:
+            mask.append(counter)
+
+        counter += 1
+
+    return np.delete(particles, mask, axis=0)
+
+
+def main():
+
     dx = 2.5E-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
+    hole_centre_x = 0.25 - dx/2
+    hole_centre_y = 0.125 - dx/2
+
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
-    flag, unit_vector = build_boundary_conditions(x)
+    x = build_hole(x, [hole_centre_x, hole_centre_y], 0.05)
+    flag, unit_vector = build_boundary_conditions(x, dx)
 
     material = Material(name="quasi-brittle", E=33e9, Gf=130,
                         density=2400, ft=2.5)
@@ -67,9 +103,10 @@ def main():
     particles = ParticleSet(x, dx, bc, material)
     # cm = ConstitutiveModel()
     bonds = BondSet(particles.nlist)
-    simulation = Simulation(dt=1e-8, n_time_steps=10000, damping=0)
+    simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
     model = Model(particles, bonds, simulation)
 
     model.run_simulation()
+
 
 main()
