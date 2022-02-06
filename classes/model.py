@@ -61,8 +61,9 @@ class Model():
         * rename as _integration_step?
         """
 
-        self.particles.calculate_particle_forces(self.bonds)
-        self.particles.update_particle_positions(self.simulation, i_time_step)
+        nf, _ = self.particles.calculate_particle_forces(self.bonds)
+        self.particles.update_particle_positions(nf, self.simulation,
+                                                 i_time_step)
 
     def run_simulation(self):
         """
@@ -84,7 +85,7 @@ class Model():
                                   unit="steps"):
             self._single_time_step(i_time_step)
 
-        self.plot_deformed_particles()
+        self.plot_deformed_particles(dsf=100)
 
     def plot_deformed_particles(self, dsf=10):
         """

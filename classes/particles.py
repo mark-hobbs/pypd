@@ -155,7 +155,7 @@ class ParticleSet():
                                       bonds.d, bonds.c, self.cell_volume,
                                       bonds.sc, bonds.f_x, bonds.f_y)
 
-    def update_particle_positions(self, simulation, i_time_step):
+    def update_particle_positions(self, node_force, simulation, i_time_step):
         """
         Update particle positions using an Euler-Cromer time integration scheme
         
@@ -179,7 +179,7 @@ class ParticleSet():
                                              simulation.n_time_steps,
                                              0, 1e-3)
 
-        return update_nodal_positions(self.node_force, self.u, self.v, self.a,
+        return update_nodal_positions(node_force, self.u, self.v, self.a,
                                       simulation.damping, self.node_density,
                                       simulation.dt, self.bc.flag,
                                       self.bc.magnitude, self.bc.unit_vector)
