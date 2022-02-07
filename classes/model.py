@@ -114,4 +114,4 @@ class Model():
         y_coords = self.particles.x[:, 1] + (self.particles.u[:, 1] * dsf)
         ax.scatter(x_coords, y_coords, s=sz, c=data, cmap='jet')
         plt.axis('equal')
-        plt.savefig('Plate', dpi=1000)
+        plt.savefig('Branching', dpi=1000)

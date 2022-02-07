@@ -54,7 +54,7 @@ class BondSet():
         nlist : ndarray
             TODO: write description
         material : Material class
-        constitutive_model : ConstitutiveModel class
+        constitutive_law : ConstitutiveLaw class
 
         Returns
         -------
@@ -74,6 +74,9 @@ class BondSet():
         self.f_y = np.zeros(self.n_bonds)
 
         # Constitutive model
+        # self.constitutive_law = constitutive_law
+        # self.c = self.constitutive_law.calculate_bond_stifness()
+        # self.sc = self.constitutive_law.calculate_critical_stretch()
         self.c = 8.75e+19
         self.sc = 8.2e-4
 

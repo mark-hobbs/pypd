@@ -1,4 +1,7 @@
-
+"""
+Example: 2D plate with a hole
+-----------------------------
+"""
 import numpy as np
 
 from classes.boundary_conditions import BoundaryConditions
