@@ -75,7 +75,7 @@ class BondSet():
 
         # Constitutive model
         self.c = 8.75e+19
-        self.sc = 1
+        self.sc = 8.2e-4
 
     def _build_bond_list(self, nlist):
         """

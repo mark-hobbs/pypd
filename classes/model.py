@@ -85,16 +85,22 @@ class Model():
                                   unit="steps"):
             self._single_time_step(i_time_step)
 
-        self.plot_deformed_particles(dsf=100)
+        self.particles.calculate_particle_damage(self.bonds)
+        self.plot_deformed_particles(sz=5, dsf=1, data=self.particles.damage)
 
-    def plot_deformed_particles(self, dsf=10):
+    def plot_deformed_particles(self, sz=2, dsf=10, data=None):
         """
         Plot the deformed particles
 
         Parameters
         ----------
+        sz : int
+            The marker size (particle size) in points (default = 2)
         dsf : int
             Displacement scale factor (default = 10)
+        data : 
+            Array-like list to be mapped to colours. For example:
+            particle.damage, particle.stress etc
 
         Returns
         -------
@@ -106,6 +112,6 @@ class Model():
         ax = fig.add_subplot(111)
         x_coords = self.particles.x[:, 0] + (self.particles.u[:, 0] * dsf)
         y_coords = self.particles.x[:, 1] + (self.particles.u[:, 1] * dsf)
-        ax.scatter(x_coords, y_coords, s=2, cmap='jet')
+        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap='jet')
         plt.axis('equal')
         plt.savefig('Plate', dpi=1000)

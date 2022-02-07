@@ -8,7 +8,10 @@ TODO: rename classes as base or baseclasses?
 import numpy as np
 
 from input.tools import build_particle_families
-from solver.calculate import calculate_nodal_forces, smooth_step_data, update_nodal_positions
+from solver.calculate import (calculate_nodal_forces,
+                              calculate_node_damage,
+                              smooth_step_data,
+                              update_nodal_positions)
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -37,6 +40,10 @@ class ParticleSet():
         Velocity array
     a : ndarray (float)
         Acceleration array
+    damage : ndarray (float)
+        The value of damage will range from 0 to 1, where 0 indicates that
+        all bonds connected to the node are in the elastic range, and 1
+        indicates that all bonds connected to the node have failed
     material_flag : ndarray (int)
         Flag to identify the material type. The flag is set by the user.
     cell_volume: ndarray (float)
@@ -45,7 +52,6 @@ class ParticleSet():
     boundary_condition_flag : ndarray (int)
         Flag to... 1 if a boundary condition is applied, 0 if no...
     boundary_condition_value : ndarray (float)
-    
 
     Methods
     -------
@@ -94,10 +100,12 @@ class ParticleSet():
 
         # TODO: move the following to an initisalise method in Model or
         # Simulation?
-        self.node_force = np.zeros([self.n_nodes, self.n_dim])
-        self.u = np.zeros([self.n_nodes, self.n_dim])
-        self.v = np.zeros([self.n_nodes, self.n_dim])
-        self.a = np.zeros([self.n_nodes, self.n_dim])
+        self.node_force = np.zeros((self.n_nodes, self.n_dim))
+        self.u = np.zeros((self.n_nodes, self.n_dim))
+        self.v = np.zeros((self.n_nodes, self.n_dim))
+        self.a = np.zeros((self.n_nodes, self.n_dim))
+
+        self.damage = np.zeros(self.n_nodes)
 
     # TODO: see PySPH
     def add_property():
@@ -154,6 +162,28 @@ class ParticleSet():
         return calculate_nodal_forces(bonds.bondlist, self.x, self.u,
                                       bonds.d, bonds.c, self.cell_volume,
                                       bonds.sc, bonds.f_x, bonds.f_y)
+
+    def calculate_particle_damage(self, bonds):
+        """
+        Calculate particle damage
+
+        Parameters
+        ----------
+        bonds : BondSet
+            TODO: write a description
+
+        Returns
+        -------
+        damage : ndarray (float)
+            The value of damage will range from 0 to 1, where 0 indicates that
+            all bonds connected to the node are in the elastic range, and 1
+            indicates that all bonds connected to the node have failed
+
+        Notes
+        -----
+        """
+        self.damage = calculate_node_damage(self.x, bonds.bondlist, bonds.d,
+                                            self.n_family_members)
 
     def update_particle_positions(self, node_force, simulation, i_time_step):
         """

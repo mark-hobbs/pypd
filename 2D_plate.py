@@ -101,7 +101,6 @@ def main():
                         density=2400, ft=2.5)
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    # cm = ConstitutiveModel()
     bonds = BondSet(particles.nlist)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
     model = Model(particles, bonds, simulation)
