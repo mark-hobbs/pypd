@@ -25,10 +25,10 @@ class BondSet():
 
     bond_type: ndarray (int)
         Array defining the material type of every bond
-    
+
     c : ndarray (float)
         Bond stiffness
- 
+
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
