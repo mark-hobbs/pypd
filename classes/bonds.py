@@ -18,30 +18,30 @@ class BondSet():
     ----------
     bondlist : ndarray (int)
         Array of pairwise interactions (bond list)
-    
+
     nlist : ndarray (int)
         TODO: define a new name and description
         TODO: ndarray or list of numpy arrays?
-    
+
     bond_type: ndarray (int)
         Array defining the material type of every bond
     
     c : ndarray (float)
         Bond stiffness
-    
+ 
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
-    
+
     volume_correction_factors : ndarray (float)
         Array of volume correction factors (to improve spatial integration
         accuracy)
-    
+
     lambda : ndarray (float)
         Array of surface correction factors (to correct the peridynamic
         surface effect). Also known as stiffness correction factors.
-    
+
     stretch : ndarray (float)
         Bond stretch (dimensionless)
 
