@@ -6,6 +6,7 @@ Notes
 -----
 
 """
+import numpy as np
 
 
 class ConstitutiveLaw():
@@ -29,7 +30,6 @@ class ConstitutiveLaw():
         """
         raise NotImplementedError("This method must be implemented!")
 
-
     def calculate_damage_parameter():
         """
         Calculate bond damage (softening parameter). The value of d will range
@@ -40,7 +40,79 @@ class ConstitutiveLaw():
 
 
 class Linear(ConstitutiveLaw):
-    pass
+    """
+    Linear constitutive model
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+
+    Notes
+    -----
+    """
+
+    def __init__(self, material):
+        """
+        Linear constitutive model class constructor
+
+        Parameters
+        ----------
+        material : Material class
+
+        Returns
+        -------
+        c : float
+            Bond stiffness
+        
+        sc : float
+            Critical stretch
+
+        Notes
+        -----
+        """
+        self.c = self._calculate_bond_stiffness(material)
+        self.sc = self._calculate_critical_stretch(material)
+
+    def _calculate_bond_stiffness(self, material):
+        """
+        Bond stiffness
+            - linear elastic model
+            - 2D
+            - plane stress
+            
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+        """
+        c = (9 * material.E) / (np.pi * t * horizon**3)
+        return c
+
+    def _calculate_critical_stretch(self, material):
+        """
+        Critical stretch
+            - linear elastic model
+            - 2D
+            
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+
+        """
+        sc = np.sqrt((4 * np.pi * material.Gf)
+                     / (9 * material.E * horizon))
+        return sc
 
 
 class Bilinear(ConstitutiveLaw):

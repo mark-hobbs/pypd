@@ -88,7 +88,7 @@ class ParticleSet():
         self.x = x
         self.n_nodes = np.shape(self.x)[0]
         self.n_dim = np.shape(self.x)[1]
-        self.horizon = m * dx
+        self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
         self.cell_volume = dx**2    # TODO: 2D or 3D problem?
