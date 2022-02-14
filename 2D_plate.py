@@ -10,6 +10,7 @@ from classes.particles import ParticleSet
 from classes.bonds import BondSet
 from classes.model import Model
 from classes.simulation import Simulation
+from classes.constitutive_law import Linear
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -90,7 +91,7 @@ def build_hole(particles, centre, radius):
 
 def main():
 
-    dx = 2.5E-3
+    dx = 1.25E-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
     hole_centre_x = 0.25 - dx/2
@@ -104,7 +105,8 @@ def main():
                         density=2400, ft=2.5)
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    bonds = BondSet(particles.nlist)
+    linear = Linear(material, particles)
+    bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
     model = Model(particles, bonds, simulation)
 

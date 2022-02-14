@@ -10,6 +10,7 @@ from classes.particles import ParticleSet
 from classes.bonds import BondSet
 from classes.model import Model
 from classes.simulation import Simulation
+from classes.constitutive_law import Linear
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -153,7 +154,7 @@ def rebuild_node_families(n_nodes, bondlist):
 
 def main():
 
-    dx = 2.5E-3
+    dx = 1.25E-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
     notch = [np.array([0 - dx, 0.125 - (dx/2)]),
@@ -166,7 +167,8 @@ def main():
                         density=1230, ft=2.5)
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    bonds = BondSet(particles.nlist)
+    linear = Linear(material, particles)
+    bonds = BondSet(particles, linear) 
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)

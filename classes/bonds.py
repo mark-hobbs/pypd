@@ -6,7 +6,6 @@ Bond array class
 import numpy as np
 
 from input.tools import build_bond_list
-from solver.constitutive_model import linear
 
 
 # Bonds, BondArray, or BondSet?
@@ -50,9 +49,12 @@ class BondSet():
 
     Notes
     -----
+    * Code design
+        - assign the same properties to all bonds
+        - uniquely assign properties to individual bonds
     """
 
-    def __init__(self, nlist, bondlist=None):
+    def __init__(self, particles, constitutive_law, bondlist=None):
         """
         BondSet class constructor
 
@@ -60,6 +62,8 @@ class BondSet():
         ----------
         nlist : ndarray
             TODO: write description
+
+        particles : Particle class
         
         material : Material class
         
@@ -75,7 +79,7 @@ class BondSet():
         self.bondlist = bondlist
 
         if self.bondlist is None:
-            self.bondlist = self._build_bond_list(nlist)
+            self.bondlist = self._build_bond_list(particles.nlist)
 
         self.n_bonds = len(self.bondlist)
         self.d = np.zeros(self.n_bonds)
@@ -84,10 +88,15 @@ class BondSet():
 
         # Constitutive model
         # self.constitutive_law = constitutive_law
-        # self.c = self.constitutive_law.calculate_bond_stifness()
-        # self.sc = self.constitutive_law.calculate_critical_stretch()
-        self.c = 8.75e+19
-        self.sc = 8.2e-4
+        # self.c = self.constitutive_law.calculate_bond_stifness(material,
+        #                                                        particles)
+        # self.sc = self.constitutive_law.calculate_critical_stretch(material,
+        #                                                            particles)
+        self.c = constitutive_law.c
+        self.sc = constitutive_law.sc
+        
+        # self.c = 8.75e+19
+        # self.sc = 8.2e-4
 
     def _build_bond_list(self, nlist):
         """

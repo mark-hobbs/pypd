@@ -27,14 +27,19 @@ class Material():
         ----------
         name : str
             Material name (steel etc)
+
         E : float
             Young's modulus (or modulus of elasticity) (units)
+
         Gf : float
             Fracture energy (N/m)
+
         density : float
             Material density (kg/m^3)
+
         ft : float
             Tensile strength (units)
+
         nu : float
             Poisson's ratio (default = None)
 

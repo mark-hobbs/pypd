@@ -59,7 +59,9 @@ class ParticleSet():
     Notes
     -----
     * Class should accept both regular and irregular meshes
-
+    * Should dx be an attribute? Or is a Mesh class needed?
+        - particles.dx
+        - mesh.dx
     """
 
     def __init__(self, x, dx, bc, material, m=np.pi, nlist=None):
@@ -207,7 +209,7 @@ class ParticleSet():
 
         self.bc.magnitude = smooth_step_data(i_time_step, 0,
                                              simulation.n_time_steps,
-                                             0, 1e-3)
+                                             0, 1e-4)
 
         return update_nodal_positions(node_force, self.u, self.v, self.a,
                                       simulation.damping, self.node_density,

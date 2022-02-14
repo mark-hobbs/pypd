@@ -53,7 +53,7 @@ class Linear(ConstitutiveLaw):
     -----
     """
 
-    def __init__(self, material):
+    def __init__(self, material, particles):
         """
         Linear constitutive model class constructor
 
@@ -71,11 +71,13 @@ class Linear(ConstitutiveLaw):
 
         Notes
         -----
+        * TODO: passing an instance of particles is probably bad design and
+        should be improved
         """
-        self.c = self._calculate_bond_stiffness(material)
-        self.sc = self._calculate_critical_stretch(material)
+        self.c = self._calculate_bond_stiffness(material, particles)
+        self.sc = self._calculate_critical_stretch(material, particles)
 
-    def _calculate_bond_stiffness(self, material):
+    def _calculate_bond_stiffness(self, material, particles):
         """
         Bond stiffness
             - linear elastic model
@@ -84,17 +86,22 @@ class Linear(ConstitutiveLaw):
             
         Parameters
         ----------
+        material :
+            Instance of material class
 
         Returns
         -------
+        c : float
+            Bond stiffness
 
         Notes
         -----
         """
-        c = (9 * material.E) / (np.pi * t * horizon**3)
+        t = 2.5E-3  # TODO: do not hardcode values
+        c = (9 * material.E) / (np.pi * t * particles.horizon**3)
         return c
 
-    def _calculate_critical_stretch(self, material):
+    def _calculate_critical_stretch(self, material, particles):
         """
         Critical stretch
             - linear elastic model
@@ -111,7 +118,7 @@ class Linear(ConstitutiveLaw):
 
         """
         sc = np.sqrt((4 * np.pi * material.Gf)
-                     / (9 * material.E * horizon))
+                     / (9 * material.E * particles.horizon))
         return sc
 
 

@@ -40,6 +40,8 @@ class BoundaryConditions():
 
         Notes
         -----
+        * TODO: implement magnitude
+        
         """
         self.flag = flag
         self.unit_vector = unit_vector
