@@ -32,7 +32,9 @@ class Model():
         Parameters
         ----------
         particles : ParticleSet
+
         bonds : BondSet
+        
         simulation : Simulation class
             Define simulation parameters
 
@@ -99,8 +101,8 @@ class Model():
 
         dsf : int
             Displacement scale factor (default = 10)
-            
-        data : 
+
+        data : ndarray
             Array-like list to be mapped to colours. For example:
             particle.damage, particle.stress etc
 
