@@ -1,6 +1,11 @@
 """
 Example: 2D plate with a notch (crack branching)
 ------------------------------------------------
+
+Run the following command from the root folder:
+
+python -m examples.2D_notch.py
+
 """
 import numpy as np
 
@@ -172,7 +177,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
+    simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=0)
     model = Model(particles, bonds, simulation)
 
     model.run_simulation()

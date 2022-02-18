@@ -86,7 +86,7 @@ class Model():
             self._single_time_step(i_time_step)
 
         self.particles.calculate_particle_damage(self.bonds)
-        self.plot_deformed_particles(sz=2.5, dsf=1, data=self.particles.damage)
+        self.plot_deformed_particles(sz=1, dsf=1, data=self.particles.damage)
 
     def plot_deformed_particles(self, sz=2, dsf=10, data=None):
         """

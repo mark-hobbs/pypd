@@ -6,6 +6,9 @@ Notes
 -----
 * See - pysph/sph/integrator.py
       - pysph/sph/integrator_step.py
+
+* OpenCL solver - /pysph/sph/acceleration_eval_gpu_helper.py
+                - /pysph/sph/tests/test_acceleration_eval.py
 """
 
 

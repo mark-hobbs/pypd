@@ -1,6 +1,11 @@
 """
 Example: 2D plate with a hole
 -----------------------------
+
+Run the following command from the root folder:
+
+python -m examples.2D_plate.py
+
 """
 import numpy as np
 

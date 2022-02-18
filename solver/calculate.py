@@ -22,14 +22,18 @@ def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume, sc, f_x, f_y):
     ----------
     bondlist : ndarray (int)
         Array of pairwise interactions (bond list)
+    
     x : ndarray (float)
         Material point coordinates in the reference configuration
+    
     u : ndarray (float)
         Nodal displacement
+    
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
+    
     c : float
         Bond stiffness
 
@@ -37,6 +41,7 @@ def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume, sc, f_x, f_y):
     -------
     node_force : ndarray (float)
         Nodal force array
+    
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
@@ -104,8 +109,10 @@ def update_nodal_positions(node_force, u, v, a, damping,
     ----------
     u : ndarray (float)
         Particle displacement
+    
     v : ndarray (float)
         Particle velocity
+    
     a : ndarray (float)
         Particle acceleration
 
@@ -116,7 +123,10 @@ def update_nodal_positions(node_force, u, v, a, damping,
     -----
     * add random noise to particle displacement
         -  * np.random.uniform(0.98, 1.0)
-
+    * We need a generic method for employing different time intergation schemes
+        - Euler
+        - Euler-Cromer
+        - Velocity-Verlet
     """
 
     n_nodes = np.shape(node_force)[0]
@@ -158,12 +168,15 @@ def calculate_node_damage(x, bondlist, d, n_family_members):
     ----------
     x : ndarray (float)
         Material point coordinates in the reference configuration
+    
     bondlist : ndarray (int)
         Array of pairwise interactions (bond list)
+    
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
+    
     n_family_members : ndarray (int)
     
     Returns

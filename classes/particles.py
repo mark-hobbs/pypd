@@ -24,33 +24,46 @@ class ParticleSet():
     mesh_file : str
         Name of the mesh file defining the system of particles
         (TODO: attribute or parameter for __init__?)
+
     n_nodes : int
         Number of particles
+    
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
+    
     nlist : ndarray
         TODO: write description
+    
     n_family_members: ndarray (int)
         Number of family members
+    
     x : ndarray (float)
         Material point coordinates in the reference configuration
+    
     u : ndarray (float)
         Displacement array
+    
     v : ndarray (float)
         Velocity array
+    
     a : ndarray (float)
         Acceleration array
+    
     damage : ndarray (float)
         The value of damage will range from 0 to 1, where 0 indicates that
         all bonds connected to the node are in the elastic range, and 1
         indicates that all bonds connected to the node have failed
+    
     material_flag : ndarray (int)
         Flag to identify the material type. The flag is set by the user.
+    
     cell_volume: ndarray (float)
         Cell area / volume. If a regular mesh is employed, this value will be
         a constant for all nodes.
+    
     boundary_condition_flag : ndarray (int)
         Flag to... 1 if a boundary condition is applied, 0 if no...
+    
     boundary_condition_value : ndarray (float)
 
     Methods
@@ -72,12 +85,16 @@ class ParticleSet():
         ----------
         x : ndarray (float)
             Material point coordinates in the reference configuration
+        
         dx : float
             Mesh resolution (only valid for regular meshes)
+        
         m : float
             Ratio between the horizon radius and grid resolution (default
             value is pi)
+        
         bc : BoundaryConditions class
+        
         material : Material class
 
         Returns
@@ -145,6 +162,7 @@ class ParticleSet():
         ----------
         bonds : BondSet
             TODO: write a description
+        
         constitutive_law
 
         Returns
