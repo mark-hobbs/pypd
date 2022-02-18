@@ -96,8 +96,10 @@ class Model():
         ----------
         sz : int
             The marker size (particle size) in points (default = 2)
+
         dsf : int
             Displacement scale factor (default = 10)
+            
         data : 
             Array-like list to be mapped to colours. For example:
             particle.damage, particle.stress etc
