@@ -11,7 +11,7 @@ from input.tools import build_particle_families
 from solver.calculate import (calculate_nodal_forces,
                               calculate_node_damage,
                               smooth_step_data,
-                              update_nodal_positions)
+                              euler_cromer)
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -223,13 +223,14 @@ class ParticleSet():
         * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
         * TODO: pass bc.magnitude as a function
+        * return integrator.one_timestep()
         """
 
         self.bc.magnitude = smooth_step_data(i_time_step, 0,
                                              simulation.n_time_steps,
                                              0, 1e-4)
 
-        return update_nodal_positions(node_force, self.u, self.v, self.a,
-                                      simulation.damping, self.node_density,
-                                      simulation.dt, self.bc.flag,
-                                      self.bc.magnitude, self.bc.unit_vector)
+        return euler_cromer(node_force, self.u, self.v, self.a, 
+                            simulation.damping, self.node_density,
+                            simulation.dt, self.bc.flag,
+                            self.bc.magnitude, self.bc.unit_vector)
