@@ -100,7 +100,7 @@ def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume, sc, f_x, f_y):
 
 @njit(parallel=True)
 def euler_cromer(node_force, u, v, a, damping, node_density, dt,
-                 bc_flag, bc_magnitude, bc_unit_vector):
+                  bc_flag, bc_magnitude, bc_unit_vector):
     """
     Update particle positions using an Euler-Cromer time integration scheme
     

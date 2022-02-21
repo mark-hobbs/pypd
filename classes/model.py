@@ -25,7 +25,7 @@ class Model():
 
     """
 
-    def __init__(self, particles, bonds, simulation):
+    def __init__(self, particles, bonds, simulation, integrator):
         """
         Model class constructor
 
@@ -47,6 +47,7 @@ class Model():
         self.particles = particles
         self.bonds = bonds
         self.simulation = simulation
+        self.integrator = integrator
 
     def _single_time_step(self, i_time_step):
         """
@@ -60,12 +61,11 @@ class Model():
 
         Notes
         -----
-        * rename as _integration_step?
         """
 
         nf, _ = self.particles.calculate_particle_forces(self.bonds)
         self.particles.update_particle_positions(nf, self.simulation,
-                                                 i_time_step)
+                                                self.integrator, i_time_step)
 
     def run_simulation(self):
         """

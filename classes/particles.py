@@ -10,8 +10,7 @@ import numpy as np
 from input.tools import build_particle_families
 from solver.calculate import (calculate_nodal_forces,
                               calculate_node_damage,
-                              smooth_step_data,
-                              euler_cromer)
+                              smooth_step_data)
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -110,7 +109,7 @@ class ParticleSet():
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_volume = dx**2    # TODO: 2D or 3D problem?
+        self.cell_volume = dx**2  # TODO: 2D or 3D problem?
         self.node_density = self.material.density
 
         self.nlist = nlist
@@ -152,8 +151,6 @@ class ParticleSet():
         # TODO: probably not needed?
         pass
 
-    # TODO: this would require passing in a instance of the bonds class. Would
-    # this lead to circular references?
     def calculate_particle_forces(self, bonds):
         """
         Calculate particle forces
@@ -205,7 +202,8 @@ class ParticleSet():
         self.damage = calculate_node_damage(self.x, bonds.bondlist, bonds.d,
                                             self.n_family_members)
 
-    def update_particle_positions(self, node_force, simulation, i_time_step):
+    def update_particle_positions(self, node_force, simulation, integrator,
+                                  i_time_step):
         """
         Update particle positions using an Euler-Cromer time integration scheme
         
@@ -214,23 +212,22 @@ class ParticleSet():
         simulation : Simulation class
             Defines simulation parameters
 
+        integrator : Integrator class
+            Euler / Euler-Cromer / Velocity-Verlet scheme
+
         Returns
         -------
 
         Notes
         -----
-        * Euler / Euler-Cromer / Velocity-Verlet scheme
         * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
         * TODO: pass bc.magnitude as a function
-        * return integrator.one_timestep()
+        * return integrator._one_timestep()
         """
 
         self.bc.magnitude = smooth_step_data(i_time_step, 0,
                                              simulation.n_time_steps,
                                              0, 1e-4)
 
-        return euler_cromer(node_force, self.u, self.v, self.a, 
-                            simulation.damping, self.node_density,
-                            simulation.dt, self.bc.flag,
-                            self.bc.magnitude, self.bc.unit_vector)
+        return integrator.one_timestep(node_force, self, simulation)

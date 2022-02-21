@@ -20,16 +20,19 @@ class Integrator():
     Base class for time integrator
     """
 
-    def __init__(self):
-        dt = self.calculate_stable_dt()
+    def __init__(self, dt=None):
 
-    def calculate_stable_dt():
+        self.dt = dt
+        if self.dt is None:
+            self.dt = self._calculate_stable_dt()
+
+    def _calculate_stable_dt():
         """
         Calculate stable time step
         """
         pass
 
-    def one_timestep():
+    def _one_timestep():
         pass
 
 
@@ -37,10 +40,11 @@ class Euler(Integrator):
     pass
 
 
-class EulerCromer(Integrator):
+# class EulerCromer(Integrator):
+class EulerCromer():
 
-    def __init__(self) -> None:
-        super().__init__()
+    # def __init__(self) -> None:
+    #     super().__init__()
 
     def one_timestep(self, node_force, particles, simulation):
         """
