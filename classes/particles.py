@@ -223,7 +223,6 @@ class ParticleSet():
         * TODO: should the naming be consistent?
                 update_particle_positions() / update_nodal_positions()
         * TODO: pass bc.magnitude as a function
-        * return integrator._one_timestep()
         """
 
         self.bc.magnitude = smooth_step_data(i_time_step, 0,

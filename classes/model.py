@@ -38,6 +38,8 @@ class Model():
         simulation : Simulation class
             Define simulation parameters
 
+        integrator : Integrator class
+
         Returns
         -------
 
