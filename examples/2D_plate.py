@@ -16,6 +16,7 @@ from classes.bonds import BondSet
 from classes.model import Model
 from classes.simulation import Simulation
 from classes.constitutive_law import Linear
+from classes.integrator import EulerCromer
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -108,12 +109,13 @@ def main():
 
     material = Material(name="quasi-brittle", E=33e9, Gf=130,
                         density=2400, ft=2.5)
+    integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
     linear = Linear(material, particles)
     bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
-    model = Model(particles, bonds, simulation)
+    model = Model(particles, bonds, simulation, integrator)
 
     model.run_simulation()
 
