@@ -50,6 +50,7 @@ def calculate_nodal_forces(bondlist, x, u, d, c, cell_volume, sc, f_x, f_y):
     Notes
     -----
     * Can the constitutive model function be passed in as an argument?
+        - See factory functions and closures
     * If the bondlist is loaded from a .mat file:
           node_i = bondlist[k_bond, 0] - 1
           node_j = bondlist[k_bond, 1] - 1

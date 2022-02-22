@@ -8,6 +8,8 @@ Notes
 """
 import numpy as np
 
+from solver.constitutive_model import linear
+
 
 class ConstitutiveLaw():
     """
@@ -30,7 +32,7 @@ class ConstitutiveLaw():
         """
         raise NotImplementedError("This method must be implemented!")
 
-    def calculate_damage_parameter():
+    def calculate_bond_damage():
         """
         Calculate bond damage (softening parameter). The value of d will range
         from 0 to 1, where 0 indicates that the bond is still in the elastic
@@ -51,6 +53,7 @@ class Linear(ConstitutiveLaw):
 
     Notes
     -----
+    * Examine compiling classes with @jitclass
     """
 
     def __init__(self, material, particles):
@@ -120,6 +123,26 @@ class Linear(ConstitutiveLaw):
         sc = np.sqrt((4 * np.pi * material.Gf)
                      / (9 * material.E * particles.horizon))
         return sc
+
+    def calculate_bond_damage(self, stretch, d):
+        """
+        Calculate bond damage
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        d : ndarray (float)
+            Bond damage (softening parameter). The value of d will range from 0
+            to 1, where 0 indicates that the bond is still in the elastic range,
+            and 1 represents a bond that has failed
+
+        Notes
+        -----
+        * Examine closures and factory functions
+        """
+        return linear(stretch, self.sc, d)
 
 
 class Bilinear(ConstitutiveLaw):
