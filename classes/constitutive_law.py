@@ -54,6 +54,8 @@ class Linear(ConstitutiveLaw):
     Notes
     -----
     * Examine compiling classes with @jitclass
+    * How do we employ a material model?
+        - bond.material_model.calculate_bond_damage()
     """
 
     def __init__(self, material, particles):

@@ -22,8 +22,9 @@ class BondSet():
         TODO: define a new name and description
         TODO: ndarray or list of numpy arrays?
 
-    bond_type: ndarray (int)
+    material: ndarray (int)
         Array defining the material type of every bond
+        TODO: name - bonds.material or bonds.type?
 
     c : ndarray (float)
         Bond stiffness
