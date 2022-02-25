@@ -175,10 +175,15 @@ class ParticleSet():
         * TODO: should bonds.c and bonds.beta be attributes of a constitutive
         model class?
         * TODO: give users the option to use bondlist or neighbourlist
+        * Is it possible to pass bonds.material_model as a variable?
+            - bonds.material_model.calculate_bond_damage()
         """
         return calculate_nodal_forces(bonds.bondlist, self.x, self.u,
-                                      bonds.d, bonds.c, self.cell_volume,
-                                      bonds.sc, bonds.f_x, bonds.f_y)
+                                      bonds.d,
+                                      self.cell_volume,
+                                      bonds.constitutive_law.c,
+                                      bonds.constitutive_law.sc,
+                                      bonds.f_x, bonds.f_y)
 
     def calculate_particle_damage(self, bonds):
         """

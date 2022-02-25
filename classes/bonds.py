@@ -87,17 +87,8 @@ class BondSet():
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
 
-        # Constitutive model
-        # self.constitutive_law = constitutive_law
-        # self.c = self.constitutive_law.calculate_bond_stifness(material,
-        #                                                        particles)
-        # self.sc = self.constitutive_law.calculate_critical_stretch(material,
-        #                                                            particles)
-        self.c = constitutive_law.c
-        self.sc = constitutive_law.sc
-        
-        # self.c = 8.75e+19
-        # self.sc = 8.2e-4
+        # Constitutive model (material_model / material_law?)
+        self.constitutive_law = constitutive_law
 
     def _build_bond_list(self, nlist):
         """
@@ -185,4 +176,4 @@ class BondSet():
         trilinear / non-linear)
         * from solver.constitutive_model import trilinear
         """
-        return linear(self)
+        pass
