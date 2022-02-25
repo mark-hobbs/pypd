@@ -159,8 +159,6 @@ class ParticleSet():
         ----------
         bonds : BondSet
             TODO: write a description
-        
-        constitutive_law
 
         Returns
         -------
@@ -178,9 +176,8 @@ class ParticleSet():
         * Is it possible to pass bonds.material_model as a variable?
             - bonds.material_model.calculate_bond_damage()
         """
-        return calculate_nodal_forces(bonds.bondlist, self.x, self.u,
-                                      bonds.d,
-                                      self.cell_volume,
+        return calculate_nodal_forces(self.x, self.u, self.cell_volume,
+                                      bonds.bondlist, bonds.d,
                                       bonds.constitutive_law.c,
                                       bonds.constitutive_law.sc,
                                       bonds.f_x, bonds.f_y)
