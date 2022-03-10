@@ -5,7 +5,6 @@ Particle array class
 TODO: rename classes as base or baseclasses?
 """
 
-from classes.constitutive_law import ConstitutiveLaw
 import numpy as np
 
 from input.tools import build_particle_families
@@ -176,6 +175,9 @@ class ParticleSet():
         * TODO: give users the option to use bondlist or neighbourlist
         * Is it possible to pass bonds.material_model as a variable?
             - bonds.material_model.calculate_bond_damage()
+        * Perhaps the only solution is to make calculate_nodal_forces a method
+        of the consistutive_law class?
+            - consitutive_law.calculate_nodal_forces()
         """
         return calculate_nodal_forces(self.x, self.u, self.cell_volume,
                                       bonds.bondlist, bonds.d,

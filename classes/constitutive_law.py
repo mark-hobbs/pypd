@@ -148,6 +148,25 @@ class Linear():
         """
         return linear(stretch, self.sc, d)
 
+    def calculate_nodal_forces(self):
+        """
+        Calculate nodal force
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+
+        Notes
+        -----
+        * Ideally this method would not be required.
+        * Methods in this class should be concerned with the behaviour of a
+        single bond
+        * Called by particles.calculate_particle_forces()
+        """
+        pass
+
 
 class Bilinear(ConstitutiveLaw):
     pass
