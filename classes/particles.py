@@ -5,6 +5,7 @@ Particle array class
 TODO: rename classes as base or baseclasses?
 """
 
+from classes.constitutive_law import ConstitutiveLaw
 import numpy as np
 
 from input.tools import build_particle_families

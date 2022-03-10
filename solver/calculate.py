@@ -14,7 +14,7 @@ from solver.constitutive_model import linear
 
 
 @njit(parallel=True)
-def calculate_nodal_forces(x, u, cell_volume, bondlist, d,  c, sc, f_x, f_y):
+def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
     """
     Calculate particle forces - employs bondlist
 
@@ -79,8 +79,8 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d,  c, sc, f_x, f_y):
 
         # TODO: allow the user to load different constitutive models or define
         # a new law that describes the interaction between two particles
-        # (bonds.material_model)
-        # d[k_bond] = material_model.calculate_bond_damage(stretch, d[k_bond])
+        # (bonds.constitutive_law.calculate_bond_damage)
+        # d[k_bond] = calculate_bond_damage(stretch, d[k_bond])
 
         d[k_bond] = linear(stretch, sc, d[k_bond])
 

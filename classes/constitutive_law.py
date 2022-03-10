@@ -41,7 +41,7 @@ class ConstitutiveLaw():
         pass
 
 
-class Linear(ConstitutiveLaw):
+class Linear():
     """
     Linear constitutive model
 
@@ -56,6 +56,8 @@ class Linear(ConstitutiveLaw):
     * Examine compiling classes with @jitclass
     * How do we employ a material model?
         - bond.material_model.calculate_bond_damage()
+    * Should the class inherit from ConstitutiveLaw?
+        - class Linear(ConstitutiveLaw):
     """
 
     def __init__(self, material, particles):
