@@ -116,7 +116,7 @@ class ParticleSet():
         if self.nlist is None:
             self.nlist, self.n_family_members = self._build_particle_families()
 
-        # TODO: move the following to an initisalise method in Model or
+        # TODO: move the following to an initialise method in Model or
         # Simulation?
         self.node_force = np.zeros((self.n_nodes, self.n_dim))
         self.u = np.zeros((self.n_nodes, self.n_dim))
@@ -177,7 +177,7 @@ class ParticleSet():
             - bonds.material_model.calculate_bond_damage()
         * Perhaps the only solution is to make calculate_nodal_forces a method
         of the consistutive_law class?
-            - consitutive_law.calculate_nodal_forces()
+            - constitutive_law.calculate_nodal_forces()
         """
         return calculate_nodal_forces(self.x, self.u, self.cell_volume,
                                       bonds.bondlist, bonds.d,
