@@ -94,10 +94,10 @@ def mask_particles_circle(particles, centre, radius, opt):
                            ** 2 + (particle[1] - centre[1])**2)
 
         if opt == "inside":
-            if distance < radius:
+            if distance <= radius:
                 mask.append(counter)
         elif opt == "outside":
-            if distance > radius:
+            if distance >= radius:
                 mask.append(counter)
 
         counter += 1
@@ -107,7 +107,7 @@ def mask_particles_circle(particles, centre, radius, opt):
 
 def main():
 
-    dx = 0.25E-3
+    dx = .1875E-3  # 3 / 1.5 / 0.75 / 0.375 / 0.1875
     n_div_x = np.rint(0.05 / dx).astype(int)
     n_div_y = np.rint(0.05 / dx).astype(int)
     hole_centre_x = 0.025 - dx/2
