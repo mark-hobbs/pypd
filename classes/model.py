@@ -92,7 +92,8 @@ class Model():
         self.particles.calculate_particle_damage(self.bonds)
         self.plot_deformed_particles(sz=1, data=self.particles.damage)
 
-    def plot_deformed_particles(self, sz=2, dsf=10, data=None):
+    def plot_deformed_particles(self, sz=2, dsf=10, data=None,
+                                fig_title="deformed_particles"):
         """
         Plot the deformed particles
 
@@ -108,6 +109,9 @@ class Model():
             Array-like list to be mapped to colours. For example:
             particle.damage, particle.stress etc
 
+        fig_title : str
+            The figure is saved as fig_title
+
         Returns
         -------
 
@@ -120,4 +124,4 @@ class Model():
         y_coords = self.particles.x[:, 1] + (self.particles.u[:, 1] * dsf)
         ax.scatter(x_coords, y_coords, s=sz, c=data, cmap='jet')
         plt.axis('equal')
-        plt.savefig('Graphite_ring', dpi=300)
+        plt.savefig(fig_title, dpi=300)

@@ -7,7 +7,7 @@ ring compression test." Journal of Nuclear Materials 511 (2018): 134-140.
 
 Run the following command from the root folder:
 
-python -m examples.2D_plate.py
+python -m examples.2D_graphite_ring.py
 
 """
 import numpy as np
@@ -47,7 +47,7 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
             particle_coordinates[counter, 1] = coord_y
             counter += 1
 
-    return particle_coordinates
+    return translate_particles(particle_coordinates)
 
 
 def build_boundary_conditions(particles, dx):
@@ -58,10 +58,10 @@ def build_boundary_conditions(particles, dx):
     tol = 1e-6
 
     for i, particle in enumerate(particles):
-        if particle[1] < (0.001 + tol):
+        if particle[1] < (-0.024 + tol):
             bc_flag[i, 1] = 1
             bc_unit_vector[i, 1] = 1
-        if particle[1] > (0.049 - dx - tol):
+        if particle[1] > (0.024 - dx - tol):
             bc_flag[i, 1] = 1
             bc_unit_vector[i, 1] = -1
 
@@ -75,7 +75,7 @@ def mask_particles_circle(particles, centre, radius, opt):
     Parameters
     ----------
     opt : str
-        Select if particles inside out outside of a circle are deleted
+        Select if particles inside or outside of a circle are deleted
         ["inside" / "outside"]
     
     Returns
@@ -105,13 +105,34 @@ def mask_particles_circle(particles, centre, radius, opt):
     return np.delete(particles, mask, axis=0)
 
 
+def translate_particles(particles, origin=np.array([0, 0])):
+    """
+    Translate a set of points to a new origin
+
+    Parameters
+    ----------
+    origin : str
+        Translate a set of points to the origin (a, b)
+    
+    Returns
+    -------
+
+    Notes
+    -----
+    https://math.stackexchange.com/questions/1801867/finding-the-centre-of-an-abritary-set-of-points-in-two-dimensions
+
+    """
+    centroid = np.average(particles, axis=0)
+    return origin - particles + centroid
+
+
 def main():
 
     dx = .1875E-3  # 3 / 1.5 / 0.75 / 0.375 / 0.1875
     n_div_x = np.rint(0.05 / dx).astype(int)
     n_div_y = np.rint(0.05 / dx).astype(int)
-    hole_centre_x = 0.025 - dx/2
-    hole_centre_y = 0.025 - dx/2
+    hole_centre_x = 0.0  # 0.025 - dx/2
+    hole_centre_y = 0.0  # 0.025 - dx/2
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     x = mask_particles_circle(x, [hole_centre_x, hole_centre_y],
@@ -120,14 +141,14 @@ def main():
                               0.05 / 2, "outside")
     flag, unit_vector = build_boundary_conditions(x, dx)
 
-    material = Material(name="graphite", E=10e9, Gf=190,
+    material = Material(name="graphite", E=10e9, Gf=100,  # Gf=190
                         density=1780, ft=27.6)
     integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
     linear = Linear(material, particles)
     bonds = BondSet(particles, linear)
-    simulation = Simulation(dt=1e-9, n_time_steps=10000, damping=0)
+    simulation = Simulation(dt=1e-9, n_time_steps=50000, damping=0)
     model = Model(particles, bonds, simulation, integrator)
 
     model.run_simulation()
