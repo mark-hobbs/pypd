@@ -80,7 +80,6 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
         # TODO: allow the user to load different constitutive models or define
         # a new law that describes the interaction between two particles
         # (bonds.constitutive_law.calculate_bond_damage)
-        # d[k_bond] = model.calculate_bond_damage(stretch, d[k_bond])
 
         d[k_bond] = linear(stretch, sc, d[k_bond])
 

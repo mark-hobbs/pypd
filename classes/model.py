@@ -18,7 +18,7 @@ class Model():
 
     Methods
     -------
-    
+
     Notes
     -----
     * see pysph / solver / solver.py
@@ -34,7 +34,7 @@ class Model():
         particles : ParticleSet
 
         bonds : BondSet
-        
+
         simulation : Simulation class
             Define simulation parameters
 
@@ -67,7 +67,7 @@ class Model():
 
         nf, _ = self.particles.calculate_particle_forces(self.bonds)
         self.particles.update_particle_positions(nf, self.simulation,
-                                                self.integrator, i_time_step)
+                                                 self.integrator, i_time_step)
 
     def run_simulation(self):
         """
