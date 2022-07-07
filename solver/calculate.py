@@ -22,18 +22,18 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
     ----------
     bondlist : ndarray (int)
         Array of pairwise interactions (bond list)
-    
+
     x : ndarray (float)
         Material point coordinates in the reference configuration
-    
+
     u : ndarray (float)
         Nodal displacement
-    
+
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
-    
+
     c : float
         Bond stiffness
 
@@ -41,7 +41,7 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
     -------
     node_force : ndarray (float)
         Nodal force array
-    
+
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
@@ -54,7 +54,7 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
     * If the bondlist is loaded from a .mat file:
           node_i = bondlist[k_bond, 0] - 1
           node_j = bondlist[k_bond, 1] - 1
-    
+
     """
 
     n_nodes = np.shape(x)[0]
@@ -103,18 +103,18 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
 
 @njit(parallel=True)
 def euler_cromer(node_force, u, v, a, damping, node_density, dt,
-                  bc_flag, bc_magnitude, bc_unit_vector):
+                 bc_flag, bc_magnitude, bc_unit_vector):
     """
     Update particle positions using an Euler-Cromer time integration scheme
-    
+
     Parameters
     ----------
     u : ndarray (float)
         Particle displacement
-    
+
     v : ndarray (float)
         Particle velocity
-    
+
     a : ndarray (float)
         Particle acceleration
 
@@ -165,29 +165,29 @@ def smooth_step_data(current_time_step, start_time_step, final_time_step,
 def calculate_node_damage(x, bondlist, d, n_family_members):
     """
     Calculate the nodal damage
-    
+
     Parameters
     ----------
     x : ndarray (float)
         Material point coordinates in the reference configuration
-    
+
     bondlist : ndarray (int)
         Array of pairwise interactions (bond list)
-    
+
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
-    
+
     n_family_members : ndarray (int)
-    
+
     Returns
     -------
     node_damage : ndarray (float)
         The value of node_damage will range from 0 to 1, where 0 indicates that
         all bonds connected to the node are in the elastic range, and 1
         indicates that all bonds connected to the node have failed
-    
+
     Notes
     -----
     """
