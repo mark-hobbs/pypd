@@ -7,6 +7,7 @@ This module contains the core functions that are employed during a simulation.
 """
 
 
+from classes.material import Material
 import numpy as np
 from numba import njit, prange
 
@@ -14,7 +15,8 @@ from solver.constitutive_model import linear
 
 
 @njit(parallel=True)
-def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
+def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y,
+                           material_law):
     """
     Calculate particle forces - employs bondlist
 
@@ -81,7 +83,8 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, sc, f_x, f_y):
         # a new law that describes the interaction between two particles
         # (bonds.constitutive_law.calculate_bond_damage)
 
-        d[k_bond] = linear(stretch, sc, d[k_bond])
+        # d[k_bond] = linear(stretch, sc, d[k_bond])
+        d[k_bond] = material_law(stretch, d[k_bond])
 
         f = stretch * c * (1 - d[k_bond]) * cell_volume
         f_x[k_bond] = f * xi_eta_x / y

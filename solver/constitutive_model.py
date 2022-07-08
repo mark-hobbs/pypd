@@ -6,7 +6,7 @@ from numba import njit
 
 
 @njit
-def linear(stretch, sc, d):
+def linear(stretch, d, sc):
     """
     Linear constitutive model
     """
@@ -27,7 +27,7 @@ def linear(stretch, sc, d):
 
 
 @njit
-def trilinear(stretch, s0, s1, sc, d, beta):
+def trilinear(stretch, d, s0, s1, sc, beta):
     """
     Trilinear constitutive model
     """

@@ -7,6 +7,7 @@ Notes
 
 """
 import numpy as np
+from numba import njit
 
 from solver.constitutive_model import linear
 
@@ -72,7 +73,7 @@ class Linear():
         -------
         c : float
             Bond stiffness
-        
+
         sc : float
             Critical stretch
 
@@ -90,7 +91,7 @@ class Linear():
             - linear elastic model
             - 2D
             - plane stress
-            
+
         Parameters
         ----------
         material :
@@ -113,7 +114,7 @@ class Linear():
         Critical stretch
             - linear elastic model
             - 2D
-            
+
         Parameters
         ----------
 
@@ -128,25 +129,30 @@ class Linear():
                      / (9 * material.E * particles.horizon))
         return sc
 
-    def calculate_bond_damage(self, stretch, d):
-        """
-        Calculate bond damage
+    @staticmethod
+    def calculate_bond_damage(sc):
+        @njit
+        def wrapper(stretch, d):
+            """
+            Calculate bond damage
 
-        Parameters
-        ----------
+            Parameters
+            ----------
 
-        Returns
-        -------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
+            Returns
+            -------
+            d : ndarray (float)
+                Bond damage (softening parameter). The value of d will range from 0
+                to 1, where 0 indicates that the bond is still in the elastic range,
+                and 1 represents a bond that has failed
 
-        Notes
-        -----
-        * Examine closures and factory functions
-        """
-        return linear(stretch, self.sc, d)
+            Notes
+            -----
+            * Examine closures and factory functions
+            """
+            return linear(stretch, d, sc)
+
+        return wrapper
 
     def calculate_nodal_forces(self):
         """

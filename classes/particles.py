@@ -151,7 +151,7 @@ class ParticleSet():
         # TODO: probably not needed?
         pass
 
-    def calculate_particle_forces(self, bonds):
+    def calculate_particle_forces(self, bonds, material_law):
         """
         Calculate particle forces
 
@@ -183,7 +183,8 @@ class ParticleSet():
                                       bonds.bondlist, bonds.d,
                                       bonds.constitutive_law.c,
                                       bonds.constitutive_law.sc,
-                                      bonds.f_x, bonds.f_y)
+                                      bonds.f_x, bonds.f_y,
+                                      material_law)
 
     def calculate_particle_damage(self, bonds):
         """
