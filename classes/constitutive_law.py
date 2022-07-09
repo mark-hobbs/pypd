@@ -131,6 +131,20 @@ class Linear():
 
     @staticmethod
     def calculate_bond_damage(sc):
+        """
+        Calculate bond damage
+
+        Parameters
+        ----------
+        sc : float
+
+        Returns
+        -------
+        wrapper : function
+
+        Notes
+        -----
+        """
         @njit
         def wrapper(stretch, d):
             """
@@ -138,13 +152,20 @@ class Linear():
 
             Parameters
             ----------
+            stretch : float
+                Bond stretch
+
+            d : float
+                Bond damage (softening parameter). The value of d will range
+                from 0 to 1, where 0 indicates that the bond is still in the
+                elastic range, and 1 represents a bond that has failed
 
             Returns
             -------
-            d : ndarray (float)
-                Bond damage (softening parameter). The value of d will range from 0
-                to 1, where 0 indicates that the bond is still in the elastic range,
-                and 1 represents a bond that has failed
+            d : float
+                Bond damage (softening parameter). The value of d will range
+                from 0 to 1, where 0 indicates that the bond is still in the
+                elastic range, and 1 represents a bond that has failed
 
             Notes
             -----

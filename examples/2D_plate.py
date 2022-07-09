@@ -117,7 +117,7 @@ def main():
     bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
     model = Model(particles, bonds, simulation, integrator,
-                  linear.calculate_bond_damage(linear.sc))
+                  linear.calculate_bond_damage)
 
     model.run_simulation()
 

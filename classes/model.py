@@ -40,6 +40,8 @@ class Model():
 
         integrator : Integrator class
 
+        material_law : function
+
         Returns
         -------
 
