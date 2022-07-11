@@ -141,6 +141,9 @@ class Linear():
         Returns
         -------
         wrapper : function
+            Return a function with the call statement: 
+                - calculate_bond_damage(stretch, d)
+            The parameters specific to the material model are wrapped...
 
         Notes
         -----
