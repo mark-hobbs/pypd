@@ -141,7 +141,7 @@ class Linear():
         Returns
         -------
         wrapper : function
-            Return a function with the call statement: 
+            Return a function with the call statement:
                 - calculate_bond_damage(stretch, d)
             The parameters specific to the material model are wrapped...
 
@@ -159,16 +159,18 @@ class Linear():
                 Bond stretch
 
             d : float
-                Bond damage (softening parameter). The value of d will range
-                from 0 to 1, where 0 indicates that the bond is still in the
-                elastic range, and 1 represents a bond that has failed
+                Bond damage (softening parameter) at time t. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
 
             Returns
             -------
             d : float
-                Bond damage (softening parameter). The value of d will range
-                from 0 to 1, where 0 indicates that the bond is still in the
-                elastic range, and 1 represents a bond that has failed
+                Bond damage (softening parameter) at time t+1. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
 
             Notes
             -----
