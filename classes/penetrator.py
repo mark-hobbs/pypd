@@ -65,9 +65,12 @@ class Penetrator():
         particles : ParticleSet
 
         """
-        penetrator_position = self.update_penetrator_position(i_time_step,
-                                                              simulation.n_time_steps)
-        return calculate_contact_force(penetrator_position)
+        position = self.update_penetrator_position(i_time_step,
+                                                   simulation.n_time_steps)
+        return calculate_contact_force(self.family, self.radius, position,
+                                       particles.x, particles.u, particles.v,
+                                       particles.material.density,
+                                       particles.cell_volume, simulation.dt)
 
     def update_penetrator_position():
         """
