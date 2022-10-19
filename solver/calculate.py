@@ -7,6 +7,7 @@ This module contains the core functions that are employed during a simulation.
 """
 
 
+from tabnanny import filename_only
 from classes.material import Material
 import numpy as np
 from numba import njit, prange
@@ -206,3 +207,47 @@ def calculate_node_damage(x, bondlist, d, n_family_members):
     node_damage = node_damage / n_family_members
 
     return node_damage
+
+
+@njit
+def calculate_contact_force(family, penetrator_position, penetrator_radius,
+                            x, u, v, dt, density, cell_area):
+    """
+    Calculate contact force - calculate the contact force between a rigid
+    penetrator and a deformable peridynamic body. Based on code from
+    rigid_impactor.f90 in Chapter 10 - Peridynamic Theory & its Applications
+    by Madenci & Oterkus
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    Notes
+    -----
+    """
+
+    n_nodes = len(family)
+    u_previous = u.copy()
+    v_previous = v.copy()
+
+    for i in range(n_nodes):
+
+        node = family[i]
+
+        distance_component = (x[node] + u[node]) - penetrator_position
+        distance = np.sqrt(np.sum(distance_component ** 2))
+
+        if distance < penetrator_radius:
+            
+            unit_vector = distance_component / distance
+            unit_vector_scaled = unit_vector * penetrator_radius
+
+            u[node] = (penetrator_position + unit_vector_scaled) - x[node]
+            v[node] = (u[node] - u_previous[node]) / dt
+            a = (v[node] - v_previous[node]) / dt
+
+            contact_force += (density * cell_area) * a  # F = ma
+
+    return u, v, contact_force

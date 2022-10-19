@@ -25,7 +25,8 @@ class Model():
 
     """
 
-    def __init__(self, particles, bonds, simulation, integrator, material_law):
+    def __init__(self, particles, bonds, simulation, integrator, material_law,
+                penetrator=None):
         """
         Model class constructor
 
@@ -42,6 +43,8 @@ class Model():
 
         material_law : function
 
+        penetrator: Penetrator class
+
         Returns
         -------
 
@@ -53,6 +56,7 @@ class Model():
         self.simulation = simulation
         self.integrator = integrator
         self.material_law = material_law
+        self.penetrator = penetrator
 
     def _single_time_step(self, i_time_step):
         """
