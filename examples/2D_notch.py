@@ -22,16 +22,16 @@ from classes.integrator import EulerCromer
 def build_particle_coordinates(dx, n_div_x, n_div_y):
     """
     Build particle coordinates
-    
+
     Parameters
     ----------
-    
+
     Returns
     -------
 
     Notes
     -----
-    
+
     """
     particle_coordinates = np.zeros([n_div_x * n_div_y, 2])
     counter = 0
@@ -48,12 +48,12 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
 
 
 def build_boundary_conditions(particles, dx):
-    
+
     bc_flag = np.zeros((len(particles), 2), dtype=np.intc)
     bc_unit_vector = np.zeros((len(particles), 2), dtype=np.intc)
 
     tol = 1e-6
-    
+
     for i, particle in enumerate(particles):
         if particle[1] < (0.02 + tol):
             bc_flag[i, 1] = 1
@@ -100,26 +100,26 @@ def determine_intersection(P1, P2, P3, P4):
         - Given two line segments, find if the 
           given line segments intersect with
           each other.
-    
+
     Parameters
     ----------
     P : 
         P = (x, y)
-        
+
     Returns
     ------
     Returns True if two lines intersect
-    
+
     Notes
     -----
     * This solution is based on the following
       paper:
-      
+
       Antonio, F. (1992). Faster line segment
       intersection. In Graphics Gems III
       (IBM Version) (pp. 199-202). Morgan
       Kaufmann.
-    
+
     """
 
     A = P2 - P1
@@ -180,7 +180,8 @@ def main():
                                                              bonds.bondlist,
                                                              notch)
     simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=0)
-    model = Model(particles, bonds, simulation, integrator)
+    model = Model(particles, bonds, simulation, integrator,
+                  linear.calculate_bond_damage(linear.sc))
 
     model.run_simulation()
 
