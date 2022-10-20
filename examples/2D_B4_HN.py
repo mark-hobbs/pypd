@@ -56,21 +56,9 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
     return particle_coordinates
 
 
-def build_boundary_conditions(particles, dx):
-
+def build_boundary_conditions(particles):
     bc_flag = np.zeros((len(particles), 2), dtype=np.intc)
     bc_unit_vector = np.zeros((len(particles), 2), dtype=np.intc)
-
-    tol = 1e-6
-
-    for i, particle in enumerate(particles):
-        if particle[1] < (0.02 + tol):
-            bc_flag[i, 1] = 1
-            bc_unit_vector[i, 1] = -1
-        if particle[1] > (0.23 - dx - tol):
-            bc_flag[i, 1] = 1
-            bc_unit_vector[i, 1] = 1
-
     return bc_flag, bc_unit_vector
 
 
@@ -170,13 +158,15 @@ def rebuild_node_families(n_nodes, bondlist):
 def main():
 
     dx = 1.25 * mm_to_m
-    n_div_x = np.rint((175 * mm_to_m) / dx).astype(int)
-    n_div_y = np.rint((50 * mm_to_m) / dx).astype(int)
-    notch = [np.array([0 - dx, 0.125 - (dx/2)]),
-             np.array([0.2, 0.125 - (dx/2)])]  # TODO: update
+    length = 175 * mm_to_m
+    depth = 50 * mm_to_m
+    n_div_x = np.rint(length / dx).astype(int)
+    n_div_y = np.rint(depth / dx).astype(int)
+    notch = [np.array([0, length * 0.5]),
+             np.array([depth * 0.5, length * 0.5])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
-    flag, unit_vector = build_boundary_conditions(x, dx)  # TODO: not needed
+    flag, unit_vector = build_boundary_conditions(x)  # TODO: not needed
 
     material = Material(name="quasi-brittle", E=37e9, Gf=143.2,
                         density=2346, ft=3.9E6)
@@ -190,16 +180,32 @@ def main():
                                                              notch)
     simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=0)
 
+    radius = 25 * mm_to_m
     penetrators = []
-    penetrators.append(Penetrator(np.array([0, 0]), 25 * mm_to_m, particles))
-    penetrators.append(Penetrator(np.array([0, 0]), 25 * mm_to_m, particles))
-    penetrators.append(Penetrator(np.array([0, 0]), 25 * mm_to_m, particles))
+    penetrators.append(Penetrator(np.array([0.5 * length, depth + radius]),
+                                  np.array([0, 1]),
+                                  np.array([0, 2 * mm_to_m]),
+                                  radius,
+                                  particles,
+                                  plot=True))
+    penetrators.append(Penetrator(np.array([0.5 * depth, -radius]),
+                                  np.array([0, 0]),
+                                  np.array([0, 0]),
+                                  radius,
+                                  particles,
+                                  plot=True))
+    penetrators.append(Penetrator(np.array([3 * depth, -radius]),
+                                  np.array([0, 0]),
+                                  np.array([0, 0]),
+                                  radius,
+                                  particles,
+                                  plot=True))
 
     model = Model(particles, bonds, simulation, integrator,
                   linear.calculate_bond_damage(linear.sc),
                   penetrators)
 
-    model.run_simulation()
+    # model.run_simulation()
 
 
 main()
