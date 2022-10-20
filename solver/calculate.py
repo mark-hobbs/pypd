@@ -126,7 +126,7 @@ def euler_cromer(node_force, u, v, a, damping, node_density, dt,
     -----
     * add random noise to particle displacement
         -  * np.random.uniform(0.98, 1.0)
-    * We need a generic method for employing different time intergation schemes
+    * We need a generic method for employing different time integration schemes
         - Euler
         - Euler-Cromer
         - Velocity-Verlet

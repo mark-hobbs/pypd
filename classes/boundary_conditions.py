@@ -13,8 +13,11 @@ class BoundaryConditions():
     flag : ndarray
         0 - no boundary condition
         1 - the node is subject to a boundary condition
+
     unit_vector : ndarray
+
     constraint : ndarray
+    
     magnitude : float
         TODO: should this be a simulation parameter?
 

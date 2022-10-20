@@ -1,24 +1,11 @@
 
 import numpy as np
 
-from numba import int16, float64
-from numba.experimental import jitclass
-
 from solver.calculate import (smooth_step_data,
                               calculate_contact_force)
 
-spec = [
-    ('ID', int16),
-    ('centre', float64[:]),
-    ('radius', float64),
-    ('search_radius', float64),
-    ('family', int16[:])
-]
-
 
 # TODO: should Penetrator be a base class? Create a subclass for supports
-
-@jitclass(spec)
 class Penetrator():
 
     # Numba doesn't support class members (class parameters). Therefore it is
@@ -28,19 +15,18 @@ class Penetrator():
     # Use a structured numpy array to avoid issues with passing an instance of
     # a class to a jit compiled function
 
-    def __init__(self, ID, centre, radius, search_radius, particles):
+    def __init__(self, ID, centre, radius, particles):
 
         self.ID = ID
         self.centre = centre
         self.radius = radius
-        self.search_radius = search_radius
+        self.search_radius = radius * 1.25
         self.family = self._build_family(particles)
 
     def _build_family(self, particles):
         family = []
         for i in range(particles.n_nodes):
-            distance = np.sqrt(np.sum((particles.x[i, :]
-                                      - self.centre[:, :])) ** 2)
+            distance = np.sqrt(np.sum((particles.x[i] - self.centre)) ** 2)
             if distance <= self.search_radius:
                 family.append(i)
 
