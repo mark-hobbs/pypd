@@ -27,6 +27,7 @@ from classes.penetrator import Penetrator
 
 mm_to_m = 1E-3
 
+
 def build_particle_coordinates(dx, n_div_x, n_div_y):
     """
     Build particle coordinates
@@ -167,7 +168,7 @@ def rebuild_node_families(n_nodes, bondlist):
 
 
 def main():
-    
+
     dx = 1.25 * mm_to_m
     n_div_x = np.rint((175 * mm_to_m) / dx).astype(int)
     n_div_y = np.rint((50 * mm_to_m) / dx).astype(int)
@@ -188,7 +189,7 @@ def main():
                                                              bonds.bondlist,
                                                              notch)
     simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=0)
-    
+
     penetrators = []
     penetrators.append(Penetrator(np.array([0, 0]), 25 * mm_to_m, particles))
     penetrators.append(Penetrator(np.array([0, 0]), 25 * mm_to_m, particles))
@@ -197,7 +198,8 @@ def main():
     model = Model(particles, bonds, simulation, integrator,
                   linear.calculate_bond_damage(linear.sc),
                   penetrators)
-    
+
     model.run_simulation()
+
 
 main()
