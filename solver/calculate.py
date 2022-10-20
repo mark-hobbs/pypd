@@ -209,29 +209,38 @@ def calculate_node_damage(x, bondlist, d, n_family_members):
     return node_damage
 
 
-@njit
+# @njit
 def calculate_contact_force(penetrator_family, penetrator_radius,
                             penetrator_position, x, u, v,
                             density, cell_volume, dt):
     """
     Calculate contact force - calculate the contact force between a rigid
-    penetrator and a deformable peridynamic body. Based on code from
-    rigid_impactor.f90 in Chapter 10 - Peridynamic Theory & its Applications
-    by Madenci & Oterkus
+    penetrator and a deformable peridynamic body.
 
     Parameters
     ----------
 
     Returns
     -------
+    u : ndarray
+        Updated displacement array
+
+    v : ndarray
+        Updated velocity array
+
+    contact_force : ndarray
+        Resultant force components
 
     Notes
     -----
+    Based on code from rigid_impactor.f90 in Chapter 10 - Peridynamic Theory &
+    its Applications by Madenci & Oterkus
     """
 
     n_nodes = len(penetrator_family)
     u_previous = u.copy()
     v_previous = v.copy()
+    contact_force = np.array([0, 0])  # TODO: hard coded
 
     for i in range(n_nodes):
 
@@ -249,6 +258,6 @@ def calculate_contact_force(penetrator_family, penetrator_radius,
             v[node] = (u[node] - u_previous[node]) / dt
             a = (v[node] - v_previous[node]) / dt
 
-            contact_force += (density * cell_volume) * a  # F = ma
+            contact_force = contact_force + (density * cell_volume * a)
 
     return u, v, contact_force

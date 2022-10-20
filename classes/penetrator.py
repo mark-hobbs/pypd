@@ -1,23 +1,22 @@
 
 import numpy as np
+import itertools
 
 from solver.calculate import (smooth_step_data,
                               calculate_contact_force)
 
-
 # TODO: should Penetrator be a base class? Create a subclass for supports
+
+
 class Penetrator():
 
-    # Numba doesn't support class members (class parameters). Therefore it is
-    # not currently possible to assign a unique ID to every class instance by
-    # incrementing a counter
+    ID_iter = itertools.count()
+    _registry = []
 
-    # Use a structured numpy array to avoid issues with passing an instance of
-    # a class to a jit compiled function
+    def __init__(self, centre, radius, particles):
 
-    def __init__(self, ID, centre, radius, particles):
-
-        self.ID = ID
+        self._registry.append(self)
+        self.ID = next(Penetrator.ID_iter)
         self.centre = centre
         self.radius = radius
         self.search_radius = radius * 1.25
@@ -37,9 +36,10 @@ class Penetrator():
         Update the penetrator position
 
         TODO: the final displacement should not be hard coded
+        TODO: this function clearly won't work properly
         """
         return self.centre + smooth_step_data(i_time_step, 0, n_time_steps,
-                                              0, 1e-4)
+                                              0, 0)
 
     def calculate_penetrator_force(self, particles, simulation, i_time_step):
         """
@@ -57,9 +57,3 @@ class Penetrator():
                                        particles.x, particles.u, particles.v,
                                        particles.material.density,
                                        particles.cell_volume, simulation.dt)
-
-    def update_penetrator_position():
-        """
-        Update the penetrator position
-        """
-        pass

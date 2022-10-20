@@ -26,7 +26,7 @@ class Model():
     """
 
     def __init__(self, particles, bonds, simulation, integrator, material_law,
-                penetrator=None):
+                 penetrators=None):
         """
         Model class constructor
 
@@ -43,7 +43,8 @@ class Model():
 
         material_law : function
 
-        penetrator: Penetrator class
+        penetrators: list
+            List of penetrator objects/instances
 
         Returns
         -------
@@ -56,7 +57,7 @@ class Model():
         self.simulation = simulation
         self.integrator = integrator
         self.material_law = material_law
-        self.penetrator = penetrator
+        self.penetrators = penetrators
 
     def _single_time_step(self, i_time_step):
         """
@@ -76,6 +77,12 @@ class Model():
                                                          self.material_law)
         self.particles.update_particle_positions(nf, self.simulation,
                                                  self.integrator, i_time_step)
+
+        if self.penetrators:
+            for penetrator in self.penetrators:
+                penetrator.calculate_penetrator_force(self.particles,
+                                                      self.simulation,
+                                                      i_time_step)
 
     def run_simulation(self):
         """
