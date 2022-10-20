@@ -182,30 +182,27 @@ def main():
 
     radius = 25 * mm_to_m
     penetrators = []
-    penetrators.append(Penetrator(np.array([0.5 * length, depth + radius]),
+    penetrators.append(Penetrator(np.array([0.5 * length, depth + radius - dx]),
                                   np.array([0, 1]),
-                                  np.array([0, 2 * mm_to_m]),
+                                  np.array([0, -2 * mm_to_m]),
                                   radius,
-                                  particles,
-                                  plot=True))
+                                  particles))
     penetrators.append(Penetrator(np.array([0.5 * depth, -radius]),
                                   np.array([0, 0]),
                                   np.array([0, 0]),
                                   radius,
-                                  particles,
-                                  plot=True))
+                                  particles))
     penetrators.append(Penetrator(np.array([3 * depth, -radius]),
                                   np.array([0, 0]),
                                   np.array([0, 0]),
                                   radius,
-                                  particles,
-                                  plot=True))
+                                  particles))
 
     model = Model(particles, bonds, simulation, integrator,
                   linear.calculate_bond_damage(linear.sc),
                   penetrators)
 
-    # model.run_simulation()
+    model.run_simulation()
 
 
 main()

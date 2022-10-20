@@ -31,7 +31,7 @@ class Penetrator():
     def _build_family(self, particles):
         family = []
         for i in range(particles.n_nodes):
-            distance = np.sqrt(np.sum((particles.x[i] - self.centre)) ** 2)
+            distance = np.sqrt(np.sum((particles.x[i] - self.centre) ** 2))
             if distance <= self.search_radius:
                 family.append(i)
 
