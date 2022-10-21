@@ -9,7 +9,7 @@ Notes
 import numpy as np
 from numba import njit
 
-from solver.constitutive_model import linear
+from solver.constitutive_model import linear, trilinear
 
 
 class ConstitutiveLaw():
@@ -20,6 +20,30 @@ class ConstitutiveLaw():
 
     def __init__():
         pass
+
+    def _calculate_bond_stiffness(self, material, particles):
+        """
+        Bond stiffness
+            - linear elastic model
+            - 2D
+            - plane stress
+
+        Parameters
+        ----------
+        material :
+            Instance of material class
+
+        Returns
+        -------
+        c : float
+            Bond stiffness
+
+        Notes
+        -----
+        TODO: this function is generic to all material models
+        """
+        t = 2.5E-3  # TODO: do not hardcode values
+        return (9 * material.E) / (np.pi * t * particles.horizon**3)
 
     def required_parameters():
         """
@@ -42,7 +66,7 @@ class ConstitutiveLaw():
         pass
 
 
-class Linear():
+class Linear(ConstitutiveLaw):
     """
     Linear constitutive model
 
@@ -61,7 +85,7 @@ class Linear():
         - class Linear(ConstitutiveLaw):
     """
 
-    def __init__(self, material, particles):
+    def __init__(self, material, particles, c=None, sc=None):
         """
         Linear constitutive model class constructor
 
@@ -82,32 +106,14 @@ class Linear():
         * TODO: passing an instance of particles is probably bad design and
         should be improved
         """
-        self.c = self._calculate_bond_stiffness(material, particles)
-        self.sc = self._calculate_critical_stretch(material, particles)
+        self.c = c
+        self.sc = sc
 
-    def _calculate_bond_stiffness(self, material, particles):
-        """
-        Bond stiffness
-            - linear elastic model
-            - 2D
-            - plane stress
+        if self.c is None:
+            self.c = self._calculate_bond_stiffness(material, particles)
 
-        Parameters
-        ----------
-        material :
-            Instance of material class
-
-        Returns
-        -------
-        c : float
-            Bond stiffness
-
-        Notes
-        -----
-        """
-        t = 2.5E-3  # TODO: do not hardcode values
-        c = (9 * material.E) / (np.pi * t * particles.horizon**3)
-        return c
+        if self.sc is None:
+            self.sc = self._calculate_critical_stretch(material, particles)
 
     def _calculate_critical_stretch(self, material, particles):
         """
@@ -205,7 +211,106 @@ class Bilinear(ConstitutiveLaw):
 
 
 class Trilinear(ConstitutiveLaw):
-    pass
+
+    def __init__(self, material, particles, c=None, s0=None, s1=None, sc=None,
+                 beta=0.25):
+        """
+        Trilinear constitutive model class constructor
+
+        Parameters
+        ----------
+        material : Material class
+
+        Returns
+        -------
+        c : float
+            Bond stiffness
+
+        s0 : float
+            Linear elastic limit
+
+        s1 : float
+
+        sc : float
+            Critical stretch
+
+        beta : float
+            Kink point in the trilinear model (default = 0.25)
+
+        Notes
+        -----
+        """
+        self.c = c
+        self.s0 = s0
+        self.s1 = s1
+        self.sc = sc
+        self.beta = beta
+
+        if self.c is None:
+            self.c = self._calculate_bond_stiffness(material, particles)
+
+        if self.s0 is None:
+            self.s0 = self._calculate_linear_elastic_limit(material)
+
+        if self.sc is None:
+            self.sc = self._calculate_critical_stretch()
+
+    def _calculate_linear_elastic_limit(self, material):
+        return material.ft / material.E
+
+    def _calculate_critical_stretch(self):
+        pass
+
+    @staticmethod
+    def calculate_bond_damage(s0, s1, sc, beta):
+        """
+        Calculate bond damage
+
+        Parameters
+        ----------
+        sc : float
+
+        Returns
+        -------
+        wrapper : function
+            Return a function with the call statement:
+                - calculate_bond_damage(stretch, d)
+            The parameters specific to the material model are wrapped...
+
+        Notes
+        -----
+        """
+        @njit
+        def wrapper(stretch, d):
+            """
+            Calculate bond damage
+
+            Parameters
+            ----------
+            stretch : float
+                Bond stretch
+
+            d : float
+                Bond damage (softening parameter) at time t. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
+
+            Returns
+            -------
+            d : float
+                Bond damage (softening parameter) at time t+1. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
+
+            Notes
+            -----
+            * Examine closures and factory functions
+            """
+            return trilinear(stretch, d, s0, s1, sc, beta)
+
+        return wrapper
 
 
 class NonLinear(ConstitutiveLaw):

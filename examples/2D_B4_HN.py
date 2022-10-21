@@ -21,7 +21,7 @@ from classes.particles import ParticleSet
 from classes.bonds import BondSet
 from classes.model import Model
 from classes.simulation import Simulation
-from classes.constitutive_law import Linear
+from classes.constitutive_law import Linear, Trilinear
 from classes.integrator import EulerCromer
 from classes.penetrator import Penetrator
 
@@ -174,11 +174,13 @@ def main():
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
     linear = Linear(material, particles)
+    trilinear = Trilinear(material, particles, s0=1.04E-4, s1=6.9E-4,
+                          sc=5.56E-3)
     bonds = BondSet(particles, linear)
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-8, n_time_steps=50000, damping=0)
+    simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=1e6)
 
     radius = 25 * mm_to_m
     penetrators = []
@@ -204,8 +206,18 @@ def main():
                                   name="Support - right",
                                   plot=False))
 
-    model = Model(particles, bonds, simulation, integrator,
-                  linear.calculate_bond_damage(linear.sc),
+    # model = Model(particles, bonds, simulation, integrator,
+    #               linear.calculate_bond_damage(linear.sc),
+    #               penetrators)
+
+    model = Model(particles,
+                  bonds,
+                  simulation,
+                  integrator,
+                  trilinear.calculate_bond_damage(trilinear.s0,
+                                                  trilinear.s1,
+                                                  trilinear.sc,
+                                                  trilinear.beta),
                   penetrators)
 
     model.run_simulation()
