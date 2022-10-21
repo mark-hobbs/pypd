@@ -15,7 +15,7 @@ class Penetrator():
     _registry = []
 
     def __init__(self, centre, unit_vector, magnitude, radius, particles,
-                plot=False):
+                name="Penetrator", plot=False):
 
         self._registry.append(self)
         self.ID = next(Penetrator.ID_iter)
@@ -25,6 +25,7 @@ class Penetrator():
         self.radius = radius
         self.search_radius = radius * 1.25
         self.family = self._build_family(particles)
+        self.name = name
         if plot == True:
             self.plot_penetrator(particles)
 
@@ -78,4 +79,5 @@ class Penetrator():
         ax.set_aspect( 1 )
         ax.add_patch(circle)
         ax.scatter(particles.x[self.family, 0], particles.x[self.family, 1])
+        plt.title(self.name)
         plt.show()
