@@ -68,6 +68,7 @@ class Model():
 
         Returns
         -------
+        simulation_data : SimulationData class
 
         Notes
         -----
@@ -94,11 +95,13 @@ class Model():
         Returns
         -------
 
+        history : SimulationData class
+            History of the simulation run
+
         Notes
         -----
 
         """
-
         for i_time_step in trange(self.simulation.n_time_steps,
                                   desc="Simulation Progress",
                                   unit="steps"):

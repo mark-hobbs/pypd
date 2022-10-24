@@ -60,6 +60,16 @@ class Penetrator():
         ----------
         particles : ParticleSet
 
+        Returns
+        -------
+        u : ndarray
+            Updated displacement array
+
+        v : ndarray
+            Updated velocity array
+
+        contact_force : ndarray
+            Resultant force components
         """
         position = self.update_penetrator_position(i_time_step,
                                                    simulation.n_time_steps)
