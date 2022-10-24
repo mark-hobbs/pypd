@@ -16,6 +16,8 @@ class ConstitutiveLaw():
     """
     Subclass this to define a new constitutive law. This class ensures that
     all constitutive models follow the correct format.
+
+    TODO: rename ConstitutiveLaw2D?
     """
 
     def __init__():
@@ -42,8 +44,7 @@ class ConstitutiveLaw():
         -----
         TODO: this function is generic to all material models
         """
-        t = 2.5E-3  # TODO: do not hardcode values
-        return (9 * material.E) / (np.pi * t * particles.horizon**3)
+        return (9 * material.E) / (np.pi * self.t * particles.horizon**3)
 
     def required_parameters():
         """
@@ -85,13 +86,18 @@ class Linear(ConstitutiveLaw):
         - class Linear(ConstitutiveLaw):
     """
 
-    def __init__(self, material, particles, c=None, sc=None):
+    def __init__(self, material, particles, t, c=None, sc=None):
         """
         Linear constitutive model class constructor
 
         Parameters
         ----------
         material : Material class
+
+        particles: ParticleSet class
+
+        thickness : float
+            Discretisation dx...
 
         Returns
         -------
@@ -106,6 +112,7 @@ class Linear(ConstitutiveLaw):
         * TODO: passing an instance of particles is probably bad design and
         should be improved
         """
+        self.t = t
         self.c = c
         self.sc = sc
 
@@ -113,13 +120,12 @@ class Linear(ConstitutiveLaw):
             self.c = self._calculate_bond_stiffness(material, particles)
 
         if self.sc is None:
-            self.sc = self._calculate_critical_stretch(material, particles)
+            self.sc = self._calculate_sc(material, particles)
 
-    def _calculate_critical_stretch(self, material, particles):
+    def _calculate_sc(self, material, particles):
         """
-        Critical stretch
-            - linear elastic model
-            - 2D
+        Calculate the critical stretch for a linear elastic material in
+        two-dimensions
 
         Parameters
         ----------
@@ -131,9 +137,8 @@ class Linear(ConstitutiveLaw):
         -----
 
         """
-        sc = np.sqrt((4 * np.pi * material.Gf)
-                     / (9 * material.E * particles.horizon))
-        return sc
+        return np.sqrt((4 * np.pi * material.Gf)
+                       / (9 * material.E * particles.horizon))
 
     @staticmethod
     def calculate_bond_damage(sc):
@@ -212,7 +217,7 @@ class Bilinear(ConstitutiveLaw):
 
 class Trilinear(ConstitutiveLaw):
 
-    def __init__(self, material, particles, c=None, s0=None, s1=None, sc=None,
+    def __init__(self, material, particles, t, c=None, s0=None, sc=None,
                  beta=0.25):
         """
         Trilinear constitutive model class constructor
@@ -220,6 +225,11 @@ class Trilinear(ConstitutiveLaw):
         Parameters
         ----------
         material : Material class
+
+        particles: ParticleSet class
+
+        thickness : float
+            Discretisation dx...
 
         Returns
         -------
@@ -240,26 +250,44 @@ class Trilinear(ConstitutiveLaw):
         Notes
         -----
         """
+        self.t = t
         self.c = c
         self.s0 = s0
-        self.s1 = s1
         self.sc = sc
         self.beta = beta
-
+        self.gamma = self._calculate_gamma()
+        
         if self.c is None:
             self.c = self._calculate_bond_stiffness(material, particles)
 
         if self.s0 is None:
-            self.s0 = self._calculate_linear_elastic_limit(material)
+            self.s0 = self._calculate_s0(material)
 
         if self.sc is None:
-            self.sc = self._calculate_critical_stretch()
+            self.sc = self._calculate_sc(material, particles)
 
-    def _calculate_linear_elastic_limit(self, material):
+        self.s1 = self._calculate_s1()
+
+    def _calculate_s0(self, material):
+        """
+        Calculate the linear elastic limit
+        """
         return material.ft / material.E
 
-    def _calculate_critical_stretch(self):
-        pass
+    def _calculate_sc(self, material, particles):
+        """
+        Calculate the critical stretch
+        """
+        numerator = 10 * self.gamma * material.Gf
+        denominator = (np.pi * particles.horizon**5 * self.c * self.s0
+                       * (1 + (self.gamma * self.beta)))
+        return (numerator / denominator) + self.s0
+
+    def _calculate_gamma(self):
+        return (3 + (2 * self.beta)) / (2 * self.beta * (1 - self.beta))
+
+    def _calculate_s1(self):
+        return self.s0 + ((self.sc - self.s0) / self.gamma)
 
     @staticmethod
     def calculate_bond_damage(s0, s1, sc, beta):

@@ -296,11 +296,11 @@ def calculate_contact_force(penetrator_family, penetrator_radius,
     u_previous = u.copy()
     v_previous = v.copy()
 
-    distance_component = np.zeros((n_dimensions), np.float64)
-    contact_force = np.zeros((n_dimensions), np.float64)
-    unit_vector = np.zeros((n_dimensions), np.float64)
-    unit_vector_scaled = np.zeros((n_dimensions), np.float64)
-    a = np.zeros((n_dimensions), np.float64)
+    distance_component = np.zeros(n_dimensions, np.float64)
+    contact_force = np.zeros(n_dimensions, np.float64)
+    unit_vector = np.zeros(n_dimensions, np.float64)
+    unit_vector_scaled = np.zeros(n_dimensions, np.float64)
+    a = np.zeros(n_dimensions, np.float64)
 
     for i in range(n_nodes):
         node = penetrator_family[i]

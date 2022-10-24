@@ -160,6 +160,7 @@ def main():
     dx = 0.625 * mm_to_m
     length = 175 * mm_to_m
     depth = 50 * mm_to_m
+    width = 50 * mm_to_m  # thickness
     n_div_x = np.rint(length / dx).astype(int)
     n_div_y = np.rint(depth / dx).astype(int)
     notch = [np.array([length * 0.5, 0]),
@@ -173,14 +174,13 @@ def main():
     integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles)
-    trilinear = Trilinear(material, particles, s0=1.04E-4, s1=6.9E-4,
-                          sc=5.56E-3)
+    linear = Linear(material, particles, dx)
+    trilinear = Trilinear(material, particles, dx)
     bonds = BondSet(particles, linear)
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=1e6)
+    simulation = Simulation(dt=1e-9, n_time_steps=50000, damping=1e6)
 
     radius = 25 * mm_to_m
     penetrators = []
