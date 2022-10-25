@@ -16,7 +16,6 @@ class Penetrator():
 
     def __init__(self, centre, unit_vector, magnitude, radius, particles,
                 name="Penetrator", plot=False):
-
         self._registry.append(self)
         self.ID = next(Penetrator.ID_iter)
         self.centre = centre
@@ -28,6 +27,7 @@ class Penetrator():
         self.name = name
         if plot == True:
             self.plot_penetrator(particles)
+        self.penetrator_force_history = []
 
     def _build_family(self, particles):
         family = []
@@ -70,13 +70,19 @@ class Penetrator():
 
         contact_force : ndarray
             Resultant force components
+
+        Notes
+        -----
+        TODO: this function does not need to return u and v
+        TODO: write a decorator to save the force history
         """
         position = self.update_penetrator_position(i_time_step,
                                                    simulation.n_time_steps)
-        return calculate_contact_force(self.family, self.radius, position,
-                                       particles.x, particles.u, particles.v,
-                                       particles.material.density,
-                                       particles.cell_volume, simulation.dt)
+        force = calculate_contact_force(self.family, self.radius, position,
+                                        particles.x, particles.u, particles.v,
+                                        particles.material.density,
+                                        particles.cell_volume, simulation.dt)
+        self.penetrator_force_history.append(force)
 
     def plot_penetrator(self, particles):
         """

@@ -14,6 +14,7 @@ python -m examples.2D_B4_HN.py
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from classes.boundary_conditions import BoundaryConditions
 from classes.material import Material
@@ -24,6 +25,7 @@ from classes.simulation import Simulation
 from classes.constitutive_law import Linear, Trilinear
 from classes.integrator import EulerCromer
 from classes.penetrator import Penetrator
+from classes.simulation_data import Observation
 
 mm_to_m = 1E-3
 
@@ -206,6 +208,16 @@ def main():
                                   name="Support - right",
                                   plot=False))
 
+    observations = []
+    observations.append(Observation(np.array([77.5 * mm_to_m, 0]),
+                                    particles,
+                                    period=1,
+                                    name="CMOD - left"))
+    observations.append(Observation(np.array([97.5 * mm_to_m, 0]),
+                                    particles,
+                                    period=1,
+                                    name="CMOD - right"))
+
     # model = Model(particles, bonds, simulation, integrator,
     #               linear.calculate_bond_damage(linear.sc),
     #               penetrators)
@@ -218,9 +230,16 @@ def main():
                                                   trilinear.s1,
                                                   trilinear.sc,
                                                   trilinear.beta),
-                  penetrators)
+                  penetrators,
+                  observations)
 
     model.run_simulation()
-
+    
+    # Plot load-CMOD response
+    load = np.array(model.penetrators[0].penetrator_force_history)
+    cmod = (np.array(model.observations[1].history)
+            - np.array(model.observations[0].history))
+    # plt.plot(cmod[:, 0], load[:, 1])
+    # plt.show()
 
 main()

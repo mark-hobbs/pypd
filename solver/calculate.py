@@ -323,4 +323,4 @@ def calculate_contact_force(penetrator_family, penetrator_radius,
                 contact_force[j] = contact_force[j] + (density * cell_volume
                                                        * a[j])
 
-    return u, v, contact_force
+    return contact_force

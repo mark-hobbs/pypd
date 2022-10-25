@@ -26,7 +26,7 @@ class Model():
     """
 
     def __init__(self, particles, bonds, simulation, integrator, material_law,
-                 penetrators=None):
+                 penetrators=None, observations=None):
         """
         Model class constructor
 
@@ -58,6 +58,7 @@ class Model():
         self.integrator = integrator
         self.material_law = material_law
         self.penetrators = penetrators
+        self.observations = observations
 
     def _single_time_step(self, i_time_step):
         """
@@ -94,18 +95,22 @@ class Model():
 
         Returns
         -------
-
         history : SimulationData class
             History of the simulation run
 
         Notes
         -----
+        TODO: clean up observation.record_history()
 
         """
         for i_time_step in trange(self.simulation.n_time_steps,
                                   desc="Simulation Progress",
                                   unit="steps"):
             self._single_time_step(i_time_step)
+
+            if self.observations:
+                for observation in self.observations:
+                    observation.record_history(i_time_step, self.particles.u)
 
         self.particles.calculate_particle_damage(self.bonds)
         self.plot_deformed_particles(sz=1, data=self.particles.damage)
