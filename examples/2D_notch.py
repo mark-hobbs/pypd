@@ -134,7 +134,7 @@ def determine_intersection(P1, P2, P3, P4):
     alpha = alpha_numerator / denominator
     beta = beta_numerator / denominator
 
-    if (0 < alpha < 1) and (0 < beta < 1):
+    if (0 <= alpha <= 1) and (0 <= beta <= 1):
         intersect = True
     else:
         intersect = False
@@ -174,7 +174,7 @@ def main():
     integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles)
+    linear = Linear(material, particles, dx)
     bonds = BondSet(particles, linear)
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
@@ -183,7 +183,7 @@ def main():
     model = Model(particles, bonds, simulation, integrator,
                   linear.calculate_bond_damage(linear.sc))
 
-    model.run_simulation()
+    model.run_simulation(plot=True)
 
 
 main()

@@ -28,6 +28,7 @@ from classes.penetrator import Penetrator
 from classes.simulation_data import Observation
 
 mm_to_m = 1E-3
+m_to_mm = 1E3
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -96,7 +97,7 @@ def build_notch(x, bondlist, notch):
 def determine_intersection(P1, P2, P3, P4):
     """
     Determine if a bond intersects with a notch
-        - Given two line segments, find if the 
+        - Given two line segments, find if the
           given line segments intersect with
           each other.
 
@@ -133,7 +134,7 @@ def determine_intersection(P1, P2, P3, P4):
     alpha = alpha_numerator / denominator
     beta = beta_numerator / denominator
 
-    if (0 < alpha < 1) and (0 < beta < 1):
+    if (0 <= alpha <= 1) and (0 <= beta <= 1):
         intersect = True
     else:
         intersect = False
@@ -159,14 +160,14 @@ def rebuild_node_families(n_nodes, bondlist):
 
 def main():
 
-    dx = 0.625 * mm_to_m
+    dx = .625 * mm_to_m
     length = 175 * mm_to_m
     depth = 50 * mm_to_m
-    width = 50 * mm_to_m  # thickness
+    width = 50 * mm_to_m
     n_div_x = np.rint(length / dx).astype(int)
     n_div_y = np.rint(depth / dx).astype(int)
-    notch = [np.array([length * 0.5, 0]),
-             np.array([length * 0.5, depth * 0.5])]
+    notch = [np.array([(length * 0.5) + (dx * 0.5), 0]),
+             np.array([(length * 0.5) + (dx * 0.5), depth * 0.5])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     flag, unit_vector = build_boundary_conditions(x)  # TODO: not needed
@@ -182,13 +183,13 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-9, n_time_steps=50000, damping=1e6)
+    simulation = Simulation(dt=1e-9, n_time_steps=100000, damping=0)
 
     radius = 25 * mm_to_m
     penetrators = []
     penetrators.append(Penetrator(np.array([0.5 * length, depth + radius - dx]),
                                   np.array([0, 1]),
-                                  np.array([0, -.2 * mm_to_m]),
+                                  np.array([0, -.5 * mm_to_m]),
                                   radius,
                                   particles,
                                   name="Penetrator",
@@ -236,10 +237,12 @@ def main():
     model.run_simulation()
     
     # Plot load-CMOD response
-    load = np.array(model.penetrators[0].penetrator_force_history)
+    load = - np.array(model.penetrators[0].penetrator_force_history)
+    # load = (np.array(model.penetrators[1].penetrator_force_history)
+    #         + np.array(model.penetrators[2].penetrator_force_history))
     cmod = (np.array(model.observations[1].history)
             - np.array(model.observations[0].history))
-    # plt.plot(cmod[:, 0], load[:, 1])
-    # plt.show()
+    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * width))
+    plt.show()
 
 main()

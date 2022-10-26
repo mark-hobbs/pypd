@@ -44,8 +44,12 @@ class Observation():
         return tree.query(self.coordinates)
 
     def record_history(self, time_step, data):
+        """
+        Record the history of a user defined variable during a simulation run,
+        for example, particle displacement
+        """
         if time_step % self.period == 0:
-            self.history.append(data[self.particle])
+            self.history.append(data[self.particle].copy())
 
 
 class SimulationData():

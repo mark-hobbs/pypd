@@ -86,7 +86,7 @@ class Model():
                                                       self.simulation,
                                                       i_time_step)
 
-    def run_simulation(self):
+    def run_simulation(self, plot=False):
         """
         Run the simulation
 
@@ -112,8 +112,9 @@ class Model():
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
 
-        self.particles.calculate_particle_damage(self.bonds)
-        self.plot_deformed_particles(sz=1, data=self.particles.damage)
+        if plot is True:
+            self.particles.calculate_particle_damage(self.bonds)
+            self.plot_deformed_particles(sz=1, data=self.particles.damage)
 
     def plot_deformed_particles(self, sz=2, dsf=10, data=None,
                                 fig_title="deformed_particles"):
