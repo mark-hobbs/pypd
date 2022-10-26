@@ -166,6 +166,7 @@ def main():
     width = 50 * mm_to_m
     n_div_x = np.rint(length / dx).astype(int)
     n_div_y = np.rint(depth / dx).astype(int)
+    n_div_z = np.rint(width / dx).astype(int)
     notch = [np.array([(length * 0.5) + (dx * 0.5), 0]),
              np.array([(length * 0.5) + (dx * 0.5), depth * 0.5])]
 
@@ -183,13 +184,13 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-9, n_time_steps=100000, damping=0)
+    simulation = Simulation(dt=1e-9, n_time_steps=200000, damping=0)
 
     radius = 25 * mm_to_m
     penetrators = []
     penetrators.append(Penetrator(np.array([0.5 * length, depth + radius - dx]),
                                   np.array([0, 1]),
-                                  np.array([0, -.5 * mm_to_m]),
+                                  np.array([0, -.1 * mm_to_m]),
                                   radius,
                                   particles,
                                   name="Penetrator",
@@ -242,7 +243,7 @@ def main():
     #         + np.array(model.penetrators[2].penetrator_force_history))
     cmod = (np.array(model.observations[1].history)
             - np.array(model.observations[0].history))
-    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * width))
+    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
     plt.show()
 
 main()
