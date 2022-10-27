@@ -236,14 +236,19 @@ def main():
                   observations)
 
     model.run_simulation()
-    
+
     # Plot load-CMOD response
     load = - np.array(model.penetrators[0].penetrator_force_history)
     # load = (np.array(model.penetrators[1].penetrator_force_history)
     #         + np.array(model.penetrators[2].penetrator_force_history))
     cmod = (np.array(model.observations[1].history)
             - np.array(model.observations[0].history))
-    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
-    plt.show()
+    # plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
+    # plt.show()
+
+    data = [(cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z)]
+    np.savetxt('load_cmod.csv', np.transpose(np.array(data)),
+               delimiter=',', fmt='%f')
+
 
 main()

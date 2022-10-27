@@ -342,4 +342,54 @@ class Trilinear(ConstitutiveLaw):
 
 
 class NonLinear(ConstitutiveLaw):
-    pass
+
+    def __init__(self, material, particles, t, c=None, s0=None, sc=None,
+                 alpha=0.25, k=25):
+        """
+        Non-linear constitutive model class constructor
+
+        Parameters
+        ----------
+        material : Material class
+
+        particles: ParticleSet class
+
+        thickness : float
+            Discretisation dx...
+
+        Returns
+        -------
+        c : float
+            Bond stiffness
+
+        s0 : float
+            Linear elastic limit
+
+        sc : float
+            Critical stretch
+
+        alpha : float
+            alpha controls the position of the transition from exponential to
+            linear decay (default = 0.25)
+
+        k : float
+            k controls the rate of exponential decay (default = 25)
+
+        Notes
+        -----
+        """
+        self.t = t
+        self.c = c
+        self.s0 = s0
+        self.sc = sc
+        self.alpha = alpha
+        self.k = k
+        
+        if self.c is None:
+            self.c = self._calculate_bond_stiffness(material, particles)
+
+        if self.s0 is None:
+            self.s0 = self._calculate_s0(material)
+
+        if self.sc is None:
+            self.sc = self._calculate_sc(material, particles)

@@ -41,9 +41,6 @@ class Penetrator():
     def update_penetrator_position(self, i_time_step, n_time_steps):
         """
         Update the penetrator position
-
-        TODO: the final displacement should not be hard coded
-        TODO: this function clearly won't work properly
         """
         return self.centre + (self.unit_vector
                               * smooth_step_data(i_time_step,
