@@ -22,7 +22,7 @@ from classes.particles import ParticleSet
 from classes.bonds import BondSet
 from classes.model import Model
 from classes.simulation import Simulation
-from classes.constitutive_law import Linear, Trilinear
+from classes.constitutive_law import Linear, Trilinear, NonLinear
 from classes.integrator import EulerCromer
 from classes.penetrator import Penetrator
 from classes.simulation_data import Observation
@@ -180,7 +180,10 @@ def main():
     particles = ParticleSet(x, dx, bc, material)
     linear = Linear(material, particles, dx)
     trilinear = Trilinear(material, particles, dx)
+    nonlinear = NonLinear(material, particles, dx)
     trilinear.print_parameters()
+    nonlinear.print_parameters()
+
     bonds = BondSet(particles, linear)
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,

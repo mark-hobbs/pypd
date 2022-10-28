@@ -276,7 +276,7 @@ class Trilinear(ConstitutiveLaw):
 
     def _calculate_sc(self, material, particles):
         """
-        Calculate the critical stretch
+        Trilinear model - calculate the critical stretch
         """
         numerator = 10 * self.gamma * material.Gf
         denominator = (np.pi * particles.horizon**5 * self.c * self.s0
@@ -393,7 +393,7 @@ class NonLinear(ConstitutiveLaw):
         self.sc = sc
         self.alpha = alpha
         self.k = k
-        
+
         if self.c is None:
             self.c = self._calculate_bond_stiffness(material, particles)
 
@@ -402,6 +402,33 @@ class NonLinear(ConstitutiveLaw):
 
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
+
+    def _calculate_s0(self, material):
+        """
+        Calculate the linear elastic limit
+        """
+        return material.ft / material.E
+
+    def _calculate_sc(self, material, particles):
+        """
+        Nonlinear model - calculate the critical stretch
+        """
+        numerator_a = 4 * self.k * (1 - np.exp(self.k)) * (1 + self.alpha)
+        numerator_b = ((self.t * self.c * particles.horizon**4 * self.s0**2
+                       * ((2 * self.k)
+                          - (2 * np.exp(self.k))
+                          + (self.alpha * self.k)
+                          - (self.alpha * self.k * np.exp(self.k) + 2)))
+                       / ((4 * self.k)
+                          + (np.exp(self.k) - 1)
+                          * (1 + self.alpha)))
+        numerator = numerator_a * (material.Gf - numerator_b)
+        denominator_a = self.t * self.c * particles.horizon**4 * self.s0
+        denominator_b = ((2 * self.k) - (2 * np.exp(self.k))
+                         + (self.alpha * self.k)
+                         - (self.alpha * self.k * np.exp(self.k)) + 2)
+        denominator = denominator_a * denominator_b
+        return numerator / denominator
 
     def print_parameters(self):
         """
