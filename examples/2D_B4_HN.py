@@ -180,6 +180,7 @@ def main():
     particles = ParticleSet(x, dx, bc, material)
     linear = Linear(material, particles, dx)
     trilinear = Trilinear(material, particles, dx)
+    trilinear.print_parameters()
     bonds = BondSet(particles, linear)
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,

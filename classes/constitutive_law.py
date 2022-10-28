@@ -340,6 +340,15 @@ class Trilinear(ConstitutiveLaw):
 
         return wrapper
 
+    def print_parameters(self):
+        """
+        Print constitutive model parameters
+        """
+        print('{0:>10s} : {1:>12,.5E}'.format('c', self.c))
+        print('{0:>10s} : {1:>12,.5E}'.format('s0', self.s0))
+        print('{0:>10s} : {1:>12,.5E}'.format('sc', self.sc))
+        print('{0:>10s} : {1:>12,.2f}'.format('beta', self.beta))
+
 
 class NonLinear(ConstitutiveLaw):
 
@@ -393,3 +402,13 @@ class NonLinear(ConstitutiveLaw):
 
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
+
+    def print_parameters(self):
+        """
+        Print constitutive model parameters
+        """
+        print('{0:>10s} : {1:>12,.5E}'.format('c', self.c))
+        print('{0:>10s} : {1:>12,.5E}'.format('s0', self.s0))
+        print('{0:>10s} : {1:>12,.5E}'.format('sc', self.sc))
+        print('{0:>10s} : {1:>12,.2f}'.format('alpha', self.alpha))
+        print('{0:>10s} : {1:>12,.2f}'.format('k', self.k))
