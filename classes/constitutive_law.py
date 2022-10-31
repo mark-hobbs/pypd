@@ -9,7 +9,7 @@ Notes
 import numpy as np
 from numba import njit
 
-from solver.constitutive_model import linear, trilinear
+from solver.constitutive_model import linear, trilinear, nonlinear
 
 
 class ConstitutiveLaw():
@@ -429,6 +429,57 @@ class NonLinear(ConstitutiveLaw):
                          - (self.alpha * self.k * np.exp(self.k)) + 2)
         denominator = denominator_a * denominator_b
         return numerator / denominator
+
+    @staticmethod
+    def calculate_bond_damage(s0, sc, alpha, k):
+        """
+        Calculate bond damage
+
+        Parameters
+        ----------
+        sc : float
+
+        Returns
+        -------
+        wrapper : function
+            Return a function with the call statement:
+                - calculate_bond_damage(stretch, d)
+            The parameters specific to the material model are wrapped...
+
+        Notes
+        -----
+        """
+        @njit
+        def wrapper(stretch, d):
+            """
+            Calculate bond damage
+
+            Parameters
+            ----------
+            stretch : float
+                Bond stretch
+
+            d : float
+                Bond damage (softening parameter) at time t. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
+
+            Returns
+            -------
+            d : float
+                Bond damage (softening parameter) at time t+1. The value of d
+                will range from 0 to 1, where 0 indicates that the bond is
+                still in the elastic range, and 1 represents a bond that has
+                failed
+
+            Notes
+            -----
+            * Examine closures and factory functions
+            """
+            return nonlinear(stretch, d, s0, sc, alpha, k)
+
+        return wrapper
 
     def print_parameters(self):
         """

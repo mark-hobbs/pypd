@@ -228,14 +228,25 @@ def main():
     #               linear.calculate_bond_damage(linear.sc),
     #               penetrators)
 
+    # model = Model(particles,
+    #               bonds,
+    #               simulation,
+    #               integrator,
+    #               trilinear.calculate_bond_damage(trilinear.s0,
+    #                                               trilinear.s1,
+    #                                               trilinear.sc,
+    #                                               trilinear.beta),
+    #               penetrators,
+    #               observations)
+
     model = Model(particles,
                   bonds,
                   simulation,
                   integrator,
-                  trilinear.calculate_bond_damage(trilinear.s0,
-                                                  trilinear.s1,
-                                                  trilinear.sc,
-                                                  trilinear.beta),
+                  nonlinear.calculate_bond_damage(nonlinear.s0,
+                                                  nonlinear.sc,
+                                                  nonlinear.alpha,
+                                                  nonlinear.k),
                   penetrators,
                   observations)
 
@@ -247,8 +258,8 @@ def main():
     #         + np.array(model.penetrators[2].penetrator_force_history))
     cmod = (np.array(model.observations[1].history)
             - np.array(model.observations[0].history))
-    # plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
-    # plt.show()
+    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
+    plt.show()
 
     data = [(cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z)]
     np.savetxt('load_cmod.csv', np.transpose(np.array(data)),
