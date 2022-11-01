@@ -256,7 +256,7 @@ class Trilinear(ConstitutiveLaw):
         self.sc = sc
         self.beta = beta
         self.gamma = self._calculate_gamma()
-        
+
         if self.c is None:
             self.c = self._calculate_bond_stiffness(material, particles)
 
@@ -296,7 +296,14 @@ class Trilinear(ConstitutiveLaw):
 
         Parameters
         ----------
+        s0 : float
+
+        s1 : float
+
         sc : float
+
+        beta : float
+            Kink point in the trilinear model (default = 0.25)
 
         Returns
         -------
@@ -437,7 +444,16 @@ class NonLinear(ConstitutiveLaw):
 
         Parameters
         ----------
+        s0 : float
+
         sc : float
+
+        alpha : float
+            alpha controls the position of the transition from exponential to
+            linear decay (default = 0.25)
+
+        k : float
+            k controls the rate of exponential decay (default = 25)
 
         Returns
         -------

@@ -287,8 +287,8 @@ def calculate_contact_force(penetrator_family, penetrator_radius,
     Notes
     -----
     - 'C style' code
-    - Based on code from rigid_impactor.f90 in Chapter 10 - Peridynamic Theory &
-    its Applications by Madenci & Oterkus
+    - Based on code from rigid_impactor.f90 in Chapter 10 - Peridynamic Theory
+    & its Applications by Madenci & Oterkus
     """
 
     n_nodes = len(penetrator_family)

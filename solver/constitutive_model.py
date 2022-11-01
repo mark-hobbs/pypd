@@ -58,7 +58,10 @@ def nonlinear(s, d, s0, sc, alpha, k):
     """
     Non-linear constitutive model
     """
-    if (s0 < s) and (s <= sc):
+
+    d_temp = 0.0
+
+    if (s > s0) and (s <= sc):
         numerator = 1 - np.exp(-k * (s - s0) / (sc - s0))
         denominator = 1 - np.exp(-k)
         residual = alpha * (1 - (s - s0) / (sc - s0))

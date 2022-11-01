@@ -160,7 +160,7 @@ def rebuild_node_families(n_nodes, bondlist):
 
 def main():
 
-    dx = .625 * mm_to_m
+    dx = 1.25 * mm_to_m
     length = 175 * mm_to_m
     depth = 50 * mm_to_m
     width = 50 * mm_to_m
@@ -188,13 +188,13 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(dt=1e-9, n_time_steps=200000, damping=0)
+    simulation = Simulation(n_time_steps=200000, damping=0, dt=1e-9)
 
     radius = 25 * mm_to_m
     penetrators = []
     penetrators.append(Penetrator(np.array([0.5 * length, depth + radius - dx]),
                                   np.array([0, 1]),
-                                  np.array([0, -.1 * mm_to_m]),
+                                  np.array([0, -.2 * mm_to_m]),
                                   radius,
                                   particles,
                                   name="Penetrator",
@@ -253,15 +253,15 @@ def main():
     model.run_simulation()
 
     # Plot load-CMOD response
-    load = - np.array(model.penetrators[0].penetrator_force_history)
+    load = - np.array(model.penetrators[0].penetrator_force_history) * n_div_z
     # load = (np.array(model.penetrators[1].penetrator_force_history)
     #         + np.array(model.penetrators[2].penetrator_force_history))
     cmod = (np.array(model.observations[1].history)
             - np.array(model.observations[0].history))
-    plt.plot((cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z))
+    plt.plot((cmod[:, 0] * m_to_mm), load[:, 1])
     plt.show()
 
-    data = [(cmod[:, 0] * m_to_mm), (load[:, 1] * n_div_z)]
+    data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
     np.savetxt('load_cmod.csv', np.transpose(np.array(data)),
                delimiter=',', fmt='%f')
 

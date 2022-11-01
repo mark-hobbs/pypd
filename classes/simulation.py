@@ -3,12 +3,18 @@ class Simulation():
 
     # Define a config file (yaml file)
 
-    def __init__(self, dt, n_time_steps, damping):
-        self.dt = dt
+    def __init__(self, n_time_steps, damping, dt=None):
         self.n_time_steps = n_time_steps
         self.damping = damping
-        # self.model = model
-        # self.config = config
+        self.dt = dt
+        if self.dt is None:
+            self.dt = self._calculate_stable_dt()
+
+    def _calculate_stable_dt(self):
+        """
+        Calculate stable time step
+        """
+        pass
 
     def initiate_arrays():
         pass
