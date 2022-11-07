@@ -1,6 +1,8 @@
 install_requires = [
+        'python=3.9',
         'numpy',
         'numba',
-        'sklearn',
+        'matplotlib',
+        'scikit-learn',
         'tqdm'
         ]

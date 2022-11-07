@@ -188,7 +188,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(n_time_steps=200000, damping=0, dt=1e-9)
+    simulation = Simulation(n_time_steps=200000, damping=0, dt=1e-7)
 
     radius = 25 * mm_to_m
     penetrators = []

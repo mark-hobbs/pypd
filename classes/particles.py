@@ -109,7 +109,8 @@ class ParticleSet():
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_volume = dx**2  # TODO: 2D or 3D problem?
+        self.cell_area = dx**2  # TODO: where is this used?
+        self.cell_volume = dx**3
         self.node_density = self.material.density
 
         self.nlist = nlist
