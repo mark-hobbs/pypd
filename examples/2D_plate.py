@@ -113,7 +113,7 @@ def main():
     integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles)
+    linear = Linear(material, particles, dx)
     bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
     model = Model(particles, bonds, simulation, integrator,

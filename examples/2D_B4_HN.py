@@ -160,7 +160,7 @@ def rebuild_node_families(n_nodes, bondlist):
 
 def main():
 
-    dx = 1.25 * mm_to_m
+    dx = 2.5 * mm_to_m
     length = 175 * mm_to_m
     depth = 50 * mm_to_m
     width = 50 * mm_to_m
@@ -188,13 +188,13 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(particles.x,
                                                              bonds.bondlist,
                                                              notch)
-    simulation = Simulation(n_time_steps=200000, damping=0, dt=1e-7)
+    simulation = Simulation(n_time_steps=200000, damping=0, dt=1e-6)
 
     radius = 25 * mm_to_m
     penetrators = []
     penetrators.append(Penetrator(np.array([0.5 * length, depth + radius - dx]),
                                   np.array([0, 1]),
-                                  np.array([0, -.2 * mm_to_m]),
+                                  np.array([0, -.4 * mm_to_m]),
                                   radius,
                                   particles,
                                   name="Penetrator",
@@ -226,7 +226,7 @@ def main():
 
     # model = Model(particles, bonds, simulation, integrator,
     #               linear.calculate_bond_damage(linear.sc),
-    #               penetrators)
+    #               penetrators, observations)
 
     # model = Model(particles,
     #               bonds,
