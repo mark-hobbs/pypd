@@ -8,7 +8,6 @@ python -m examples.2D_plate.py
 
 """
 import numpy as np
-from numba import njit
 
 from classes.boundary_conditions import BoundaryConditions
 from classes.material import Material
