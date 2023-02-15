@@ -109,7 +109,8 @@ class ParticleSet():
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_volume = dx**2  # TODO: 2D or 3D problem?
+        self.cell_area = dx**2  # TODO: where is this used?
+        self.cell_volume = dx**3
         self.node_density = self.material.density
 
         self.nlist = nlist
@@ -151,7 +152,7 @@ class ParticleSet():
         # TODO: probably not needed?
         pass
 
-    def calculate_particle_forces(self, bonds):
+    def calculate_particle_forces(self, bonds, material_law):
         """
         Calculate particle forces
 
@@ -182,8 +183,8 @@ class ParticleSet():
         return calculate_nodal_forces(self.x, self.u, self.cell_volume,
                                       bonds.bondlist, bonds.d,
                                       bonds.constitutive_law.c,
-                                      bonds.constitutive_law.sc,
-                                      bonds.f_x, bonds.f_y)
+                                      bonds.f_x, bonds.f_y,
+                                      material_law)
 
     def calculate_particle_damage(self, bonds):
         """

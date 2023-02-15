@@ -22,16 +22,16 @@ from classes.integrator import EulerCromer
 def build_particle_coordinates(dx, n_div_x, n_div_y):
     """
     Build particle coordinates
-    
+
     Parameters
     ----------
-    
+
     Returns
     -------
 
     Notes
     -----
-    
+
     """
     particle_coordinates = np.zeros([n_div_x * n_div_y, 2])
     counter = 0
@@ -68,10 +68,10 @@ def build_boundary_conditions(particles, dx):
 def build_hole(particles, centre, radius):
     """
     Build hole in 2D plate
-    
+
     Parameters
     ----------
-    
+
     Returns
     -------
 
@@ -112,10 +112,11 @@ def main():
     integrator = EulerCromer()
     bc = BoundaryConditions(flag, unit_vector, magnitude=1)
     particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles)
+    linear = Linear(material, particles, dx)
     bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
-    model = Model(particles, bonds, simulation, integrator)
+    model = Model(particles, bonds, simulation, integrator,
+                  linear.calculate_bond_damage(linear.sc))
 
     model.run_simulation()
 

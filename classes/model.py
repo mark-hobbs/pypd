@@ -25,7 +25,8 @@ class Model():
 
     """
 
-    def __init__(self, particles, bonds, simulation, integrator):
+    def __init__(self, particles, bonds, simulation, integrator, material_law,
+                 penetrators=None, observations=None):
         """
         Model class constructor
 
@@ -40,6 +41,11 @@ class Model():
 
         integrator : Integrator class
 
+        material_law : function
+
+        penetrators: list
+            List of penetrator objects/instances
+
         Returns
         -------
 
@@ -50,6 +56,9 @@ class Model():
         self.bonds = bonds
         self.simulation = simulation
         self.integrator = integrator
+        self.material_law = material_law
+        self.penetrators = penetrators
+        self.observations = observations
 
     def _single_time_step(self, i_time_step):
         """
@@ -60,16 +69,24 @@ class Model():
 
         Returns
         -------
+        simulation_data : SimulationData class
 
         Notes
         -----
         """
 
-        nf, _ = self.particles.calculate_particle_forces(self.bonds)
+        nf, _ = self.particles.calculate_particle_forces(self.bonds,
+                                                         self.material_law)
         self.particles.update_particle_positions(nf, self.simulation,
                                                  self.integrator, i_time_step)
 
-    def run_simulation(self):
+        if self.penetrators:
+            for penetrator in self.penetrators:
+                penetrator.calculate_penetrator_force(self.particles,
+                                                      self.simulation,
+                                                      i_time_step)
+
+    def run_simulation(self, plot=False):
         """
         Run the simulation
 
@@ -78,19 +95,26 @@ class Model():
 
         Returns
         -------
+        history : SimulationData class
+            History of the simulation run
 
         Notes
         -----
+        TODO: clean up observation.record_history()
 
         """
-
         for i_time_step in trange(self.simulation.n_time_steps,
                                   desc="Simulation Progress",
                                   unit="steps"):
             self._single_time_step(i_time_step)
 
-        self.particles.calculate_particle_damage(self.bonds)
-        self.plot_deformed_particles(sz=1, data=self.particles.damage)
+            if self.observations:
+                for observation in self.observations:
+                    observation.record_history(i_time_step, self.particles.u)
+
+        if plot is True:
+            self.particles.calculate_particle_damage(self.bonds)
+            self.plot_deformed_particles(sz=1, data=self.particles.damage)
 
     def plot_deformed_particles(self, sz=2, dsf=10, data=None,
                                 fig_title="deformed_particles"):

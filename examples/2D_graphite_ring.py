@@ -25,16 +25,16 @@ from classes.integrator import EulerCromer
 def build_particle_coordinates(dx, n_div_x, n_div_y):
     """
     Build particle coordinates
-    
+
     Parameters
     ----------
-    
+
     Returns
     -------
 
     Notes
     -----
-    
+
     """
     particle_coordinates = np.zeros([n_div_x * n_div_y, 2])
     counter = 0
@@ -71,13 +71,13 @@ def build_boundary_conditions(particles, dx):
 def mask_particles_circle(particles, centre, radius, opt):
     """
     Mask particles inside or outside of a circle
-    
+
     Parameters
     ----------
     opt : str
         Select if particles inside or outside of a circle are deleted
         ["inside" / "outside"]
-    
+
     Returns
     -------
 
@@ -113,7 +113,7 @@ def translate_particles(particles, origin=np.array([0, 0])):
     ----------
     origin : str
         Translate a set of points to the origin (a, b)
-    
+
     Returns
     -------
 
@@ -149,7 +149,8 @@ def main():
     linear = Linear(material, particles)
     bonds = BondSet(particles, linear)
     simulation = Simulation(dt=1e-9, n_time_steps=50000, damping=0)
-    model = Model(particles, bonds, simulation, integrator)
+    model = Model(particles, bonds, simulation, integrator,
+                  linear.calculate_bond_damage(linear.sc))
 
     model.run_simulation()
 

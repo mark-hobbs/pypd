@@ -1,0 +1,9 @@
+name: PyPD
+
+dependencies:
+  - python=3.9
+  - numpy
+  - numba
+  - matplotlib
+  - scikit-learn
+  - tqdm
