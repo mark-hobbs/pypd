@@ -1,9 +1,9 @@
 
 import scipy.io
 
-from classes.particles import ParticleSet
-from classes.bonds import BondSet
-from classes.model import Model
+from .particles import ParticleSet
+from .bonds import BondSet
+from .model import Model
 
 
 def read_input_file(filepath, filename):

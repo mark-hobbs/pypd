@@ -4,19 +4,12 @@ Example: 2D plate with a hole
 
 Run the following command from the root folder:
 
-python -m examples.2D_plate.py
+python -m examples.2D_plate
 
 """
 import numpy as np
 
-from classes.boundary_conditions import BoundaryConditions
-from classes.material import Material
-from classes.particles import ParticleSet
-from classes.bonds import BondSet
-from classes.model import Model
-from classes.simulation import Simulation
-from classes.constitutive_law import Linear
-from classes.integrator import EulerCromer
+import pypd
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -36,7 +29,7 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
     particle_coordinates = np.zeros([n_div_x * n_div_y, 2])
     counter = 0
 
-    for i_y in range(n_div_y):      # Depth
+    for i_y in range(n_div_y):  # Depth
         for i_x in range(n_div_x):  # Length
             coord_x = dx * i_x
             coord_y = dx * i_y
@@ -48,7 +41,6 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
 
 
 def build_boundary_conditions(particles, dx):
-
     bc_flag = np.zeros((len(particles), 2), dtype=np.intc)
     bc_unit_vector = np.zeros((len(particles), 2), dtype=np.intc)
 
@@ -76,16 +68,16 @@ def build_hole(particles, centre, radius):
     -------
 
     Notes
-    -----    
+    -----
     """
 
     counter = 0
     mask = []
 
     for particle in particles:
-
-        distance = np.sqrt((particle[0] - centre[0])
-                           ** 2 + (particle[1] - centre[1])**2)
+        distance = np.sqrt(
+            (particle[0] - centre[0]) ** 2 + (particle[1] - centre[1]) ** 2
+        )
 
         if distance < radius:
             mask.append(counter)
@@ -96,27 +88,30 @@ def build_hole(particles, centre, radius):
 
 
 def main():
-
-    dx = 1.25E-3
+    dx = 1.25e-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
-    hole_centre_x = 0.25 - dx/2
-    hole_centre_y = 0.125 - dx/2
+    hole_centre_x = 0.25 - dx / 2
+    hole_centre_y = 0.125 - dx / 2
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     x = build_hole(x, [hole_centre_x, hole_centre_y], 0.05)
     flag, unit_vector = build_boundary_conditions(x, dx)
 
-    material = Material(name="quasi-brittle", E=33e9, Gf=130,
-                        density=2400, ft=2.5)
-    integrator = EulerCromer()
-    bc = BoundaryConditions(flag, unit_vector, magnitude=1)
-    particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles, dx)
-    bonds = BondSet(particles, linear)
-    simulation = Simulation(dt=1e-8, n_time_steps=20000, damping=0)
-    model = Model(particles, bonds, simulation, integrator,
-                  linear.calculate_bond_damage(linear.sc))
+    material = pypd.Material(name="quasi-brittle", E=33e9, Gf=130, density=2400, ft=2.5)
+    integrator = pypd.EulerCromer()
+    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1)
+    particles = pypd.ParticleSet(x, dx, bc, material)
+    linear = pypd.Linear(material, particles, dx)
+    bonds = pypd.BondSet(particles, linear)
+    simulation = pypd.Simulation(dt=1e-8, n_time_steps=20000, damping=0)
+    model = pypd.Model(
+        particles,
+        bonds,
+        simulation,
+        integrator,
+        linear.calculate_bond_damage(linear.sc),
+    )
 
     model.run_simulation()
 

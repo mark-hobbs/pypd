@@ -4,19 +4,12 @@ Example: 2D plate with a notch (crack branching)
 
 Run the following command from the root folder:
 
-python -m examples.2D_notch.py
+python -m examples.2D_notch
 
 """
 import numpy as np
 
-from classes.boundary_conditions import BoundaryConditions
-from classes.material import Material
-from classes.particles import ParticleSet
-from classes.bonds import BondSet
-from classes.model import Model
-from classes.simulation import Simulation
-from classes.constitutive_law import Linear
-from classes.integrator import EulerCromer
+import pypd
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -36,7 +29,7 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
     particle_coordinates = np.zeros([n_div_x * n_div_y, 2])
     counter = 0
 
-    for i_y in range(n_div_y):      # Depth
+    for i_y in range(n_div_y):  # Depth
         for i_x in range(n_div_x):  # Length
             coord_x = dx * i_x
             coord_y = dx * i_y
@@ -48,7 +41,6 @@ def build_particle_coordinates(dx, n_div_x, n_div_y):
 
 
 def build_boundary_conditions(particles, dx):
-
     bc_flag = np.zeros((len(particles), 2), dtype=np.intc)
     bc_unit_vector = np.zeros((len(particles), 2), dtype=np.intc)
 
@@ -66,7 +58,6 @@ def build_boundary_conditions(particles, dx):
 
 
 def build_notch(x, bondlist, notch):
-
     n_nodes = np.shape(x)[0]
     n_bonds = np.shape(bondlist)[0]
 
@@ -76,7 +67,6 @@ def build_notch(x, bondlist, notch):
     mask = []
 
     for k_bond in range(n_bonds):
-
         node_i = bondlist[k_bond, 0]
         node_j = bondlist[k_bond, 1]
 
@@ -97,13 +87,13 @@ def build_notch(x, bondlist, notch):
 def determine_intersection(P1, P2, P3, P4):
     """
     Determine if a bond intersects with a notch
-        - Given two line segments, find if the 
+        - Given two line segments, find if the
           given line segments intersect with
           each other.
 
     Parameters
     ----------
-    P : 
+    P :
         P = (x, y)
 
     Returns
@@ -143,12 +133,10 @@ def determine_intersection(P1, P2, P3, P4):
 
 
 def rebuild_node_families(n_nodes, bondlist):
-
     n_bonds = np.shape(bondlist)[0]
     n_family_members = np.zeros(n_nodes)
 
     for k_bond in range(n_bonds):
-
         node_i = bondlist[k_bond, 0]
         node_j = bondlist[k_bond, 1]
 
@@ -159,29 +147,33 @@ def rebuild_node_families(n_nodes, bondlist):
 
 
 def main():
-
-    dx = 1.25E-3
+    dx = 1.25e-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
-    notch = [np.array([0 - dx, 0.125 - (dx/2)]),
-             np.array([0.2, 0.125 - (dx/2)])]
+    notch = [np.array([0 - dx, 0.125 - (dx / 2)]), np.array([0.2, 0.125 - (dx / 2)])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     flag, unit_vector = build_boundary_conditions(x, dx)
 
-    material = Material(name="quasi-brittle", E=4.55e9, Gf=38.46,
-                        density=1230, ft=2.5)
-    integrator = EulerCromer()
-    bc = BoundaryConditions(flag, unit_vector, magnitude=1)
-    particles = ParticleSet(x, dx, bc, material)
-    linear = Linear(material, particles, dx)
-    bonds = BondSet(particles, linear)
-    bonds.bondlist, particles.n_family_members = build_notch(particles.x,
-                                                             bonds.bondlist,
-                                                             notch)
-    simulation = Simulation(dt=1e-8, n_time_steps=5000, damping=0)
-    model = Model(particles, bonds, simulation, integrator,
-                  linear.calculate_bond_damage(linear.sc))
+    material = pypd.Material(
+        name="quasi-brittle", E=4.55e9, Gf=38.46, density=1230, ft=2.5
+    )
+    integrator = pypd.EulerCromer()
+    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1)
+    particles = pypd.ParticleSet(x, dx, bc, material)
+    linear = pypd.Linear(material, particles, dx)
+    bonds = pypd.BondSet(particles, linear)
+    bonds.bondlist, particles.n_family_members = build_notch(
+        particles.x, bonds.bondlist, notch
+    )
+    simulation = pypd.Simulation(dt=1e-8, n_time_steps=5000, damping=0)
+    model = pypd.Model(
+        particles,
+        bonds,
+        simulation,
+        integrator,
+        linear.calculate_bond_damage(linear.sc),
+    )
 
     model.run_simulation(plot=True)
 

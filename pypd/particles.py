@@ -7,10 +7,10 @@ TODO: rename classes as base or baseclasses?
 
 import numpy as np
 
-from input.tools import build_particle_families
-from solver.calculate import (calculate_nodal_forces,
-                              calculate_node_damage,
-                              smooth_step_data)
+from .tools import build_particle_families
+from .calculate import (calculate_nodal_forces,
+                        calculate_node_damage,
+                        smooth_step_data)
 
 
 # Particles, ParticleArray, or ParticleSet?
