@@ -12,8 +12,7 @@ from numba import njit, prange
 
 
 @njit(parallel=True)
-def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y,
-                           material_law):
+def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material_law):
     """
     Calculate particle forces - employs bondlist
 
@@ -64,7 +63,6 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y,
     node_force = np.zeros((n_nodes, n_dimensions))
 
     for k_bond in prange(n_bonds):
-
         node_i = bondlist[k_bond, 0]
         node_j = bondlist[k_bond, 1]
 
@@ -86,7 +84,6 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y,
 
     # Reduce bond forces to particle forces
     for k_bond in range(n_bonds):
-
         node_i = bondlist[k_bond, 0]
         node_j = bondlist[k_bond, 1]
 
@@ -179,8 +176,18 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y,
 
 
 @njit(parallel=True)
-def euler_cromer(node_force, u, v, a, damping, node_density, dt,
-                 bc_flag, bc_magnitude, bc_unit_vector):
+def euler_cromer(
+    node_force,
+    u,
+    v,
+    a,
+    damping,
+    node_density,
+    dt,
+    bc_flag,
+    bc_magnitude,
+    bc_unit_vector,
+):
     """
     Update particle positions using an Euler-Cromer time integration scheme
 
@@ -213,8 +220,9 @@ def euler_cromer(node_force, u, v, a, damping, node_density, dt,
 
     for node_i in prange(n_nodes):
         for dof in range(n_dimensions):
-            a[node_i, dof] = (node_force[node_i, dof] -
-                              damping * v[node_i, dof]) / node_density
+            a[node_i, dof] = (
+                node_force[node_i, dof] - damping * v[node_i, dof]
+            ) / node_density
             v[node_i, dof] = v[node_i, dof] + (a[node_i, dof] * dt)
             u[node_i, dof] = u[node_i, dof] + (v[node_i, dof] * dt)
 
@@ -225,15 +233,16 @@ def euler_cromer(node_force, u, v, a, damping, node_density, dt,
 
 
 @njit
-def smooth_step_data(current_time_step, start_time_step, final_time_step,
-                     start_value, final_value):
+def smooth_step_data(
+    current_time_step, start_time_step, final_time_step, start_value, final_value
+):
     """
     Smooth 5th order polynomial
     """
-    xi = ((current_time_step - start_time_step)
-          / (final_time_step - start_time_step))
-    alpha = (start_value + (final_value - start_value)
-             * xi**3 * (10 - 15 * xi + 6 * xi**2))
+    xi = (current_time_step - start_time_step) / (final_time_step - start_time_step)
+    alpha = start_value + (final_value - start_value) * xi**3 * (
+        10 - 15 * xi + 6 * xi**2
+    )
 
     return alpha
 
@@ -270,10 +279,9 @@ def calculate_node_damage(x, bondlist, d, n_family_members):
     """
     n_nodes = np.shape(x)[0]
     n_bonds = np.shape(bondlist)[0]
-    node_damage = np.zeros((n_nodes, ))
+    node_damage = np.zeros((n_nodes,))
 
     for k_bond in range(n_bonds):
-
         node_i = bondlist[k_bond, 0]
         node_j = bondlist[k_bond, 1]
 
@@ -286,9 +294,17 @@ def calculate_node_damage(x, bondlist, d, n_family_members):
 
 
 @njit
-def calculate_contact_force(penetrator_family, penetrator_radius,
-                            penetrator_position, x, u, v,
-                            density, cell_volume, dt):
+def calculate_contact_force(
+    penetrator_family,
+    penetrator_radius,
+    penetrator_position,
+    x,
+    u,
+    v,
+    density,
+    cell_volume,
+    dt,
+):
     """
     Calculate contact force - calculate the contact force between a rigid
     penetrator and a deformable peridynamic body.
@@ -328,30 +344,37 @@ def calculate_contact_force(penetrator_family, penetrator_radius,
     for i in range(n_nodes):
         node = penetrator_family[i]
         for j in range(n_dimensions):
-            distance_component[j] = ((x[node, j] + u[node, j])
-                                     - penetrator_position[j])
+            distance_component[j] = (x[node, j] + u[node, j]) - penetrator_position[j]
 
-        distance = np.sqrt(np.sum(distance_component ** 2))
+        distance = np.sqrt(np.sum(distance_component**2))
 
         if distance < penetrator_radius:
             for j in range(n_dimensions):
                 unit_vector[j] = distance_component[j] / distance
                 unit_vector_scaled[j] = unit_vector[j] * penetrator_radius
 
-                u[node, j] = ((penetrator_position[j] + unit_vector_scaled[j])
-                              - x[node, j])
+                u[node, j] = (penetrator_position[j] + unit_vector_scaled[j]) - x[
+                    node, j
+                ]
                 v[node, j] = (u[node, j] - u_previous[node, j]) / dt
                 a[j] = (v[node, j] - v_previous[node, j]) / dt
 
-                contact_force[j] = contact_force[j] + (density * cell_volume
-                                                       * a[j])
+                contact_force[j] = contact_force[j] + (density * cell_volume * a[j])
 
     return contact_force
 
 
-def calculate_contact_force_vectorised(penetrator_family, penetrator_radius,
-                                       penetrator_position, x, u, v,
-                                       density, cell_volume, dt):
+def calculate_contact_force_vectorised(
+    penetrator_family,
+    penetrator_radius,
+    penetrator_position,
+    x,
+    u,
+    v,
+    density,
+    cell_volume,
+    dt,
+):
     """
     Calculate contact force - calculate the contact force between a rigid
     penetrator and a deformable peridynamic body.
@@ -384,14 +407,12 @@ def calculate_contact_force_vectorised(penetrator_family, penetrator_radius,
     contact_force = np.zeros(n_dimensions, np.float64)
 
     for i in range(n_nodes):
-
         node = penetrator_family[i]
 
         distance_component = (x[node] + u[node]) - penetrator_position
-        distance = np.sqrt(np.sum(distance_component ** 2))
+        distance = np.sqrt(np.sum(distance_component**2))
 
         if distance < penetrator_radius:
-
             unit_vector = distance_component / distance
             unit_vector_scaled = unit_vector * penetrator_radius
 

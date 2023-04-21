@@ -1,4 +1,3 @@
-
 """
 Influence function base class
 -----------------------------
@@ -10,7 +9,7 @@ Notes
 """
 
 
-class InfluenceFunction():
+class InfluenceFunction:
     pass
 
 

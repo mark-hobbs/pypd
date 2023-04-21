@@ -11,18 +11,17 @@ substitute the variable parts. PySPH makes use of the mako template library.
 """
 
 
-class Application():
+class Application:
     """Subclass this to run any peridynamics simulation. There are several
     important methods that this class provides."""
 
     def __init__(self, coordinates, horizon, input_file=None, solver=None):
-        
         self.coordinates = coordinates
         self.horizon = horizon
         self.input_file = input_file
         self.solver = solver
         # degress of freedom
-        
+
         if self.input_file is not None:
             #  Read input file in a number of formats
             pass
@@ -56,9 +55,9 @@ class Application():
         pass
 
     def create_constitutive_model():
-        """"
-        Function to determine the damage parameter (d), and equations to 
-        determine any parameters (linear elastic limit, critical stretch etc) 
+        """ "
+        Function to determine the damage parameter (d), and equations to
+        determine any parameters (linear elastic limit, critical stretch etc)
         """
         pass
 
@@ -93,7 +92,7 @@ class Application():
     def run():
         """Run the application.
         This method calls ``setup()`` and then ``solve()``.
-        
+
         Parameters
         ----------
         argv: list

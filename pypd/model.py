@@ -9,7 +9,7 @@ from tqdm import trange
 import matplotlib.pyplot as plt
 
 
-class Model():
+class Model:
     """
     Model class
 
@@ -25,8 +25,16 @@ class Model():
 
     """
 
-    def __init__(self, particles, bonds, simulation, integrator, material_law,
-                 penetrators=None, observations=None):
+    def __init__(
+        self,
+        particles,
+        bonds,
+        simulation,
+        integrator,
+        material_law,
+        penetrators=None,
+        observations=None,
+    ):
         """
         Model class constructor
 
@@ -75,16 +83,16 @@ class Model():
         -----
         """
 
-        nf, _ = self.particles.calculate_particle_forces(self.bonds,
-                                                         self.material_law)
-        self.particles.update_particle_positions(nf, self.simulation,
-                                                 self.integrator, i_time_step)
+        nf, _ = self.particles.calculate_particle_forces(self.bonds, self.material_law)
+        self.particles.update_particle_positions(
+            nf, self.simulation, self.integrator, i_time_step
+        )
 
         if self.penetrators:
             for penetrator in self.penetrators:
-                penetrator.calculate_penetrator_force(self.particles,
-                                                      self.simulation,
-                                                      i_time_step)
+                penetrator.calculate_penetrator_force(
+                    self.particles, self.simulation, i_time_step
+                )
 
     def run_simulation(self, plot=False):
         """
@@ -103,9 +111,9 @@ class Model():
         TODO: clean up observation.record_history()
 
         """
-        for i_time_step in trange(self.simulation.n_time_steps,
-                                  desc="Simulation Progress",
-                                  unit="steps"):
+        for i_time_step in trange(
+            self.simulation.n_time_steps, desc="Simulation Progress", unit="steps"
+        ):
             self._single_time_step(i_time_step)
 
             if self.observations:
@@ -116,8 +124,9 @@ class Model():
             self.particles.calculate_particle_damage(self.bonds)
             self.plot_deformed_particles(sz=1, data=self.particles.damage)
 
-    def plot_deformed_particles(self, sz=2, dsf=10, data=None,
-                                fig_title="deformed_particles"):
+    def plot_deformed_particles(
+        self, sz=2, dsf=10, data=None, fig_title="deformed_particles"
+    ):
         """
         Plot the deformed particles
 
@@ -146,6 +155,6 @@ class Model():
         ax = fig.add_subplot(111)
         x_coords = self.particles.x[:, 0] + (self.particles.u[:, 0] * dsf)
         y_coords = self.particles.x[:, 1] + (self.particles.u[:, 1] * dsf)
-        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap='jet')
-        plt.axis('equal')
+        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
+        plt.axis("equal")
         plt.savefig(fig_title, dpi=300)

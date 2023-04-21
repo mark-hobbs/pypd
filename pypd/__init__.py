@@ -5,7 +5,4 @@ from .bonds import BondSet
 from .integrator import EulerCromer
 from .boundary_conditions import BoundaryConditions
 from .material import Material
-from .constitutive_law import (Linear,
-                                Bilinear,
-                                Trilinear,
-                                NonLinear)
+from .constitutive_law import Linear, Bilinear, Trilinear, NonLinear

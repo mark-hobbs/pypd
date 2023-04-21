@@ -4,7 +4,8 @@ Material class
 
 """
 
-class Material():
+
+class Material:
     """
     The main class for defining material properties
 
@@ -13,7 +14,7 @@ class Material():
 
     Methods
     -------
-    
+
     Notes
     -----
 

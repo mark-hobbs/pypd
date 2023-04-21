@@ -15,13 +15,12 @@ Notes
 from .calculate import euler_cromer
 
 
-class Integrator():
+class Integrator:
     """
     Base class for time integrator
     """
 
     def __init__(self, dt=None):
-
         self.dt = dt
         if self.dt is None:
             self.dt = self._calculate_stable_dt()
@@ -41,15 +40,14 @@ class Euler(Integrator):
 
 
 # class EulerCromer(Integrator):
-class EulerCromer():
-
+class EulerCromer:
     # def __init__(self) -> None:
     #     super().__init__()
 
     def one_timestep(self, node_force, particles, simulation):
         """
         Update particle positions using an Euler-Cromer time integration scheme
-        
+
         Parameters
         ----------
 
@@ -61,10 +59,18 @@ class EulerCromer():
         * self.dt or simulation.dt?
 
         """
-        return euler_cromer(node_force, particles.u, particles.v, particles.a,
-                            simulation.damping, particles.node_density,
-                            simulation.dt, particles.bc.flag,
-                            particles.bc.magnitude, particles.bc.unit_vector)
+        return euler_cromer(
+            node_force,
+            particles.u,
+            particles.v,
+            particles.a,
+            simulation.damping,
+            particles.node_density,
+            simulation.dt,
+            particles.bc.flag,
+            particles.bc.magnitude,
+            particles.bc.unit_vector,
+        )
 
 
 class VelocityVerlet(Integrator):

@@ -1,6 +1,4 @@
-
-class Simulation():
-
+class Simulation:
     # Define a config file (yaml file)
 
     def __init__(self, n_time_steps, damping, dt=None):

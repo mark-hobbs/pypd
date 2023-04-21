@@ -8,13 +8,11 @@ TODO: rename classes as base or baseclasses?
 import numpy as np
 
 from .tools import build_particle_families
-from .calculate import (calculate_nodal_forces,
-                        calculate_node_damage,
-                        smooth_step_data)
+from .calculate import calculate_nodal_forces, calculate_node_damage, smooth_step_data
 
 
 # Particles, ParticleArray, or ParticleSet?
-class ParticleSet():
+class ParticleSet:
     """
     The main class for storing the particle (node) set.
 
@@ -180,11 +178,17 @@ class ParticleSet():
         of the consistutive_law class?
             - constitutive_law.calculate_nodal_forces()
         """
-        return calculate_nodal_forces(self.x, self.u, self.cell_volume,
-                                      bonds.bondlist, bonds.d,
-                                      bonds.constitutive_law.c,
-                                      bonds.f_x, bonds.f_y,
-                                      material_law)
+        return calculate_nodal_forces(
+            self.x,
+            self.u,
+            self.cell_volume,
+            bonds.bondlist,
+            bonds.d,
+            bonds.constitutive_law.c,
+            bonds.f_x,
+            bonds.f_y,
+            material_law,
+        )
 
     def calculate_particle_damage(self, bonds):
         """
@@ -205,11 +209,13 @@ class ParticleSet():
         Notes
         -----
         """
-        self.damage = calculate_node_damage(self.x, bonds.bondlist, bonds.d,
-                                            self.n_family_members)
+        self.damage = calculate_node_damage(
+            self.x, bonds.bondlist, bonds.d, self.n_family_members
+        )
 
-    def update_particle_positions(self, node_force, simulation, integrator,
-                                  i_time_step):
+    def update_particle_positions(
+        self, node_force, simulation, integrator, i_time_step
+    ):
         """
         Update particle positions using an Euler-Cromer time integration scheme
 
@@ -231,8 +237,8 @@ class ParticleSet():
         * TODO: pass bc.magnitude as a function
         """
 
-        self.bc.magnitude = smooth_step_data(i_time_step, 0,
-                                             simulation.n_time_steps,
-                                             0, 1e-4)
+        self.bc.magnitude = smooth_step_data(
+            i_time_step, 0, simulation.n_time_steps, 0, 1e-4
+        )
 
         return integrator.one_timestep(node_force, self, simulation)

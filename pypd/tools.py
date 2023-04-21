@@ -1,4 +1,3 @@
-
 import numpy as np
 import sklearn.neighbors as neighbors
 
@@ -6,12 +5,11 @@ import sklearn.neighbors as neighbors
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
-
     particle_coordinates = np.zeros([n_div_x * n_div_y * n_div_z, 3])
     counter = 0
 
-    for i_z in range(n_div_z):          # Width
-        for i_y in range(n_div_y):      # Depth
+    for i_z in range(n_div_z):  # Width
+        for i_y in range(n_div_y):  # Depth
             for i_x in range(n_div_x):  # Length
                 coord_x = dx * i_x
                 coord_y = dx * i_y
@@ -52,8 +50,7 @@ def build_particle_families(x, horizon):
     neighbour_list = tree.query_radius(x, r=horizon)
 
     # Remove identity values, as there is no bond between a node and itself
-    neighbour_list = [neighbour_list[i][neighbour_list[i] != i]
-                      for i in range(n_nodes)]
+    neighbour_list = [neighbour_list[i][neighbour_list[i] != i] for i in range(n_nodes)]
 
     n_family_members = [len(neighbour_list[i]) for i in range(n_nodes)]
     n_family_members = np.array(n_family_members, dtype=np.intc)
@@ -61,7 +58,7 @@ def build_particle_families(x, horizon):
     nlist = np.ones((n_nodes, n_family_members.max()), dtype=np.intc) * -1
 
     for i in range(n_nodes):
-        nlist[i, :n_family_members[i]] = neighbour_list[i]
+        nlist[i, : n_family_members[i]] = neighbour_list[i]
 
     nlist = nlist.astype(np.intc)
 
@@ -72,8 +69,9 @@ def build_bond_list(nlist):
     """
     Build bond list
     """
-    bondlist = [[i, j] for i, neighbours in enumerate(nlist)
-                for j in neighbours if i < j]
+    bondlist = [
+        [i, j] for i, neighbours in enumerate(nlist) for j in neighbours if i < j
+    ]
     bondlist = np.array(bondlist, dtype=np.intc)
 
     return bondlist
@@ -91,22 +89,35 @@ def build_volume_correction_factors():
 def build_bond_length(x, bondlist):
     """Build the bond length array"""
     n_bonds = np.shape(bondlist)[0]
-    xi = np.zeros([n_bonds, ])
-    xi_x = np.zeros([n_bonds, ])
-    xi_y = np.zeros([n_bonds, ])
-    xi_z = np.zeros([n_bonds, ])
+    xi = np.zeros(
+        [
+            n_bonds,
+        ]
+    )
+    xi_x = np.zeros(
+        [
+            n_bonds,
+        ]
+    )
+    xi_y = np.zeros(
+        [
+            n_bonds,
+        ]
+    )
+    xi_z = np.zeros(
+        [
+            n_bonds,
+        ]
+    )
 
     for k_bond in range(n_bonds):
-
         node_i = bondlist[k_bond, 0] - 1
         node_j = bondlist[k_bond, 1] - 1
 
         xi_x[k_bond] = x[node_j, 0] - x[node_i, 0]
         xi_y[k_bond] = x[node_j, 1] - x[node_i, 1]
         xi_z[k_bond] = x[node_j, 2] - x[node_i, 2]
-        xi[k_bond] = np.sqrt(xi_x[k_bond]**2
-                             + xi_y[k_bond]**2
-                             + xi_z[k_bond]**2)
+        xi[k_bond] = np.sqrt(xi_x[k_bond] ** 2 + xi_y[k_bond] ** 2 + xi_z[k_bond] ** 2)
 
     return xi, xi_x, xi_y, xi_z
 

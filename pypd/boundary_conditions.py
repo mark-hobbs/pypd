@@ -4,7 +4,8 @@ Boundary conditions class
 
 """
 
-class BoundaryConditions():
+
+class BoundaryConditions:
     """
     The main class for defining the boundary conditions
 
@@ -17,13 +18,13 @@ class BoundaryConditions():
     unit_vector : ndarray
 
     constraint : ndarray
-    
+
     magnitude : float
         TODO: should this be a simulation parameter?
 
     Methods
     -------
-    
+
     Notes
     -----
     * Should this class inherit from the ParticleSet class (i.e. child class)?
@@ -44,7 +45,7 @@ class BoundaryConditions():
         Notes
         -----
         * TODO: implement magnitude
-        
+
         """
         self.flag = flag
         self.unit_vector = unit_vector

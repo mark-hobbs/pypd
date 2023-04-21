@@ -9,7 +9,7 @@ from .tools import build_bond_list
 
 
 # Bonds, BondArray, or BondSet?
-class BondSet():
+class BondSet:
     """
     The main class for storing the bond set.
 
@@ -65,9 +65,9 @@ class BondSet():
             TODO: write description
 
         particles : Particle class
-        
+
         material : Material class
-        
+
         constitutive_law : ConstitutiveLaw class
 
         Returns
@@ -124,7 +124,7 @@ class BondSet():
     def calculate_bond_force(self):
         """
         Calculate bond forces
-        
+
         Parameters
         ----------
         x : ndarray (float)

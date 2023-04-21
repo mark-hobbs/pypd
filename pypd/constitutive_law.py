@@ -12,7 +12,7 @@ from numba import njit
 from .constitutive_model import linear, trilinear, nonlinear
 
 
-class ConstitutiveLaw():
+class ConstitutiveLaw:
     """
     Subclass this to define a new constitutive law. This class ensures that
     all constitutive models follow the correct format.
@@ -137,8 +137,7 @@ class Linear(ConstitutiveLaw):
         -----
 
         """
-        return np.sqrt((4 * np.pi * material.Gf)
-                       / (9 * material.E * particles.horizon))
+        return np.sqrt((4 * np.pi * material.Gf) / (9 * material.E * particles.horizon))
 
     @staticmethod
     def calculate_bond_damage(sc):
@@ -159,6 +158,7 @@ class Linear(ConstitutiveLaw):
         Notes
         -----
         """
+
         @njit
         def wrapper(stretch, d):
             """
@@ -216,9 +216,7 @@ class Bilinear(ConstitutiveLaw):
 
 
 class Trilinear(ConstitutiveLaw):
-
-    def __init__(self, material, particles, t, c=None, s0=None, sc=None,
-                 beta=0.25):
+    def __init__(self, material, particles, t, c=None, s0=None, sc=None, beta=0.25):
         """
         Trilinear constitutive model class constructor
 
@@ -279,8 +277,13 @@ class Trilinear(ConstitutiveLaw):
         Trilinear model - calculate the critical stretch
         """
         numerator = 10 * self.gamma * material.Gf
-        denominator = (np.pi * particles.horizon**5 * self.c * self.s0
-                       * (1 + (self.gamma * self.beta)))
+        denominator = (
+            np.pi
+            * particles.horizon**5
+            * self.c
+            * self.s0
+            * (1 + (self.gamma * self.beta))
+        )
         return (numerator / denominator) + self.s0
 
     def _calculate_gamma(self):
@@ -315,6 +318,7 @@ class Trilinear(ConstitutiveLaw):
         Notes
         -----
         """
+
         @njit
         def wrapper(stretch, d):
             """
@@ -351,16 +355,16 @@ class Trilinear(ConstitutiveLaw):
         """
         Print constitutive model parameters
         """
-        print('{0:>10s} : {1:>12,.5E}'.format('c', self.c))
-        print('{0:>10s} : {1:>12,.5E}'.format('s0', self.s0))
-        print('{0:>10s} : {1:>12,.5E}'.format('sc', self.sc))
-        print('{0:>10s} : {1:>12,.2f}'.format('beta', self.beta))
+        print("{0:>10s} : {1:>12,.5E}".format("c", self.c))
+        print("{0:>10s} : {1:>12,.5E}".format("s0", self.s0))
+        print("{0:>10s} : {1:>12,.5E}".format("sc", self.sc))
+        print("{0:>10s} : {1:>12,.2f}".format("beta", self.beta))
 
 
 class NonLinear(ConstitutiveLaw):
-
-    def __init__(self, material, particles, t, c=None, s0=None, sc=None,
-                 alpha=0.25, k=25):
+    def __init__(
+        self, material, particles, t, c=None, s0=None, sc=None, alpha=0.25, k=25
+    ):
         """
         Non-linear constitutive model class constructor
 
@@ -421,19 +425,27 @@ class NonLinear(ConstitutiveLaw):
         Nonlinear model - calculate the critical stretch
         """
         numerator_a = 4 * self.k * (1 - np.exp(self.k)) * (1 + self.alpha)
-        numerator_b = ((self.t * self.c * particles.horizon**4 * self.s0**2
-                       * ((2 * self.k)
-                          - (2 * np.exp(self.k))
-                          + (self.alpha * self.k)
-                          - (self.alpha * self.k * np.exp(self.k) + 2)))
-                       / ((4 * self.k)
-                          + (np.exp(self.k) - 1)
-                          * (1 + self.alpha)))
+        numerator_b = (
+            self.t
+            * self.c
+            * particles.horizon**4
+            * self.s0**2
+            * (
+                (2 * self.k)
+                - (2 * np.exp(self.k))
+                + (self.alpha * self.k)
+                - (self.alpha * self.k * np.exp(self.k) + 2)
+            )
+        ) / ((4 * self.k) + (np.exp(self.k) - 1) * (1 + self.alpha))
         numerator = numerator_a * (material.Gf - numerator_b)
         denominator_a = self.t * self.c * particles.horizon**4 * self.s0
-        denominator_b = ((2 * self.k) - (2 * np.exp(self.k))
-                         + (self.alpha * self.k)
-                         - (self.alpha * self.k * np.exp(self.k)) + 2)
+        denominator_b = (
+            (2 * self.k)
+            - (2 * np.exp(self.k))
+            + (self.alpha * self.k)
+            - (self.alpha * self.k * np.exp(self.k))
+            + 2
+        )
         denominator = denominator_a * denominator_b
         return numerator / denominator
 
@@ -465,6 +477,7 @@ class NonLinear(ConstitutiveLaw):
         Notes
         -----
         """
+
         @njit
         def wrapper(stretch, d):
             """
@@ -501,8 +514,8 @@ class NonLinear(ConstitutiveLaw):
         """
         Print constitutive model parameters
         """
-        print('{0:>10s} : {1:>12,.5E}'.format('c', self.c))
-        print('{0:>10s} : {1:>12,.5E}'.format('s0', self.s0))
-        print('{0:>10s} : {1:>12,.5E}'.format('sc', self.sc))
-        print('{0:>10s} : {1:>12,.2f}'.format('alpha', self.alpha))
-        print('{0:>10s} : {1:>12,.2f}'.format('k', self.k))
+        print("{0:>10s} : {1:>12,.5E}".format("c", self.c))
+        print("{0:>10s} : {1:>12,.5E}".format("s0", self.s0))
+        print("{0:>10s} : {1:>12,.5E}".format("sc", self.sc))
+        print("{0:>10s} : {1:>12,.2f}".format("alpha", self.alpha))
+        print("{0:>10s} : {1:>12,.2f}".format("k", self.k))

@@ -1,10 +1,9 @@
-
 import numpy as np
 import itertools
 from scipy import spatial
 
 
-class Observation():
+class Observation:
     """
     Class for savings observations during a simulation run
     """
@@ -12,8 +11,7 @@ class Observation():
     ID_iter = itertools.count()
     _registry = []
 
-    def __init__(self, coordinates, particles, period=100,
-                 name="Observation point"):
+    def __init__(self, coordinates, particles, period=100, name="Observation point"):
         self._registry.append(self)
         self.ID = next(Observation.ID_iter)
         self.coordinates = coordinates
@@ -52,7 +50,7 @@ class Observation():
             self.history.append(data[self.particle].copy())
 
 
-class SimulationData():
+class SimulationData:
     """
     Class for saving the output of a simulation run
     """
@@ -68,12 +66,12 @@ class SimulationData():
 
         The record_history decorator
 
-        https://pythonhosted.org/log_calls/record_history_deco.html 
+        https://pythonhosted.org/log_calls/record_history_deco.html
         """
         pass
 
 
-class History():
+class History:
     """
     https://bitbucket.org/westmont/history_object/src/master/lib/history_object.py
     """
@@ -82,19 +80,23 @@ class History():
         pass
 
     def start(self, obj):
-        if '_history' not in obj.__dict__:
-            obj.__dict__['_history'] = {}
+        if "_history" not in obj.__dict__:
+            obj.__dict__["_history"] = {}
 
     def __call__(self, cls):
         this = self
 
         def getter(self, attr):
             this.start(self)
-            if attr == 'history':
+            if attr == "history":
                 return self._history
-            if attr == 'historyTrace':
-                return '\n'.join('%s: "%s" has changed to "%s"' % (t[0], t[1], t[2]) for t in self._history)
+            if attr == "historyTrace":
+                return "\n".join(
+                    '%s: "%s" has changed to "%s"' % (t[0], t[1], t[2])
+                    for t in self._history
+                )
             return self.__dict__.get(attr)
+
         cls.__getattr__ = getter
 
         def setter(self, attr, value):
@@ -105,9 +107,9 @@ class History():
                 else:
                     self._history[attr].append(value)
             else:
-                self._history[attr] = [
-                    None, value] if value is not None else [None]
+                self._history[attr] = [None, value] if value is not None else [None]
             self.__dict__[attr] = value
+
         cls.__setattr__ = setter
 
         return cls
