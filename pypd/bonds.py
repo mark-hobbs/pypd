@@ -5,7 +5,7 @@ Bond array class
 
 import numpy as np
 
-from input.tools import build_bond_list
+from .tools import build_bond_list
 
 
 # Bonds, BondArray, or BondSet?

@@ -12,7 +12,7 @@ Notes
 """
 
 
-from solver.calculate import euler_cromer
+from .calculate import euler_cromer
 
 
 class Integrator():
