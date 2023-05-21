@@ -6,6 +6,44 @@ PyPD provides an easy to use class structure with fully interchangeable integrat
 
 ## Getting started
 
+Make sure you have Pipenv installed on your system. If you don't have it, you can install it using pip:
+
+```shell
+$ pip install pipenv
+```
+
+Pipenv provides a convenient way to manage Python package dependencies and virtual environments. By following these steps, you'll be able to install and work with the package in a controlled and isolated environment.
+
+Clone the repository:
+
+```shell
+$ git clone git@github.com:mhobbs18/PyPD.git
+```
+
+Change into the cloned repository's directory:
+
+```shell
+$ cd PyPD/
+```
+
+Create a virtual environment and install the package dependencies using Pipenv:
+
+```shell
+$ pipenv install --dev
+```
+
+This command will create a new virtual environment and install the package dependencies, including both the required dependencies and any development dependencies specified in the Pipfile.
+
+Activate the virtual environment:
+
+```shell
+$ pipenv shell
+```
+
+This command will activate the virtual environment so that you can work within it.
+
+You are now ready to use the package. You can run the package's scripts, import its modules, or use any other functionality it provides.
+
 ## Code structure
 
 ## Examples
