@@ -17,7 +17,7 @@ Pipenv provides a convenient way to manage Python package dependencies and virtu
 Clone the repository:
 
 ```shell
-$ git clone git@github.com:mhobbs18/PyPD.git
+$ git clone git@github.com:mark-hobbs/PyPD.git
 ```
 
 Change into the cloned repository's directory:
