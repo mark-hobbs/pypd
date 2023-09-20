@@ -113,7 +113,7 @@ def main():
         linear.calculate_bond_damage(linear.sc),
     )
 
-    model.run_simulation()
+    model.run_simulation(plot=True)
 
 
 main()

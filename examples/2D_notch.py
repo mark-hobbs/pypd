@@ -150,7 +150,8 @@ def main():
     dx = 1.25e-3
     n_div_x = np.rint(0.5 / dx).astype(int)
     n_div_y = np.rint(0.25 / dx).astype(int)
-    notch = [np.array([0 - dx, 0.125 - (dx / 2)]), np.array([0.2, 0.125 - (dx / 2)])]
+    notch = [np.array([0 - dx, 0.125 - (dx / 2)]), 
+             np.array([0.2, 0.125 - (dx / 2)])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     flag, unit_vector = build_boundary_conditions(x, dx)
@@ -166,7 +167,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
-    simulation = pypd.Simulation(dt=2e-7, n_time_steps=5000, damping=0)
+    simulation = pypd.Simulation(dt=1e-8, n_time_steps=5000, damping=0)
     model = pypd.Model(
         particles,
         bonds,
