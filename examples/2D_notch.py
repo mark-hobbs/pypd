@@ -165,7 +165,7 @@ def main():
     flag, unit_vector = build_boundary_conditions(x, dx)
 
     material = pypd.Material(
-        name="quasi-brittle", E=4.55e9, Gf=38.46, density=1230, ft=2.5
+        name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5
     )
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1)
@@ -185,7 +185,7 @@ def main():
     )
 
     model.run_simulation()
-    model.plot_damage()
+    model.plot_damage(fig_title='crack-branching')
 
 
 main()
