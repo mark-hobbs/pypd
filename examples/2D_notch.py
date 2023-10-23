@@ -2,6 +2,14 @@
 Example: 2D plate with a notch (crack branching)
 ------------------------------------------------
 
+See Section 5.2 Crack Branching in Homalite in [1]
+
+[1] Bobaru, F., & Zhang, G. (2015). Why do cracks branch? A peridynamic 
+investigation of dynamic brittle fracture. International Journal of Fracture,
+196, 59-98.
+
+Run
+---
 Run the following command from the root folder:
 
 python -m examples.2D_notch
