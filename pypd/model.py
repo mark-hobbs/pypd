@@ -94,7 +94,7 @@ class Model:
                     self.particles, self.simulation, i_time_step
                 )
 
-    def run_simulation(self, plot=False):
+    def run_simulation(self):
         """
         Run the simulation
 
@@ -120,27 +120,17 @@ class Model:
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
 
-        if plot is True:
-            self.particles.calculate_particle_damage(self.bonds)
-            self.plot_deformed_particles(sz=1, data=self.particles.damage)
-
-    def plot_deformed_particles(
-        self, sz=2, dsf=10, data=None, fig_title="deformed_particles"
-    ):
+    def plot_damage(self, sz=1, dsf=0, fig_title="damage"):
         """
-        Plot the deformed particles
+        Plot the damaged particles
 
         Parameters
         ----------
         sz : int
-            The marker size (particle size) in points (default = 2)
+            The marker size (particle size) in points (default = 1)
 
         dsf : int
-            Displacement scale factor (default = 10)
-
-        data : ndarray
-            Array-like list to be mapped to colours. For example:
-            particle.damage, particle.stress etc
+            Displacement scale factor (default = 0)
 
         fig_title : str
             The figure is saved as fig_title
@@ -151,10 +141,7 @@ class Model:
         Notes
         -----
         """
-        fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(111)
-        x_coords = self.particles.x[:, 0] + (self.particles.u[:, 0] * dsf)
-        y_coords = self.particles.x[:, 1] + (self.particles.u[:, 1] * dsf)
-        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
-        plt.axis("equal")
-        plt.savefig(fig_title, dpi=300)
+        self.particles.calculate_particle_damage(self.bonds)
+        self.particles.plot_particles(
+            sz=sz, dsf=dsf, data=self.particles.damage, fig_title=fig_title
+        )

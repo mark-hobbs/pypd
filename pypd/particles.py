@@ -6,6 +6,7 @@ TODO: rename classes as base or baseclasses?
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from .tools import build_particle_families
 from .calculate import calculate_nodal_forces, calculate_node_damage, smooth_step_data
@@ -108,7 +109,7 @@ class ParticleSet:
         self.bc = bc
         self.material = material
         self.cell_area = dx**2  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
-        self.cell_volume = dx**3 
+        self.cell_volume = dx**2 
         self.node_density = self.material.density
 
         self.nlist = nlist
@@ -242,3 +243,36 @@ class ParticleSet:
         )
 
         return integrator.one_timestep(node_force, self, simulation)
+    
+    def plot_particles(self, sz=1, dsf=10, data=None, fig_title="particles"):
+        """
+        Plot particles
+
+        Parameters
+        ----------
+        sz : int
+            The marker size (particle size) in points (default = 2)
+
+        dsf : int
+            Displacement scale factor (default = 10)
+
+        data : ndarray
+            Array-like list to be mapped to colours. For example:
+            particle.damage, particle.stress etc
+
+        fig_title : str
+            The figure is saved as fig_title
+
+        Returns
+        -------
+
+        Notes
+        -----
+        """
+        fig = plt.figure(figsize=(12, 6))
+        ax = fig.add_subplot(111)
+        x_coords = self.x[:, 0] + (self.u[:, 0] * dsf)
+        y_coords = self.x[:, 1] + (self.u[:, 1] * dsf)
+        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
+        plt.axis("equal")
+        plt.savefig(fig_title, dpi=300)
