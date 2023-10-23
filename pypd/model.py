@@ -31,7 +31,7 @@ class Model:
         bonds,
         simulation,
         integrator,
-        material_law,
+        constitutive_law,
         penetrators=None,
         observations=None,
     ):
@@ -49,7 +49,7 @@ class Model:
 
         integrator : Integrator class
 
-        material_law : function
+        constitutive_law : ConstitutiveLaw class
 
         penetrators: list
             List of penetrator objects/instances
@@ -64,7 +64,7 @@ class Model:
         self.bonds = bonds
         self.simulation = simulation
         self.integrator = integrator
-        self.material_law = material_law
+        self.constitutive_law = constitutive_law
         self.penetrators = penetrators
         self.observations = observations
 
@@ -83,7 +83,9 @@ class Model:
         -----
         """
 
-        nf, _ = self.particles.calculate_particle_forces(self.bonds, self.material_law)
+        nf, _ = self.particles.calculate_particle_forces(
+            self.bonds, self.constitutive_law.calculate_bond_damage
+        )
         self.particles.update_particle_positions(
             nf, self.simulation, self.integrator, i_time_step
         )

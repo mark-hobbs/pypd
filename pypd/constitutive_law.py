@@ -122,6 +122,8 @@ class Linear(ConstitutiveLaw):
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.sc)
+
     def _calculate_sc(self, material, particles):
         """
         Calculate the critical stretch for a linear elastic material in
@@ -140,7 +142,7 @@ class Linear(ConstitutiveLaw):
         return np.sqrt((4 * np.pi * material.Gf) / (9 * material.E * particles.horizon))
 
     @staticmethod
-    def calculate_bond_damage(sc):
+    def _calculate_bond_damage(sc):
         """
         Calculate bond damage
 
