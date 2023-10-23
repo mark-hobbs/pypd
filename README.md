@@ -6,6 +6,8 @@ PyPD provides an easy to use class structure with fully interchangeable integrat
 
 ## Code structure
 
+## Dependencies
+
 ## Getting started
 
 Make sure you have Pipenv installed on your system. If you don't have it, you can install it using pip:
@@ -46,6 +48,10 @@ This command will activate the virtual environment so that you can work within i
 
 You are now ready to use the package. You can run the package's scripts, import its modules, or use any other functionality it provides.
 
+## Usage
+
+## Features
+
 ## Examples
 
 There are four examples provided:
@@ -75,4 +81,5 @@ python -m examples.2D_B4_HN.py
 
 - [ ] Write unit tests
 - [ ] Write documentation
+- [ ] Publish on PyPI
 
