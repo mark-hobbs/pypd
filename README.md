@@ -4,6 +4,8 @@ A simple bond-based peridynamics code written in Python
 
 PyPD provides an easy to use class structure with fully interchangeable integration schemes and material models (constitutive model)
 
+## Code structure
+
 ## Getting started
 
 Make sure you have Pipenv installed on your system. If you don't have it, you can install it using pip:
@@ -44,9 +46,14 @@ This command will activate the virtual environment so that you can work within i
 
 You are now ready to use the package. You can run the package's scripts, import its modules, or use any other functionality it provides.
 
-## Code structure
-
 ## Examples
+
+There are four examples provided:
+
+- Crack branching in notched Homalite sheets
+- Plate with a hole in tension
+- Three-point bending test of a half-notched beam
+- Nuclear graphite ring compression test  
 
 ### Crack branching
 
@@ -64,4 +71,8 @@ python -m examples.2D_B4_HN.py
 
 ![](figures/TPB_HN.png)
 
+## :white_check_mark: TODO
+
+- [ ] Write unit tests
+- [ ] Write documentation
 
