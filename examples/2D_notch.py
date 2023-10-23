@@ -58,7 +58,7 @@ def build_boundary_conditions(particles, dx):
         if particle[1] < (0.02 + tol):
             bc_flag[i, 1] = 1
             bc_unit_vector[i, 1] = -1
-        if particle[1] > (0.23 - dx - tol):
+        if particle[1] > (0.18 - dx - tol):
             bc_flag[i, 1] = 1
             bc_unit_vector[i, 1] = 1
 
@@ -155,11 +155,11 @@ def rebuild_node_families(n_nodes, bondlist):
 
 
 def main():
-    dx = 1.25e-3
-    n_div_x = np.rint(0.5 / dx).astype(int)
-    n_div_y = np.rint(0.25 / dx).astype(int)
-    notch = [np.array([0 - dx, 0.125 - (dx / 2)]), 
-             np.array([0.2, 0.125 - (dx / 2)])]
+    dx = 1e-3
+    n_div_x = np.rint(0.4 / dx).astype(int)
+    n_div_y = np.rint(0.2 / dx).astype(int)
+    notch = [np.array([0 - dx, 0.1 - (dx / 2)]), 
+             np.array([0.2, 0.1 - (dx / 2)])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     flag, unit_vector = build_boundary_conditions(x, dx)
