@@ -177,7 +177,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
-    simulation = pypd.Simulation(n_time_steps=200000, damping=0, dt=1e-6)
+    simulation = pypd.Simulation(n_time_steps=200000, damping=0, dt=1e-8)
 
     radius = 25 * mm_to_m
     penetrators = []
@@ -247,14 +247,13 @@ def main():
         bonds,
         simulation,
         integrator,
-        nonlinear.calculate_bond_damage(
-            nonlinear.s0, nonlinear.sc, nonlinear.alpha, nonlinear.k
-        ),
+        nonlinear,
         penetrators,
         observations,
     )
 
     model.run_simulation()
+    # model.plot_damage(sz=25, dsf=10, fig_title='half-notched-beam')
 
     # Plot load-CMOD response
     load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z

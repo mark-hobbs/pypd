@@ -416,6 +416,11 @@ class NonLinear(ConstitutiveLaw):
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.s0, 
+                                                                 self.sc, 
+                                                                 self.alpha, 
+                                                                 self.k)
+
     def _calculate_s0(self, material):
         """
         Calculate the linear elastic limit
@@ -452,7 +457,7 @@ class NonLinear(ConstitutiveLaw):
         return numerator / denominator
 
     @staticmethod
-    def calculate_bond_damage(s0, sc, alpha, k):
+    def _calculate_bond_damage(s0, sc, alpha, k):
         """
         Calculate bond damage
 
