@@ -1,4 +1,3 @@
-## Pull Request Template
 
 **Description:**
 
@@ -19,11 +18,10 @@ If applicable, include screenshots or images that help illustrate the changes.
 
 **Checklist:**
 
-- [ ] I have read and followed the [contributing guidelines](CONTRIBUTING.md).
-- [ ] My code follows the project's coding standards.
-- [ ] My code has been tested on relevant browsers/devices.
-- [ ] I have updated documentation if necessary.
-- [ ] All tests pass.
+- [ ] I have read and followed the [contributing guidelines](contributing.md)
+- [ ] My code follows the project's coding standards
+- [ ] I have updated documentation if necessary
+- [ ] All tests pass
 
 **Additional Comments:**
 
