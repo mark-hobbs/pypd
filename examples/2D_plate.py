@@ -110,7 +110,7 @@ def main():
         bonds,
         simulation,
         integrator,
-        linear.calculate_bond_damage(linear.sc),
+        linear,
     )
 
     model.run_simulation()

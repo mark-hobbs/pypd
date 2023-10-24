@@ -122,6 +122,8 @@ class Linear(ConstitutiveLaw):
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.sc)
+
     def _calculate_sc(self, material, particles):
         """
         Calculate the critical stretch for a linear elastic material in
@@ -140,7 +142,7 @@ class Linear(ConstitutiveLaw):
         return np.sqrt((4 * np.pi * material.Gf) / (9 * material.E * particles.horizon))
 
     @staticmethod
-    def calculate_bond_damage(sc):
+    def _calculate_bond_damage(sc):
         """
         Calculate bond damage
 
@@ -266,6 +268,11 @@ class Trilinear(ConstitutiveLaw):
 
         self.s1 = self._calculate_s1()
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.s0,
+                                                                 self.s1, 
+                                                                 self.sc, 
+                                                                 self.beta)
+
     def _calculate_s0(self, material):
         """
         Calculate the linear elastic limit
@@ -293,7 +300,7 @@ class Trilinear(ConstitutiveLaw):
         return self.s0 + ((self.sc - self.s0) / self.gamma)
 
     @staticmethod
-    def calculate_bond_damage(s0, s1, sc, beta):
+    def _calculate_bond_damage(s0, s1, sc, beta):
         """
         Calculate bond damage
 
@@ -414,6 +421,11 @@ class NonLinear(ConstitutiveLaw):
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.s0, 
+                                                                 self.sc, 
+                                                                 self.alpha, 
+                                                                 self.k)
+
     def _calculate_s0(self, material):
         """
         Calculate the linear elastic limit
@@ -450,7 +462,7 @@ class NonLinear(ConstitutiveLaw):
         return numerator / denominator
 
     @staticmethod
-    def calculate_bond_damage(s0, sc, alpha, k):
+    def _calculate_bond_damage(s0, sc, alpha, k):
         """
         Calculate bond damage
 
