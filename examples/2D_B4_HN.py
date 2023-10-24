@@ -12,6 +12,7 @@ Run the following command from the root folder:
 python -m examples.2D_B4_HN
 
 """
+import copy
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -145,6 +146,24 @@ def rebuild_node_families(n_nodes, bondlist):
     return n_family_members
 
 
+def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
+    load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z
+    cmod = np.array(model.observations[1].history) - np.array(
+        model.observations[0].history
+    )
+
+    fig = plt.figure(figsize=(12, 6))
+    ax = fig.add_subplot(111)
+    plt.plot((cmod[:, 0] * m_to_mm), load[:, 1])
+    plt.savefig(fig_title, dpi=300)
+
+    if save_csv == True:
+        data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
+        np.savetxt(
+            "load_cmod.csv", np.transpose(np.array(data)), delimiter=",", fmt="%f"
+        )
+
+
 def main():
     dx = 2.5 * mm_to_m
     length = 175 * mm_to_m
@@ -227,46 +246,42 @@ def main():
         )
     )
 
-    # model = Model(particles, bonds, simulation, integrator,
-    #               linear.calculate_bond_damage(linear.sc),
-    #               penetrators, observations)
+    linear_model = pypd.Model(
+        copy.deepcopy(particles),
+        copy.deepcopy(bonds),
+        copy.deepcopy(simulation),
+        copy.deepcopy(integrator),
+        linear,
+        copy.deepcopy(penetrators),
+        copy.deepcopy(observations),
+    )
+    linear_model.run_simulation()
+    plot_load_cmod(linear_model, n_div_z, fig_title="load-cmod-linear")
 
-    # model = Model(particles,
-    #               bonds,
-    #               simulation,
-    #               integrator,
-    #               trilinear.calculate_bond_damage(trilinear.s0,
-    #                                               trilinear.s1,
-    #                                               trilinear.sc,
-    #                                               trilinear.beta),
-    #               penetrators,
-    #               observations)
+    trilinear_model = pypd.Model(
+        copy.deepcopy(particles),
+        copy.deepcopy(bonds),
+        copy.deepcopy(simulation),
+        copy.deepcopy(integrator),
+        trilinear,
+        copy.deepcopy(penetrators),
+        copy.deepcopy(observations),
+    )
+    trilinear_model.run_simulation()
+    plot_load_cmod(trilinear_model, n_div_z, fig_title="load-cmod-trilinear")
 
-    model = pypd.Model(
-        particles,
-        bonds,
-        simulation,
-        integrator,
+    nonlinear_model = pypd.Model(
+        copy.deepcopy(particles),
+        copy.deepcopy(bonds),
+        copy.deepcopy(simulation),
+        copy.deepcopy(integrator),
         nonlinear,
-        penetrators,
-        observations,
+        copy.deepcopy(penetrators),
+        copy.deepcopy(observations),
     )
-
-    model.run_simulation()
-    # model.plot_damage(sz=25, dsf=10, fig_title='half-notched-beam')
-
-    # Plot load-CMOD response
-    load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z
-    # load = (np.array(model.penetrators[1].penetrator_force_history)
-    #         + np.array(model.penetrators[2].penetrator_force_history))
-    cmod = np.array(model.observations[1].history) - np.array(
-        model.observations[0].history
-    )
-    plt.plot((cmod[:, 0] * m_to_mm), load[:, 1])
-    plt.show()
-
-    data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
-    np.savetxt("load_cmod.csv", np.transpose(np.array(data)), delimiter=",", fmt="%f")
+    nonlinear_model.run_simulation()
+    nonlinear_model.plot_damage(sz=25, dsf=10, fig_title="half-notched-beam")
+    plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 
 main()
