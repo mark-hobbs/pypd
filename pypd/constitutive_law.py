@@ -268,6 +268,11 @@ class Trilinear(ConstitutiveLaw):
 
         self.s1 = self._calculate_s1()
 
+        self.calculate_bond_damage = self._calculate_bond_damage(self.s0,
+                                                                 self.s1, 
+                                                                 self.sc, 
+                                                                 self.beta)
+
     def _calculate_s0(self, material):
         """
         Calculate the linear elastic limit
@@ -295,7 +300,7 @@ class Trilinear(ConstitutiveLaw):
         return self.s0 + ((self.sc - self.s0) / self.gamma)
 
     @staticmethod
-    def calculate_bond_damage(s0, s1, sc, beta):
+    def _calculate_bond_damage(s0, s1, sc, beta):
         """
         Calculate bond damage
 
