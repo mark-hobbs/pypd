@@ -82,4 +82,5 @@ python -m examples.2D_B4_HN.py
 - [ ] Write unit tests
 - [ ] Write documentation
 - [ ] Publish on PyPI
+- [ ] Sort particles spatially to improve memory access (see this [notebook](https://github.com/pdebuyl/compute/blob/master/hilbert_curve/hilbert_curve.ipynb) on understanding the Hilbert curve)
 
