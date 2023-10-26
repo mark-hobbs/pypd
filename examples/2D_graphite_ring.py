@@ -134,7 +134,7 @@ def main():
         name="graphite", E=10e9, Gf=100, density=1780, ft=27.6  # Gf=190
     )
     integrator = pypd.EulerCromer()
-    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1)
+    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
     linear = pypd.Linear(material, particles, t=dx)
     bonds = pypd.BondSet(particles, linear)
@@ -144,10 +144,10 @@ def main():
         bonds,
         simulation,
         integrator,
-        linear.calculate_bond_damage(linear.sc),
+        linear
     )
 
     model.run_simulation()
-
+    model.plot_damage(sz=.5, dsf=0, fig_title="graphite-ring")
 
 main()
