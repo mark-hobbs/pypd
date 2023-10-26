@@ -38,6 +38,8 @@ class BoundaryConditions:
 
         Parameters
         ----------
+        i_magnitude : float
+            Magnitude at time step i
 
         Returns
         -------
@@ -50,9 +52,19 @@ class BoundaryConditions:
         self.flag = flag
         self.unit_vector = unit_vector
         self.magnitude = magnitude
+        self.i_magnitude = None
+
+
+class DisplacementBoundaryCondition(BoundaryConditions):
+    def __init__(self, flag, unit_vector, magnitude):
+        super().__init__(flag, unit_vector, magnitude)
 
     def _applied_displacement_magnitude():
         """
         self.magnitude = smooth_step_data()
         """
         pass
+
+
+class ForceBoundaryCondition(BoundaryConditions):
+    pass

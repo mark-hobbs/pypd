@@ -100,7 +100,7 @@ def main():
 
     material = pypd.Material(name="quasi-brittle", E=33e9, Gf=130, density=2400, ft=2.5)
     integrator = pypd.EulerCromer()
-    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1)
+    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
     linear = pypd.Linear(material, particles, dx)
     bonds = pypd.BondSet(particles, linear)

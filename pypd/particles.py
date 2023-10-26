@@ -238,8 +238,8 @@ class ParticleSet:
         * TODO: pass bc.magnitude as a function
         """
 
-        self.bc.magnitude = smooth_step_data(
-            i_time_step, 0, simulation.n_time_steps, 0, 1e-4
+        self.bc.i_magnitude = smooth_step_data(
+            i_time_step, 0, simulation.n_time_steps, 0, self.bc.magnitude
         )
 
         return integrator.one_timestep(node_force, self, simulation)
