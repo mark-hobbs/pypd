@@ -186,9 +186,9 @@ def main():
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=0)  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
-    linear = pypd.Linear(material, particles, dx)
-    trilinear = pypd.Trilinear(material, particles, dx)
-    nonlinear = pypd.NonLinear(material, particles, dx)
+    linear = pypd.Linear(material, particles, t=dx)
+    trilinear = pypd.Trilinear(material, particles, t=dx)
+    nonlinear = pypd.NonLinear(material, particles, t=dx)
     trilinear.print_parameters()
     nonlinear.print_parameters()
 
