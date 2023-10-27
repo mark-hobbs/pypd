@@ -103,13 +103,16 @@ class ParticleSet:
         """
 
         self.x = x
+        self.dx = dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
         self.n_nodes = np.shape(self.x)[0]
         self.n_dim = np.shape(self.x)[1]
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_area = dx**2  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
-        self.cell_volume = dx**2 
+        self.cell_area = (
+            dx**2
+        )  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
+        self.cell_volume = dx**2
         self.node_density = self.material.density
 
         self.nlist = nlist
@@ -243,7 +246,7 @@ class ParticleSet:
         )
 
         return integrator.one_timestep(node_force, self, simulation)
-    
+
     def plot_particles(self, sz=1, dsf=10, data=None, fig_title="particles"):
         """
         Plot particles
