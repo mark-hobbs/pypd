@@ -104,7 +104,7 @@ def main():
     particles = pypd.ParticleSet(x, dx, bc, material)
     linear = pypd.Linear(material, particles, t=dx)
     bonds = pypd.BondSet(particles, linear)
-    simulation = pypd.Simulation(dt=1e-8, n_time_steps=20000, damping=0)
+    simulation = pypd.Simulation(dt=None, n_time_steps=20000, damping=0)
     model = pypd.Model(
         particles,
         bonds,

@@ -112,7 +112,7 @@ class ParticleSet:
         self.cell_area = (
             dx**2
         )  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
-        self.cell_volume = dx**2
+        self.cell_volume = dx**3
         self.node_density = self.material.density
 
         self.nlist = nlist
