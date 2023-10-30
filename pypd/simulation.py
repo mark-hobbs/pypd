@@ -1,3 +1,6 @@
+from .tools import calculate_stable_time_step
+
+
 class Simulation:
     # Define a config file (yaml file)
 
@@ -5,14 +8,32 @@ class Simulation:
         self.n_time_steps = n_time_steps
         self.damping = damping
         self.dt = dt
-        if self.dt is None:
-            self.dt = self._calculate_stable_dt()
 
-    def _calculate_stable_dt(self):
+    @staticmethod
+    def calculate_stable_dt(particles, constitutive_law, sf=0.8):
         """
         Calculate stable time step
+
+        Parameters
+        ----------
+        particles : ParticleSet
+
+        constitutive_law : ConstitutiveLaw
+
+        sf : float
+            Safety factor
+
+        Notes
+        -----
+        - TODO: dx should be an attribute of a Mesh class
+        - TODO: c should be an attribute of a bond
         """
-        pass
+        return sf * calculate_stable_time_step(
+            particles.material.density,
+            particles.dx,
+            particles.horizon,
+            constitutive_law.c,
+        )
 
     def initiate_arrays():
         pass

@@ -68,6 +68,12 @@ class Model:
         self.penetrators = penetrators
         self.observations = observations
 
+        if self.simulation.dt is None:
+            self.simulation.dt = self.simulation.calculate_stable_dt(
+                self.particles, self.constitutive_law
+            )
+            print(self.simulation.dt)
+
     def _single_time_step(self, i_time_step):
         """
         Single time step

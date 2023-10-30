@@ -268,10 +268,9 @@ class Trilinear(ConstitutiveLaw):
 
         self.s1 = self._calculate_s1()
 
-        self.calculate_bond_damage = self._calculate_bond_damage(self.s0,
-                                                                 self.s1, 
-                                                                 self.sc, 
-                                                                 self.beta)
+        self.calculate_bond_damage = self._calculate_bond_damage(
+            self.s0, self.s1, self.sc, self.beta
+        )
 
     def _calculate_s0(self, material):
         """
@@ -421,10 +420,9 @@ class NonLinear(ConstitutiveLaw):
         if self.sc is None:
             self.sc = self._calculate_sc(material, particles)
 
-        self.calculate_bond_damage = self._calculate_bond_damage(self.s0, 
-                                                                 self.sc, 
-                                                                 self.alpha, 
-                                                                 self.k)
+        self.calculate_bond_damage = self._calculate_bond_damage(
+            self.s0, self.sc, self.alpha, self.k
+        )
 
     def _calculate_s0(self, material):
         """

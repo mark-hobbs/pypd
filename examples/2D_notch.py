@@ -175,7 +175,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
-    simulation = pypd.Simulation(dt=1e-8, n_time_steps=5000, damping=0)
+    simulation = pypd.Simulation(dt=None, n_time_steps=5000, damping=0)
     model = pypd.Model(
         particles,
         bonds,
