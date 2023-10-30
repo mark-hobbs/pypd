@@ -136,11 +136,11 @@ def calculate_stable_time_step(rho, dx, horizon, c):
     rho : float
         Material density (kg/m^3)
 
-    horizon : float
-        Horizon radius
-
     dx : float
         Mesh resolution (only valid for regular meshes)
+
+    horizon : float
+        Horizon radius
 
     c : float
         Bond stiffness
