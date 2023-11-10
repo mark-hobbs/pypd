@@ -271,6 +271,8 @@ class ParticleSet:
 
         Notes
         -----
+        TODO: saving the figure should move to another class method - for 
+        example Model.save_final_state_fig()
         """
         fig = plt.figure(figsize=(12, 6))
         ax = fig.add_subplot(111)

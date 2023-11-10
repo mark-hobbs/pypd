@@ -34,6 +34,7 @@ class Model:
         constitutive_law,
         penetrators=None,
         observations=None,
+        animation=None,
     ):
         """
         Model class constructor
@@ -67,6 +68,7 @@ class Model:
         self.constitutive_law = constitutive_law
         self.penetrators = penetrators
         self.observations = observations
+        self.animation = animation
 
         if self.simulation.dt is None:
             self.simulation.dt = self.simulation.calculate_stable_dt(
@@ -101,6 +103,9 @@ class Model:
                 penetrator.calculate_penetrator_force(
                     self.particles, self.simulation, i_time_step
                 )
+        
+        if self.animation:
+            pass
 
     def run_simulation(self):
         """
@@ -148,6 +153,8 @@ class Model:
 
         Notes
         -----
+        TODO: rename as model.save_final_state_fig() and save the figure in 
+        this method
         """
         self.particles.calculate_particle_damage(self.bonds)
         self.particles.plot_particles(
