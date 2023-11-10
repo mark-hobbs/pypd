@@ -247,7 +247,7 @@ class ParticleSet:
 
         return integrator.one_timestep(node_force, self, simulation)
 
-    def plot_particles(self, sz=1, dsf=10, data=None, fig_title="particles"):
+    def plot_particles(self, ax, sz=1, dsf=10, data=None):
         """
         Plot particles
 
@@ -263,21 +263,12 @@ class ParticleSet:
             Array-like list to be mapped to colours. For example:
             particle.damage, particle.stress etc
 
-        fig_title : str
-            The figure is saved as fig_title
-
         Returns
         -------
 
         Notes
         -----
-        TODO: saving the figure should move to another class method - for 
-        example Model.save_final_state_fig()
         """
-        fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(111)
         x_coords = self.x[:, 0] + (self.u[:, 0] * dsf)
         y_coords = self.x[:, 1] + (self.u[:, 1] * dsf)
         ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
-        plt.axis("equal")
-        plt.savefig(fig_title, dpi=300)
