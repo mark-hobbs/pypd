@@ -148,6 +148,6 @@ def main():
     )
 
     model.run_simulation()
-    model.plot_damage(sz=.5, dsf=0, fig_title="graphite-ring")
+    model.save_final_state_fig(sz=.5, dsf=0, fig_title="graphite-ring")
 
 main()
