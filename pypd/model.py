@@ -103,9 +103,10 @@ class Model:
                 penetrator.calculate_penetrator_force(
                     self.particles, self.simulation, i_time_step
                 )
-        
+
         if self.animation:
-            pass
+            if i_time_step % self.animation.frequency == 0:
+                self.animation.save_particle_positions(self.particles)
 
     def run_simulation(self):
         """
@@ -133,9 +134,9 @@ class Model:
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
 
-    def plot_damage(self, sz=1, dsf=0, fig_title="damage"):
+    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage"):
         """
-        Plot the damaged particles
+        Save a figure of the final state of the simulation
 
         Parameters
         ----------
@@ -153,10 +154,10 @@ class Model:
 
         Notes
         -----
-        TODO: rename as model.save_final_state_fig() and save the figure in 
-        this method
         """
+        fig = plt.figure(figsize=(12, 6))
+        ax = fig.add_subplot(111)
         self.particles.calculate_particle_damage(self.bonds)
-        self.particles.plot_particles(
-            sz=sz, dsf=dsf, data=self.particles.damage, fig_title=fig_title
-        )
+        self.particles.plot_particles(ax, sz=sz, dsf=dsf, data=self.particles.damage)
+        plt.axis("equal")
+        plt.savefig(fig_title, dpi=300)
