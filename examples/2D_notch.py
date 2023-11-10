@@ -185,7 +185,7 @@ def main():
     )
 
     model.run_simulation()
-    model.plot_damage(fig_title='crack-branching')
+    model.save_final_state_fig(fig_title='crack-branching')
 
 
 main()
