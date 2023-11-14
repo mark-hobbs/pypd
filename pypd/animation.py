@@ -82,6 +82,7 @@ class Animation:
         self.ax.set_title(f"frame {frame}")
         self.ax.set_aspect("equal", "box")
         self.ax.axis("off")
+        self.fig.tight_layout()
         return scatter
 
     def generate_animation(self):
