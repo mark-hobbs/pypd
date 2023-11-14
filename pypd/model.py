@@ -106,12 +106,8 @@ class Model:
 
         if self.animation:
             if i_time_step % self.animation.frequency == 0:
-                fig = plt.figure(figsize=(12, 6))
                 self.particles.calculate_particle_damage(self.bonds)
-                self.particles.plot_particles(
-                    fig, sz=1, dsf=0, data=self.particles.damage
-                )
-                self.animation.save_frame(fig)
+                self.animation.save_frame(self.particles)
 
     def run_simulation(self):
         """

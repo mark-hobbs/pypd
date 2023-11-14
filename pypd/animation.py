@@ -1,7 +1,8 @@
 """
 Animation class
------------
+---------------
 
+A class for creating and saving animated scatter plots using Matplotlib.
 """
 from datetime import datetime
 import copy
@@ -11,9 +12,29 @@ import matplotlib.animation as animation
 
 
 class Animation:
-    def __init__(self, frequency=100, name=None):
+    def __init__(self, frequency=100, name=None, sz=1, dsf=0):
+        """
+        Initialise the Animation object
+
+        Parameters
+        ----------
+        frequency : int, optional
+            The frequency at which frames are saved. Default is 100 time steps.
+
+        name : str, optional
+            The name of the animation file to be saved. If not provided, a default
+            name based on the timestamp will be generated.
+
+        sz : float, optional
+            Size scaling factor for particles in the scatter plot. Default is 1.
+
+        dsf : float, optional
+            Data scaling factor for particles in the scatter plot. Default is 0.
+        """
         self.frequency = frequency
         self.name = name or self._generate_animation_name()
+        self.sz = sz
+        self.dsf = dsf
         self.frames = []
         self.fig, self.ax = plt.subplots()
 
@@ -22,12 +43,14 @@ class Animation:
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         return f"{timestamp}-animation.gif"
 
-    def save_frame(self, frame):
+    def save_frame(self, particles):
         """
         Append a matplotlib.figure.Figure object to the self.frames list at a
         frequency defined by self.frequency
         """
-        self.frames.append(copy.deepcopy(frame))
+        fig = plt.figure(figsize=(12, 6))
+        particles.plot_particles(fig, sz=self.sz, dsf=self.dsf, data=particles.damage)
+        self.frames.append(copy.deepcopy(fig))
 
     def _set_axis_limits(self, i):
         x_data, y_data = self._get_data_from_frame(i)
