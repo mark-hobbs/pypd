@@ -176,12 +176,14 @@ def main():
         particles.x, bonds.bondlist, notch
     )
     simulation = pypd.Simulation(dt=None, n_time_steps=5000, damping=0)
+    animation = pypd.Animation(frequency=100)
     model = pypd.Model(
         particles,
         bonds,
         simulation,
         integrator,
         linear,
+        animation=animation
     )
 
     model.run_simulation()

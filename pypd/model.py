@@ -106,7 +106,12 @@ class Model:
 
         if self.animation:
             if i_time_step % self.animation.frequency == 0:
-                self.animation.save_particle_positions(self.particles)
+                fig = plt.figure(figsize=(12, 6))
+                self.particles.calculate_particle_damage(self.bonds)
+                self.particles.plot_particles(
+                    fig, sz=1, dsf=0, data=self.particles.damage
+                )
+                self.animation.save_frame(fig)
 
     def run_simulation(self):
         """
@@ -134,6 +139,9 @@ class Model:
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
 
+        if self.animation:
+            self.animation.generate_animation()
+
     def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage"):
         """
         Save a figure of the final state of the simulation
@@ -156,8 +164,6 @@ class Model:
         -----
         """
         fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(111)
         self.particles.calculate_particle_damage(self.bonds)
-        self.particles.plot_particles(ax, sz=sz, dsf=dsf, data=self.particles.damage)
-        plt.axis("equal")
-        plt.savefig(fig_title, dpi=300)
+        self.particles.plot_particles(fig, sz=sz, dsf=dsf, data=self.particles.damage)
+        fig.savefig(fig_title, dpi=300)
