@@ -247,12 +247,16 @@ class ParticleSet:
 
         return integrator.one_timestep(node_force, self, simulation)
 
-    def plot_particles(self, sz=1, dsf=10, data=None, fig_title="particles"):
+    def plot_particles(self, fig, sz=1, dsf=10, data=None):
         """
-        Plot particles
+        Scatter plot of displaced particle positions
 
         Parameters
         ----------
+        fig : matplotlib.figure.Figure
+            The top-level container that holds all elements of a Matplotlib 
+            plot
+
         sz : int
             The marker size (particle size) in points (default = 2)
 
@@ -263,19 +267,18 @@ class ParticleSet:
             Array-like list to be mapped to colours. For example:
             particle.damage, particle.stress etc
 
-        fig_title : str
-            The figure is saved as fig_title
-
         Returns
         -------
+        The ax.scatter() function in Matplotlib returns a PathCollection 
+        object. This object represents a collection of scatter points or 
+        markers on a plot. It contains information about the plotted markers, 
+        including their positions, sizes, colours, and other properties.
 
         Notes
         -----
         """
-        fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(111)
         x_coords = self.x[:, 0] + (self.u[:, 0] * dsf)
         y_coords = self.x[:, 1] + (self.u[:, 1] * dsf)
-        ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
-        plt.axis("equal")
-        plt.savefig(fig_title, dpi=300)
+
+        ax = fig.add_subplot(1, 1, 1)
+        return ax.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")

@@ -34,6 +34,7 @@ class Model:
         constitutive_law,
         penetrators=None,
         observations=None,
+        animation=None,
     ):
         """
         Model class constructor
@@ -67,6 +68,7 @@ class Model:
         self.constitutive_law = constitutive_law
         self.penetrators = penetrators
         self.observations = observations
+        self.animation = animation
 
         if self.simulation.dt is None:
             self.simulation.dt = self.simulation.calculate_stable_dt(
@@ -102,6 +104,11 @@ class Model:
                     self.particles, self.simulation, i_time_step
                 )
 
+        if self.animation:
+            if i_time_step % self.animation.frequency == 0:
+                self.particles.calculate_particle_damage(self.bonds)
+                self.animation.save_frame(self.particles)
+
     def run_simulation(self):
         """
         Run the simulation
@@ -128,9 +135,12 @@ class Model:
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
 
-    def plot_damage(self, sz=1, dsf=0, fig_title="damage"):
+        if self.animation:
+            self.animation.generate_animation()
+
+    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage"):
         """
-        Plot the damaged particles
+        Save a figure of the final state of the simulation
 
         Parameters
         ----------
@@ -149,7 +159,7 @@ class Model:
         Notes
         -----
         """
+        fig = plt.figure(figsize=(12, 6))
         self.particles.calculate_particle_damage(self.bonds)
-        self.particles.plot_particles(
-            sz=sz, dsf=dsf, data=self.particles.damage, fig_title=fig_title
-        )
+        self.particles.plot_particles(fig, sz=sz, dsf=dsf, data=self.particles.damage)
+        fig.savefig(fig_title, dpi=300)

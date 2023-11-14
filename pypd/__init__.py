@@ -8,3 +8,4 @@ from .material import Material
 from .constitutive_law import Linear, Bilinear, Trilinear, NonLinear
 from .penetrator import Penetrator
 from .simulation_data import Observation
+from .animation import Animation

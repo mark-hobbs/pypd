@@ -114,7 +114,7 @@ def main():
     )
 
     model.run_simulation()
-    model.plot_damage(sz=.75, fig_title="plate-with-a-hole")
+    model.save_final_state_fig(sz=.75, fig_title="plate-with-a-hole")
 
 
 main()
