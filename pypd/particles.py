@@ -247,42 +247,16 @@ class ParticleSet:
 
         return integrator.one_timestep(node_force, self, simulation)
 
-    # def plot_particles(self, sz=1, dsf=10, data=None):
-    #     """
-    #     Scatter plot of displaced particle positions
-
-    #     Parameters
-    #     ----------
-    #     sz : int
-    #         The marker size (particle size) in points (default = 2)
-
-    #     dsf : int
-    #         Displacement scale factor (default = 10)
-
-    #     data : ndarray
-    #         Array-like list to be mapped to colours. For example:
-    #         particle.damage, particle.stress etc
-
-    #     Returns
-    #     -------
-    #     The plt.scatter() function in Matplotlib returns a PathCollection 
-    #     object. This object represents a collection of scatter points or 
-    #     markers on a plot. It contains information about the plotted markers, 
-    #     including their positions, sizes, colours, and other properties.
-
-    #     Notes
-    #     -----
-    #     """
-    #     x_coords = self.x[:, 0] + (self.u[:, 0] * dsf)
-    #     y_coords = self.x[:, 1] + (self.u[:, 1] * dsf)
-    #     return plt.scatter(x_coords, y_coords, s=sz, c=data, cmap="jet")
-
     def plot_particles(self, fig, sz=1, dsf=10, data=None):
         """
         Scatter plot of displaced particle positions
 
         Parameters
         ----------
+        fig : matplotlib.figure.Figure
+            The top-level container that holds all elements of a Matplotlib 
+            plot
+
         sz : int
             The marker size (particle size) in points (default = 2)
 
@@ -295,7 +269,7 @@ class ParticleSet:
 
         Returns
         -------
-        The plt.scatter() function in Matplotlib returns a PathCollection 
+        The ax.scatter() function in Matplotlib returns a PathCollection 
         object. This object represents a collection of scatter points or 
         markers on a plot. It contains information about the plotted markers, 
         including their positions, sizes, colours, and other properties.
