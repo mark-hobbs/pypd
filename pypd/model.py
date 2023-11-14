@@ -162,4 +162,6 @@ class Model:
         fig = plt.figure(figsize=(12, 6))
         self.particles.calculate_particle_damage(self.bonds)
         self.particles.plot_particles(fig, sz=sz, dsf=dsf, data=self.particles.damage)
+        fig.gca().set_aspect("equal", "box")
+        fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
