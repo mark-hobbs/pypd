@@ -269,7 +269,7 @@ def main():
     )
 
     nonlinear_model.run_simulation()
-    nonlinear_model.save_final_state_fig(sz=12, dsf=1, fig_title="mixed-mode-fracture")
+    nonlinear_model.save_final_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
     plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 
