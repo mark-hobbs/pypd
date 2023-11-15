@@ -19,6 +19,12 @@ import matplotlib.pyplot as plt
 
 import pypd
 
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Times New Roman"]})
+plt.rcParams["font.family"] = "Times New Roman"
+
 mm_to_m = 1e-3
 m_to_mm = 1e3
 
@@ -152,10 +158,14 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
         model.observations[0].history
     )
 
-    fig = plt.figure(figsize=(12, 6))
-    ax = fig.add_subplot(111)
-    plt.plot((cmod[:, 0] * m_to_mm), load[:, 1])
-    plt.savefig(fig_title, dpi=300)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot((cmod[:, 0] * m_to_mm), load[:, 1])
+    ax.set_xlabel('CMOD (mm)')
+    ax.set_ylabel('Load (N)')
+    ax.grid(True)
+
+    fig.tight_layout()
+    fig.savefig(fig_title, dpi=300)
 
     if save_csv == True:
         data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
@@ -198,7 +208,7 @@ def main():
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
-    simulation = pypd.Simulation(n_time_steps=200000, damping=0, dt=None)
+    simulation = pypd.Simulation(n_time_steps=100000, damping=0, dt=None)
 
     radius = 25 * mm_to_m
     penetrators = []
@@ -206,7 +216,7 @@ def main():
         pypd.Penetrator(
             np.array([0.5 * length, depth + radius - dx]),
             np.array([0, 1]),
-            np.array([0, -0.4 * mm_to_m]),
+            np.array([0, -0.2 * mm_to_m]),
             radius,
             particles,
             name="Penetrator",
