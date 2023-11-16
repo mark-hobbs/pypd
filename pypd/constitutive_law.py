@@ -113,15 +113,8 @@ class Linear(ConstitutiveLaw):
         should be improved
         """
         self.t = t
-        self.c = c
-        self.sc = sc
-
-        if self.c is None:
-            self.c = self._calculate_bond_stiffness(material, particles)
-
-        if self.sc is None:
-            self.sc = self._calculate_sc(material, particles)
-
+        self.c = c or self._calculate_bond_stiffness(material, particles)
+        self.sc = sc or self._calculate_sc(material, particles)
         self.calculate_bond_damage = self._calculate_bond_damage(self.sc)
 
     def _calculate_sc(self, material, particles):
@@ -251,23 +244,12 @@ class Trilinear(ConstitutiveLaw):
         -----
         """
         self.t = t
-        self.c = c
-        self.s0 = s0
-        self.sc = sc
+        self.c = c or self._calculate_bond_stiffness(material, particles)
+        self.s0 = s0 or self._calculate_s0(material)
+        self.sc = sc or self._calculate_sc(material, particles)
         self.beta = beta
         self.gamma = self._calculate_gamma()
-
-        if self.c is None:
-            self.c = self._calculate_bond_stiffness(material, particles)
-
-        if self.s0 is None:
-            self.s0 = self._calculate_s0(material)
-
-        if self.sc is None:
-            self.sc = self._calculate_sc(material, particles)
-
         self.s1 = self._calculate_s1()
-
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.s1, self.sc, self.beta
         )
@@ -405,21 +387,11 @@ class NonLinear(ConstitutiveLaw):
         -----
         """
         self.t = t
-        self.c = c
-        self.s0 = s0
-        self.sc = sc
+        self.c = c or self._calculate_bond_stiffness(material, particles)
+        self.s0 = s0 or self._calculate_s0(material)
+        self.sc = sc or self._calculate_sc(material, particles)
         self.alpha = alpha
         self.k = k
-
-        if self.c is None:
-            self.c = self._calculate_bond_stiffness(material, particles)
-
-        if self.s0 is None:
-            self.s0 = self._calculate_s0(material)
-
-        if self.sc is None:
-            self.sc = self._calculate_sc(material, particles)
-
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.sc, self.alpha, self.k
         )
