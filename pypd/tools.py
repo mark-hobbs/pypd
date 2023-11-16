@@ -158,6 +158,6 @@ def calculate_stable_time_step(rho, dx, horizon, c):
     peridynamic model of solid mechanics. Computers & structures, 83(17-18),
     1526-1535.
 
-    TODO: is this equation correct and is it valid for 2D and 3D problems? 
+    TODO: is this equation correct and is it valid for 2D and 3D problems?
     """
     return np.sqrt((2 * rho * dx) / (np.pi * horizon**2 * dx * c))

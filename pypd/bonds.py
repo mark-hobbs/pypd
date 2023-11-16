@@ -82,7 +82,9 @@ class BondSet:
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
-        self.constitutive_law = constitutive_law # Constitutive model (material_model / material_law?)
+        self.constitutive_law = (
+            constitutive_law  # Constitutive model (material_model / material_law?)
+        )
 
     def _build_bond_list(self, nlist):
         """
