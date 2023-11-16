@@ -21,9 +21,7 @@ class Integrator:
     """
 
     def __init__(self, dt=None):
-        self.dt = dt
-        if self.dt is None:
-            self.dt = self._calculate_stable_dt()
+        self.dt = dt or self._calculate_stable_dt()
 
     def _calculate_stable_dt():
         """
