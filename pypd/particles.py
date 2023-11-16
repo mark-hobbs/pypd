@@ -9,7 +9,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .tools import build_particle_families
-from .calculate import calculate_nodal_forces, calculate_node_damage, smooth_step_data
+from .kernels.calculate import (
+    calculate_nodal_forces,
+    calculate_node_damage,
+    smooth_step_data,
+)
 
 
 # Particles, ParticleArray, or ParticleSet?
@@ -109,9 +113,7 @@ class ParticleSet:
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_area = (
-            dx**2
-        )  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
+        self.cell_area = dx**2 # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
         self.cell_volume = dx**3
         self.node_density = self.material.density
 
@@ -254,7 +256,7 @@ class ParticleSet:
         Parameters
         ----------
         fig : matplotlib.figure.Figure
-            The top-level container that holds all elements of a Matplotlib 
+            The top-level container that holds all elements of a Matplotlib
             plot
 
         sz : int
@@ -269,9 +271,9 @@ class ParticleSet:
 
         Returns
         -------
-        The ax.scatter() function in Matplotlib returns a PathCollection 
-        object. This object represents a collection of scatter points or 
-        markers on a plot. It contains information about the plotted markers, 
+        The ax.scatter() function in Matplotlib returns a PathCollection
+        object. This object represents a collection of scatter points or
+        markers on a plot. It contains information about the plotted markers,
         including their positions, sizes, colours, and other properties.
 
         Notes

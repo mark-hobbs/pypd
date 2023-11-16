@@ -77,18 +77,14 @@ class BondSet:
         -----
         """
 
-        self.bondlist = bondlist
-
-        if self.bondlist is None:
-            self.bondlist = self._build_bond_list(particles.nlist)
-
+        self.bondlist = bondlist or self._build_bond_list(particles.nlist)
         self.n_bonds = len(self.bondlist)
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
-
-        # Constitutive model (material_model / material_law?)
-        self.constitutive_law = constitutive_law
+        self.constitutive_law = (
+            constitutive_law  # Constitutive model (material_model / material_law?)
+        )
 
     def _build_bond_list(self, nlist):
         """
