@@ -244,11 +244,11 @@ class Trilinear(ConstitutiveLaw):
         -----
         """
         self.t = t
+        self.beta = beta
+        self.gamma = self._calculate_gamma()
         self.c = c or self._calculate_bond_stiffness(material, particles)
         self.s0 = s0 or self._calculate_s0(material)
         self.sc = sc or self._calculate_sc(material, particles)
-        self.beta = beta
-        self.gamma = self._calculate_gamma()
         self.s1 = self._calculate_s1()
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.s1, self.sc, self.beta
@@ -387,11 +387,11 @@ class NonLinear(ConstitutiveLaw):
         -----
         """
         self.t = t
+        self.alpha = alpha
+        self.k = k
         self.c = c or self._calculate_bond_stiffness(material, particles)
         self.s0 = s0 or self._calculate_s0(material)
         self.sc = sc or self._calculate_sc(material, particles)
-        self.alpha = alpha
-        self.k = k
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.sc, self.alpha, self.k
         )
