@@ -2,7 +2,7 @@ import numpy as np
 import itertools
 import matplotlib.pyplot as plt
 
-from .calculate import smooth_step_data, calculate_contact_force
+from .kernels.calculate import smooth_step_data, calculate_contact_force
 
 # TODO: should Penetrator be a base class? Create a subclass for supports
 

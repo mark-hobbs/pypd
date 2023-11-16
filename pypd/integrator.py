@@ -12,7 +12,7 @@ Notes
 """
 
 
-from .calculate import euler_cromer
+from .kernels.calculate import euler_cromer
 
 
 class Integrator:

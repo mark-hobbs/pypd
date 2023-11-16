@@ -4,6 +4,8 @@ Solver calculate functions
 
 This module contains the core functions that are employed during a simulation.
 
+Small, highly optimised computational units written using Numba
+
 """
 
 
