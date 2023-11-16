@@ -9,7 +9,7 @@ Notes
 import numpy as np
 from numba import njit
 
-from .constitutive_model import linear, trilinear, nonlinear
+from .kernels.constitutive_model import linear, trilinear, nonlinear
 
 
 class ConstitutiveLaw:

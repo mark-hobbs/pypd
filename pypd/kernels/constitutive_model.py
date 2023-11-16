@@ -1,5 +1,8 @@
 """
 Constitutive models - linear / bilinear / trilinear / non-linear
+
+Small, highly optimised computational units written using Numba
+
 """
 
 from numba import njit
