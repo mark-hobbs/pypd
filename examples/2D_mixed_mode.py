@@ -19,10 +19,13 @@ import matplotlib.pyplot as plt
 
 import pypd
 
-plt.rcParams.update({
-    "text.usetex": True,
-    "font.family": "sans-serif",
-    "font.sans-serif": ["Times New Roman"]})
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "font.family": "sans-serif",
+        "font.sans-serif": ["Times New Roman"],
+    }
+)
 plt.rcParams["font.family"] = "Times New Roman"
 
 mm_to_m = 1e-3
@@ -159,10 +162,15 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
     )
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.plot((cmod[:, 0] * m_to_mm), load[:, 1])
-    ax.set_xlabel('CMOD (mm)')
-    ax.set_ylabel('Load (N)')
+    plot_experimental_data(ax)
+    ax.plot((cmod[:, 0] * m_to_mm), load[:, 1], label="Numerical")
+
+    ax.set_xlim(0, 0.25)
+    ax.set_ylim(bottom=0)
+    ax.set_xlabel("CMOD (mm)")
+    ax.set_ylabel("Load (N)")
     ax.grid(True)
+    ax.legend()
 
     fig.tight_layout()
     fig.savefig(fig_title, dpi=300)
@@ -174,17 +182,56 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
         )
 
 
+def plot_experimental_data(ax: plt.Axes) -> None:
+    from scipy import io
+    from scipy.signal import savgol_filter
+
+    load_cmod = io.loadmat("d_80mm_e_pt625d.mat")
+
+    exp_max_cmod = load_cmod["exp_max"][:, 0] / 1000
+    exp_max_load = load_cmod["exp_max"][:, 1]
+
+    exp_min_cmod = load_cmod["exp_min"][:, 0] / 1000
+    exp_min_load = load_cmod["exp_min"][:, 1]
+
+    cmod = np.linspace(0, exp_min_cmod.max(), 10000)
+    exp_max_load_interp = np.interp(cmod, exp_max_cmod, exp_max_load)
+    exp_min_load_interp = np.interp(cmod, exp_min_cmod, exp_min_load)
+
+    smooth_exp_max_load = savgol_filter(
+        exp_max_load_interp, window_length=50, polyorder=3
+    )
+    smooth_exp_min_load = savgol_filter(
+        exp_min_load_interp, window_length=50, polyorder=3
+    )
+
+    grey = (0.75, 0.75, 0.75)
+
+    ax.plot(exp_max_cmod, exp_max_load, color=grey)
+    ax.plot(exp_min_cmod, exp_min_load, color=grey)
+
+    ax.fill_between(
+        cmod,
+        smooth_exp_min_load,
+        smooth_exp_max_load,
+        color=grey,
+        edgecolor=None,
+        label="Experimental",
+    )
+
+
 def main():
     dx = 1.25 * mm_to_m
-    length = 250 * mm_to_m
     depth = 80 * mm_to_m
     width = 50 * mm_to_m
+    length = 3.125 * depth
+    e = 0.625 * depth
     n_div_x = np.rint(length / dx).astype(int)
     n_div_y = np.rint(depth / dx).astype(int)
     n_div_z = np.rint(width / dx).astype(int)
     notch = [
-        np.array([(depth * 0.9375) + (dx * 0.5), 0]),
-        np.array([(depth * 0.9375) + (dx * 0.5), depth * 0.25]),
+        np.array([(length * 0.5) - e + (dx * 0.5), 0]),
+        np.array([(length * 0.5) - e + (dx * 0.5), depth * 0.25]),
     ]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
@@ -249,12 +296,18 @@ def main():
     observations = []
     observations.append(
         pypd.Observation(
-            np.array([depth * 0.85, 0]), particles, period=1, name="CMOD - left"
+            np.array([(length * 0.5) - e - (10 * mm_to_m), 0]),
+            particles,
+            period=1,
+            name="CMOD - left",
         )
     )
     observations.append(
         pypd.Observation(
-            np.array([depth * 0.95, 0]), particles, period=1, name="CMOD - right"
+            np.array([(length * 0.5) - e + (10 * mm_to_m), 0]),
+            particles,
+            period=1,
+            name="CMOD - right",
         )
     )
 
@@ -270,6 +323,7 @@ def main():
 
     nonlinear_model.run_simulation()
     nonlinear_model.save_final_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
+
     plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 
