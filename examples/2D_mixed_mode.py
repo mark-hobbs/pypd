@@ -12,7 +12,7 @@ Run the following command from the root folder:
 python -m examples.2D_mixed_mode
 
 """
-import copy
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +30,18 @@ plt.rcParams["font.family"] = "Times New Roman"
 
 mm_to_m = 1e-3
 m_to_mm = 1e3
+
+
+def load_data_file(filename):
+    """
+    Determine the location of the script and construct the path to the data 
+    file dynamically. 
+    """
+    from scipy import io
+
+    return io.loadmat(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", filename)
+    )
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -183,10 +195,9 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
 
 
 def plot_experimental_data(ax: plt.Axes) -> None:
-    from scipy import io
     from scipy.signal import savgol_filter
 
-    load_cmod = io.loadmat("d_80mm_e_pt625d.mat")
+    load_cmod = load_data_file("d_80mm_e_pt625d.mat")
 
     exp_max_cmod = load_cmod["exp_max"][:, 0] / 1000
     exp_max_load = load_cmod["exp_max"][:, 1]
