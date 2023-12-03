@@ -70,6 +70,16 @@ python -m examples.2D_notch.py
 
 ![](figures/crack_branching.png)
 
+### Mixed-mode fracture
+
+Example with validation using experimental data. 
+
+<span style="font-family: 'Courier New', monospace;"> García-Álvarez, V. O., Gettu, R., and Carol, I. (2012). Analysis of mixed-mode fracture in concrete using interface elements and a cohesive crack model. Sadhana, 37(1):187–205.</span>
+
+![](figures/mixed-mode-fracture.png)
+![](figures/mixed-mode-load-cmod.png)
+
+
 ### Flexural three-point bending test - half-notched beam
 
 ```
