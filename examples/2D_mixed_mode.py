@@ -34,7 +34,7 @@ m_to_mm = 1e3
 
 def load_data_file(filename):
     """
-    Determine the location of the script and construct the path to the data 
+    Determine the location of the example and construct the path to the data 
     file dynamically. 
     """
     from scipy import io
