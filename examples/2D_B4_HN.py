@@ -12,6 +12,7 @@ Run the following command from the root folder:
 python -m examples.2D_B4_HN
 
 """
+import os
 import copy
 
 import numpy as np
@@ -19,8 +20,30 @@ import matplotlib.pyplot as plt
 
 import pypd
 
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "font.family": "sans-serif",
+        "font.sans-serif": ["Times New Roman"],
+    }
+)
+plt.rcParams["font.family"] = "Times New Roman"
+
 mm_to_m = 1e-3
 m_to_mm = 1e3
+kn_to_n = 1e3
+
+
+def load_data_file(filename):
+    """
+    Determine the location of the example and construct the path to the data
+    file dynamically.
+    """
+    from scipy import io
+
+    return io.loadmat(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", filename)
+    )
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -152,16 +175,46 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
         model.observations[0].history
     )
 
-    fig = plt.figure(figsize=(12, 6))
-    ax = fig.add_subplot(111)
-    plt.plot((cmod[:, 0] * m_to_mm), load[:, 1])
-    plt.savefig(fig_title, dpi=300)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    plot_experimental_data(ax)
+    ax.plot((cmod[:, 0] * m_to_mm), load[:, 1], label="Numerical")
+
+    ax.set_xlim(0, 0.20)
+    ax.set_ylim(bottom=0)
+    ax.set_xlabel("CMOD (mm)")
+    ax.set_ylabel("Load (N)")
+    ax.grid(True)
+    ax.legend()
+
+    fig.tight_layout()
+    fig.savefig(fig_title, dpi=300)
 
     if save_csv == True:
         data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
         np.savetxt(
             "load_cmod.csv", np.transpose(np.array(data)), delimiter=",", fmt="%f"
         )
+
+
+def plot_experimental_data(ax):
+    mat_file = load_data_file("Beam_4_hn_exp.mat")
+    load_cmod = mat_file["Beam_4_hn_exp"].T
+
+    cmod_experimental = load_cmod[0, :]
+    load_experimental_b = load_cmod[2, :] * kn_to_n
+    load_experimental_c = load_cmod[3, :] * kn_to_n
+
+    grey = (0.75, 0.75, 0.75)
+    ax.plot(cmod_experimental, load_experimental_b, linewidth=0.5, color=grey)
+    ax.plot(cmod_experimental, load_experimental_c, linewidth=0.5, color=grey)
+    ax.fill_between(
+        cmod_experimental,
+        load_experimental_b,
+        load_experimental_c,
+        color=grey,
+        edgecolor=None,
+        label="Experimental",
+    )
 
 
 def main():
@@ -184,7 +237,9 @@ def main():
         name="quasi-brittle", E=37e9, Gf=143.2, density=2346, ft=3.9e6
     )
     integrator = pypd.EulerCromer()
-    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=0)  # TODO: boundary conditions are not required as this example uses a contact model
+    bc = pypd.BoundaryConditions(
+        flag, unit_vector, magnitude=0
+    )  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
     linear = pypd.Linear(material, particles, t=dx)
     trilinear = pypd.Trilinear(material, particles, t=dx)
