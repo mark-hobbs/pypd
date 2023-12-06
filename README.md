@@ -54,6 +54,10 @@ You are now ready to use the package. You can run the package's scripts, import 
 
 ## Examples
 
+<details>
+
+<summary>Expand for a summary of the examples provided</summary>
+
 There are multiple examples provided:
 
 - [Crack branching in notched Homalite sheets](/examples/2D_notch.py)
@@ -87,6 +91,8 @@ python -m examples.2D_B4_HN.py
 ```
 
 ![](figures/TPB_HN.png)
+
+</details>
 
 ## :white_check_mark: TODO
 
