@@ -197,7 +197,7 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
 def plot_experimental_data(ax: plt.Axes) -> None:
     from scipy.signal import savgol_filter
 
-    load_cmod = load_data_file("d_80mm_e_pt625d.mat")
+    load_cmod = load_data_file("mixed_mode_fracture.mat")
 
     exp_max_cmod = load_cmod["exp_max"][:, 0] / 1000
     exp_max_load = load_cmod["exp_max"][:, 1]

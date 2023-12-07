@@ -197,7 +197,7 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
 
 
 def plot_experimental_data(ax):
-    mat_file = load_data_file("Beam_4_hn_exp.mat")
+    mat_file = load_data_file("half_notched_beam.mat")
     load_cmod = mat_file["Beam_4_hn_exp"].T
 
     cmod_experimental = load_cmod[0, :]
