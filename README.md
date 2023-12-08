@@ -54,6 +54,10 @@ You are now ready to use the package. You can run the package's scripts, import 
 
 ## Examples
 
+<details>
+
+<summary>Expand for a summary of the examples provided</summary>
+
 There are multiple examples provided:
 
 - [Crack branching in notched Homalite sheets](/examples/2D_notch.py)
@@ -70,6 +74,16 @@ python -m examples.2D_notch.py
 
 ![](figures/crack_branching.png)
 
+### Mixed-mode fracture
+
+Example with validation using experimental data. 
+
+<span style="font-family: 'Courier New', monospace;"> García-Álvarez, V. O., Gettu, R., and Carol, I. (2012). Analysis of mixed-mode fracture in concrete using interface elements and a cohesive crack model. Sadhana, 37(1):187–205.</span>
+
+![](figures/mixed-mode-fracture.png)
+![](figures/mixed-mode-load-cmod.png)
+
+
 ### Flexural three-point bending test - half-notched beam
 
 ```
@@ -77,6 +91,8 @@ python -m examples.2D_B4_HN.py
 ```
 
 ![](figures/TPB_HN.png)
+
+</details>
 
 ## :white_check_mark: TODO
 
