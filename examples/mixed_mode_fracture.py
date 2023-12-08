@@ -34,14 +34,13 @@ m_to_mm = 1e3
 
 def load_data_file(filename):
     """
-    Determine the location of the example and construct the path to the data 
-    file dynamically. 
+    Determine the location of the example and construct the path to the data
+    file dynamically.
     """
-    from scipy import io
-
-    return io.loadmat(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", filename)
+    file_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "data", filename
     )
+    return np.genfromtxt(file_path, delimiter=",")
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -194,37 +193,21 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
         )
 
 
-def plot_experimental_data(ax: plt.Axes) -> None:
-    from scipy.signal import savgol_filter
+def plot_experimental_data(ax):
+    data_file = load_data_file("mixed_mode_fracture.csv")
 
-    load_cmod = load_data_file("mixed_mode_fracture.mat")
-
-    exp_max_cmod = load_cmod["exp_max"][:, 0] / 1000
-    exp_max_load = load_cmod["exp_max"][:, 1]
-
-    exp_min_cmod = load_cmod["exp_min"][:, 0] / 1000
-    exp_min_load = load_cmod["exp_min"][:, 1]
-
-    cmod = np.linspace(0, exp_min_cmod.max(), 10000)
-    exp_max_load_interp = np.interp(cmod, exp_max_cmod, exp_max_load)
-    exp_min_load_interp = np.interp(cmod, exp_min_cmod, exp_min_load)
-
-    smooth_exp_max_load = savgol_filter(
-        exp_max_load_interp, window_length=50, polyorder=3
-    )
-    smooth_exp_min_load = savgol_filter(
-        exp_min_load_interp, window_length=50, polyorder=3
-    )
+    cmod = data_file[:, 0]
+    load_min = data_file[:, 1]
+    load_max = data_file[:, 2]
 
     grey = (0.75, 0.75, 0.75)
 
-    ax.plot(exp_max_cmod, exp_max_load, color=grey)
-    ax.plot(exp_min_cmod, exp_min_load, color=grey)
-
+    ax.plot(cmod, load_min, color=grey)
+    ax.plot(cmod, load_max, color=grey)
     ax.fill_between(
         cmod,
-        smooth_exp_min_load,
-        smooth_exp_max_load,
+        load_min,
+        load_max,
         color=grey,
         edgecolor=None,
         label="Experimental",

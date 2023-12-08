@@ -31,7 +31,6 @@ plt.rcParams["font.family"] = "Times New Roman"
 
 mm_to_m = 1e-3
 m_to_mm = 1e3
-kn_to_n = 1e3
 
 
 def load_data_file(filename):
@@ -39,11 +38,10 @@ def load_data_file(filename):
     Determine the location of the example and construct the path to the data
     file dynamically.
     """
-    from scipy import io
-
-    return io.loadmat(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", filename)
+    file_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "data", filename
     )
+    return np.genfromtxt(file_path, delimiter=",")
 
 
 def build_particle_coordinates(dx, n_div_x, n_div_y):
@@ -197,20 +195,19 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
 
 
 def plot_experimental_data(ax):
-    mat_file = load_data_file("half_notched_beam.mat")
-    load_cmod = mat_file["Beam_4_hn_exp"].T
+    data_file = load_data_file("half_notched_beam.csv")
 
-    cmod_experimental = load_cmod[0, :]
-    load_experimental_b = load_cmod[2, :] * kn_to_n
-    load_experimental_c = load_cmod[3, :] * kn_to_n
+    cmod = data_file[:, 0]
+    load_min = data_file[:, 1]
+    load_max = data_file[:, 2]
 
     grey = (0.75, 0.75, 0.75)
-    ax.plot(cmod_experimental, load_experimental_b, linewidth=0.5, color=grey)
-    ax.plot(cmod_experimental, load_experimental_c, linewidth=0.5, color=grey)
+    ax.plot(cmod, load_min, color=grey)
+    ax.plot(cmod, load_max, color=grey)
     ax.fill_between(
-        cmod_experimental,
-        load_experimental_b,
-        load_experimental_c,
+        cmod,
+        load_min,
+        load_max,
         color=grey,
         edgecolor=None,
         label="Experimental",
