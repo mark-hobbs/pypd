@@ -33,11 +33,12 @@ class ParticleSet:
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
 
-    nlist : ndarray
-        TODO: write description
+    nlist : ndarray (int)
+        Neighbour list for each particle, where each entry stores the indices 
+        of particles interacting with the corresponding particle
 
     n_family_members: ndarray (int)
-        Number of family members
+        Array specifying the number of family members for each particle
 
     x : ndarray (float)
         Material point coordinates in the reference configuration
@@ -146,6 +147,12 @@ class ParticleSet:
 
         Returns
         -------
+        nlist : ndarray (int)
+            Neighbour list for each particle, where each entry stores the 
+            indices of particles interacting with the corresponding particle
+
+        n_family_members: ndarray (int)
+            Array specifying the number of family members for each particle
 
         Notes
         -----
