@@ -13,8 +13,6 @@ black = "*"
 pypd = "*"
 
 [dev-packages]
-sphinx = "*"
-ghp-import = "*"
 
 [requires]
 python_version = "3.9"
