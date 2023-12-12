@@ -1,18 +1,23 @@
 .. pypd documentation master file.
 
-PyPD Documentation
-================================
+PyPD
+====
 
 **PyPD** is an easy to use Python package...
 
+Features
+========
+
+Documentation
+=============
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
-   modules
-
-.. automodule:: pypd
-   :members:
+   modules/model
+   modules/particles
+   modules/bonds
 
 
 Indices and tables
