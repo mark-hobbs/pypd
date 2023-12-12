@@ -239,13 +239,10 @@ def main():
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
-    linear = pypd.Linear(material, particles, t=dx)
-    trilinear = pypd.Trilinear(material, particles, t=dx)
     nonlinear = pypd.NonLinear(material, particles, t=dx)
-    trilinear.print_parameters()
     nonlinear.print_parameters()
 
-    bonds = pypd.BondSet(particles, linear)
+    bonds = pypd.BondSet(particles, nonlinear)
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
