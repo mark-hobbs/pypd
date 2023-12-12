@@ -60,11 +60,11 @@ You are now ready to use the package. You can run the package's scripts, import 
 
 There are multiple examples provided:
 
-- [Crack branching in notched Homalite sheets](/examples/2D_notch.py)
-- [Plate with a hole in tension](/examples/2D_plate.py)
-- [Three-point bending test of a half-notched concrete beam](/examples/2D_B4_HN.py)
-- [Nuclear graphite ring compression test  ](/examples/2D_graphite_ring.py)
-- [Mixed-mode fracture in concrete](/examples/2D_mixed_mode.py)
+- [Crack branching in notched Homalite sheets](/examples/crack_branching.py)
+- [Plate with a hole in tension](/examples/plate_with_hole.py)
+- [Three-point bending test of a half-notched concrete beam](/examples/half_notched_beam.py)
+- [Nuclear graphite ring compression test  ](/examples/graphite_ring.py)
+- [Mixed-mode fracture in concrete](/examples/mixed_mode_fracture.py)
 
 ### Crack branching
 
