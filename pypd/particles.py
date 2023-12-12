@@ -34,7 +34,7 @@ class ParticleSet:
         Number of dimensions (2 or 3-dimensional system)
 
     nlist : ndarray (int)
-        Neighbour list for each particle, where each entry stores the indices 
+        Neighbour list for each particle, where each entry stores the indices
         of particles interacting with the corresponding particle
 
     n_family_members: ndarray (int)
@@ -114,7 +114,9 @@ class ParticleSet:
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.bc = bc
         self.material = material
-        self.cell_area = dx**2 # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
+        self.cell_area = (
+            dx**2
+        )  # TODO: cell_area for 2D simulations and cell_volume for 3D simulations
         self.cell_volume = dx**3
         self.node_density = self.material.density
 
@@ -148,7 +150,7 @@ class ParticleSet:
         Returns
         -------
         nlist : ndarray (int)
-            Neighbour list for each particle, where each entry stores the 
+            Neighbour list for each particle, where each entry stores the
             indices of particles interacting with the corresponding particle
 
         n_family_members: ndarray (int)
