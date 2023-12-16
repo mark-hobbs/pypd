@@ -2,7 +2,9 @@
 
 A simple and performant Python implementation of the bond-based peridynamic model. PyPD offers an intuitive class structure with fully interchangeable material models and integration schemes.
 
-Explore a crack branching example using PyPD in Google Colab: <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent">
+**Explore a crack branching example using PyPD in Google Colab**
+
+<a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent">
 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
