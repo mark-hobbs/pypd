@@ -9,10 +9,11 @@ numba = "*"
 matplotlib = "*"
 scikit-learn = "*"
 tqdm = "*"
-black = "*"
-pypd = "*"
+pypd = {file = "."}
 
 [dev-packages]
+black = "*"
+jupyter = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"

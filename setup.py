@@ -10,9 +10,11 @@ setup(
     url='https://github.com/mark-hobbs/PyPD',
     packages=find_packages(),
     install_requires=[
-        'dependency1',
-        'dependency2',
-        # Add any additional dependencies here
+        'numpy',
+        'numba',
+        'matplotlib',
+        'scikit-learn',
+        'tqdm',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
