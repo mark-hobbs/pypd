@@ -1,13 +1,6 @@
 """
-Solver calculate functions
---------------------------
-
-This module contains the core functions that are employed during a simulation.
-
 Small, highly optimised computational units written using Numba
-
 """
-
 
 import numpy as np
 from numba import njit, prange
@@ -95,6 +88,7 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material
         node_force[node_j, 1] -= f_y[k_bond]
 
     return node_force, d
+
 
 @njit
 def calculate_node_damage(x, bondlist, d, n_family_members):

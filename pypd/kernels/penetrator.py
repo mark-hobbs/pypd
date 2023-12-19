@@ -1,6 +1,10 @@
+"""
+Small, highly optimised computational units written using Numba
+"""
 
 import numpy as np
 from numba import njit
+
 
 @njit
 def calculate_contact_force(

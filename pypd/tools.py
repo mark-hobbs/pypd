@@ -4,6 +4,7 @@ from numba import njit, prange
 
 # TODO: should this be a class (Particles)?
 
+
 @njit
 def smooth_step_data(
     current_time_step, start_time_step, final_time_step, start_value, final_value
@@ -17,6 +18,7 @@ def smooth_step_data(
     )
 
     return alpha
+
 
 def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
     particle_coordinates = np.zeros([n_div_x * n_div_y * n_div_z, 3])
@@ -99,6 +101,7 @@ def build_penetrator():
 def build_volume_correction_factors():
     pass
 
+
 @njit(parallel=True)
 def build_bond_length(x, bondlist):
     """Build the bond length array"""
@@ -112,13 +115,15 @@ def build_bond_length(x, bondlist):
         xi_x = x[node_j, 0] - x[node_i, 0]
         xi_y = x[node_j, 1] - x[node_i, 1]
 
-        xi[k_bond] = np.sqrt(xi_x ** 2 + xi_y ** 2)
+        xi[k_bond] = np.sqrt(xi_x**2 + xi_y**2)
 
     return xi
+
 
 def calculate_bond_stiffness(E, delta):
     c = (12 * E) / (np.pi * delta**4)
     return c
+
 
 def calculate_stable_time_step(rho, dx, horizon, c):
     """

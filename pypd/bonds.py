@@ -84,7 +84,9 @@ class BondSet:
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
-        self.surface_correction_factors = self._calculate_surface_correction_factors(particles)
+        self.surface_correction_factors = self._calculate_surface_correction_factors(
+            particles
+        )
         self.constitutive_law = (
             constitutive_law  # Constitutive model (material_model / material_law?)
         )
@@ -124,17 +126,17 @@ class BondSet:
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
-    
+
     def _calculate_surface_correction_factors(self, particles):
         """
-        Compute the surface correction factors (lambda) using the volume 
+        Compute the surface correction factors (lambda) using the volume
         correction method, first proposed in Chapter 2 of Ref. [1]
 
-        Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook 
+        Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook
         of Peridynamic Modeling. Chapman and Hall/CRC, New York, 1st edition.
         """
         surface_correction_factors = np.zeros(self.n_bonds)
-        v0 = np.pi * particles.horizon ** 2
+        v0 = np.pi * particles.horizon**2
 
         for k_bond in range(self.n_bonds):
             node_i = self.bondlist[k_bond, 0]
@@ -142,7 +144,7 @@ class BondSet:
             v_i = particles.n_family_members[node_i] * particles.cell_area
             v_j = particles.n_family_members[node_j] * particles.cell_area
             surface_correction_factors[k_bond] = (2 * v0) / (v_i + v_j)
-    
+
         return surface_correction_factors
 
     def calculate_bond_stretch():

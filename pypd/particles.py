@@ -9,10 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .tools import build_particle_families, smooth_step_data
-from .kernels.particles import (
-    calculate_nodal_forces,
-    calculate_node_damage
-    )
+from .kernels.particles import calculate_nodal_forces, calculate_node_damage
 
 
 # Particles, ParticleArray, or ParticleSet?
