@@ -2,12 +2,13 @@
 
 A simple and performant Python implementation of the bond-based peridynamic model. PyPD offers an intuitive class structure with fully interchangeable material models and integration schemes.
 
+## Usage
+
 **Explore a crack branching example using PyPD in Google Colab**
 
 <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent">
 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
-
 
 ## Code structure
 
@@ -52,8 +53,6 @@ $ pipenv shell
 This command will activate the virtual environment so that you can work within it.
 
 You are now ready to use the package. You can run the package's scripts, import its modules, or use any other functionality it provides.
-
-## Usage
 
 ## Features
 
