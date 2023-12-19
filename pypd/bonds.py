@@ -5,7 +5,7 @@ Bond array class
 
 import numpy as np
 
-from .tools import build_bond_list
+from .tools import build_bond_list, build_bond_length
 
 
 # Bonds, BondArray, or BondSet?
@@ -79,9 +79,12 @@ class BondSet:
 
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
         self.n_bonds = len(self.bondlist)
+        self.xi = self._calculate_bond_length(particles.x)
+        self.c = np.zeros(self.n_bonds)
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
+        self.surface_correction_factors = self._calculate_surface_correction_factors(particles)
         self.constitutive_law = (
             constitutive_law  # Constitutive model (material_model / material_law?)
         )
@@ -111,8 +114,36 @@ class BondSet:
         """
         pass
 
-    def calculate_bond_length():
-        pass
+    def _calculate_bond_length(self, x):
+        """
+        Compute the length of all bonds in the reference configuration
+
+        Returns
+        -------
+        xi : ndarray (float)
+            Reference bond length
+        """
+        return build_bond_length(x, self.bondlist)
+    
+    def _calculate_surface_correction_factors(self, particles):
+        """
+        Compute the surface correction factors (lambda) using the volume 
+        correction method, first proposed in Chapter 2 of Ref. [1]
+
+        Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook 
+        of Peridynamic Modeling. Chapman and Hall/CRC, New York, 1st edition.
+        """
+        surface_correction_factor = np.zeros(self.n_bonds)
+        v0 = np.pi * particles.horizon ** 2
+
+        for k_bond in range(self.n_bonds):
+            node_i = self.bondlist[k_bond, 0]
+            node_j = self.bondlist[k_bond, 1]
+            v_i = particles.n_family_members[node_i] * particles.cell_area
+            v_j = particles.n_family_members[node_j] * particles.cell_area
+            surface_correction_factor[k_bond] = (2 * v0) / (v_i + v_j)
+    
+        return surface_correction_factor
 
     def calculate_bond_stretch():
         pass
