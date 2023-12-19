@@ -133,7 +133,7 @@ class BondSet:
         Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook 
         of Peridynamic Modeling. Chapman and Hall/CRC, New York, 1st edition.
         """
-        surface_correction_factor = np.zeros(self.n_bonds)
+        surface_correction_factors = np.zeros(self.n_bonds)
         v0 = np.pi * particles.horizon ** 2
 
         for k_bond in range(self.n_bonds):
@@ -141,9 +141,9 @@ class BondSet:
             node_j = self.bondlist[k_bond, 1]
             v_i = particles.n_family_members[node_i] * particles.cell_area
             v_j = particles.n_family_members[node_j] * particles.cell_area
-            surface_correction_factor[k_bond] = (2 * v0) / (v_i + v_j)
+            surface_correction_factors[k_bond] = (2 * v0) / (v_i + v_j)
     
-        return surface_correction_factor
+        return surface_correction_factors
 
     def calculate_bond_stretch():
         pass

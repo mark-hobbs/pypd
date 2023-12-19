@@ -4,6 +4,19 @@ from numba import njit, prange
 
 # TODO: should this be a class (Particles)?
 
+@njit
+def smooth_step_data(
+    current_time_step, start_time_step, final_time_step, start_value, final_value
+):
+    """
+    Smooth 5th order polynomial
+    """
+    xi = (current_time_step - start_time_step) / (final_time_step - start_time_step)
+    alpha = start_value + (final_value - start_value) * xi**3 * (
+        10 - 15 * xi + 6 * xi**2
+    )
+
+    return alpha
 
 def build_particle_coordinates(dx, n_div_x, n_div_y, n_div_z):
     particle_coordinates = np.zeros([n_div_x * n_div_y * n_div_z, 3])
