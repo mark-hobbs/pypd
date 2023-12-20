@@ -55,7 +55,9 @@ class BondSet:
         - uniquely assign properties to individual bonds
     """
 
-    def __init__(self, particles, constitutive_law, bondlist=None):
+    def __init__(
+        self, particles, constitutive_law, bondlist=None, surface_correction=False
+    ):
         """
         BondSet class constructor
 
@@ -84,9 +86,14 @@ class BondSet:
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
-        self.surface_correction_factors = self._calculate_surface_correction_factors(
-            particles
-        )
+
+        if surface_correction:
+            self.surface_correction_factors = (
+                self._calculate_surface_correction_factors(particles)
+            )
+        else:
+            self.surface_correction_factors = np.ones(self.n_bonds)
+
         self.constitutive_law = (
             constitutive_law  # Constitutive model (material_model / material_law?)
         )
@@ -135,7 +142,7 @@ class BondSet:
         Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook
         of Peridynamic Modeling. Chapman and Hall/CRC, New York, 1st edition.
         """
-        surface_correction_factors = np.zeros(self.n_bonds)
+        surface_correction_factors = np.ones(self.n_bonds)
         v0 = np.pi * particles.horizon**2
 
         for k_bond in range(self.n_bonds):
