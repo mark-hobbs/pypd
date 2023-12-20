@@ -136,7 +136,7 @@ class BondSet:
 
     def _calculate_surface_correction_factors(self, particles):
         """
-        Compute the surface correction factors (lambda) using the volume
+        Compute surface correction factors (lambda) using the volume
         correction method, first proposed in Chapter 2 of Ref. [1]
 
         Bobaru, F., Foster, J., Geubelle, P., and Silling, S. (2017). Handbook
