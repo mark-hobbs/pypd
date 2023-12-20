@@ -3,51 +3,7 @@ Small, highly optimised computational units written using Numba
 """
 
 import numpy as np
-import sklearn.neighbors as neighbors
 from numba import njit, prange
-
-
-def build_particle_families(x, horizon):
-    """
-    Build particle families
-
-    Parameters
-    ----------
-    x : ndarray (float)
-        Material point coordinates in the reference configuration
-
-    horizon : float
-        Material point horizon (non-local length scale)
-
-    Returns
-    -------
-    nlist : list of numpy arrays (int)
-        TODO: define a new name and description
-
-    Notes
-    -----
-    TODO: include a discussion of the algorithm
-
-    """
-    n_nodes = np.shape(x)[0]
-
-    tree = neighbors.KDTree(x, leaf_size=160)
-    neighbour_list = tree.query_radius(x, r=horizon)
-
-    # Remove identity values, as there is no bond between a node and itself
-    neighbour_list = [neighbour_list[i][neighbour_list[i] != i] for i in range(n_nodes)]
-
-    n_family_members = [len(neighbour_list[i]) for i in range(n_nodes)]
-    n_family_members = np.array(n_family_members, dtype=np.intc)
-
-    nlist = np.ones((n_nodes, n_family_members.max()), dtype=np.intc) * -1
-
-    for i in range(n_nodes):
-        nlist[i, : n_family_members[i]] = neighbour_list[i]
-
-    nlist = nlist.astype(np.intc)
-
-    return nlist, n_family_members
 
 
 def build_bond_list(nlist):
