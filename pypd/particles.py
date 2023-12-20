@@ -8,11 +8,11 @@ TODO: rename classes as base or baseclasses?
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .tools import build_particle_families
-from .kernels.calculate import (
+from .tools import smooth_step_data
+from .kernels.particles import (
+    build_particle_families,
     calculate_nodal_forces,
     calculate_node_damage,
-    smooth_step_data,
 )
 
 
@@ -203,6 +203,7 @@ class ParticleSet:
             bonds.f_x,
             bonds.f_y,
             material_law,
+            bonds.surface_correction_factors,
         )
 
     def calculate_particle_damage(self, bonds):

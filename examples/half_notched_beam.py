@@ -244,7 +244,7 @@ def main():
     trilinear.print_parameters()
     nonlinear.print_parameters()
 
-    bonds = pypd.BondSet(particles, linear)
+    bonds = pypd.BondSet(particles, linear, surface_correction=True)
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
