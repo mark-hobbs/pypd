@@ -8,7 +8,7 @@ from numba import njit, prange
 
 
 @njit(parallel=True)
-def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material_law):
+def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material_law, surface_correction_factors):
     """
     Calculate particle forces - employs bondlist
 
@@ -42,15 +42,6 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
-
-    Notes
-    -----
-    * Can the constitutive model function be passed in as an argument?
-        - See factory functions and closures
-    * If the bondlist is loaded from a .mat file:
-          node_i = bondlist[k_bond, 0] - 1
-          node_j = bondlist[k_bond, 1] - 1
-
     """
 
     n_nodes = np.shape(x)[0]
@@ -74,7 +65,7 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material
 
         d[k_bond] = material_law(stretch, d[k_bond])
 
-        f = stretch * c * (1 - d[k_bond]) * cell_volume
+        f = stretch * c * (1 - d[k_bond]) * cell_volume * surface_correction_factors[k_bond]
         f_x[k_bond] = f * xi_eta_x / y
         f_y[k_bond] = f * xi_eta_y / y
 
