@@ -8,7 +8,18 @@ from numba import njit, prange
 
 
 @njit(parallel=True)
-def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material_law, surface_correction_factors):
+def calculate_nodal_forces(
+    x,
+    u,
+    cell_volume,
+    bondlist,
+    d,
+    c,
+    f_x,
+    f_y,
+    material_law,
+    surface_correction_factors,
+):
     """
     Calculate particle forces - employs bondlist
 
@@ -65,7 +76,13 @@ def calculate_nodal_forces(x, u, cell_volume, bondlist, d, c, f_x, f_y, material
 
         d[k_bond] = material_law(stretch, d[k_bond])
 
-        f = stretch * c * (1 - d[k_bond]) * cell_volume * surface_correction_factors[k_bond]
+        f = (
+            stretch
+            * c
+            * (1 - d[k_bond])
+            * cell_volume
+            * surface_correction_factors[k_bond]
+        )
         f_x[k_bond] = f * xi_eta_x / y
         f_y[k_bond] = f * xi_eta_y / y
 

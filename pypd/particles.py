@@ -203,7 +203,7 @@ class ParticleSet:
             bonds.f_x,
             bonds.f_y,
             material_law,
-            bonds.surface_correction_factors
+            bonds.surface_correction_factors,
         )
 
     def calculate_particle_damage(self, bonds):
