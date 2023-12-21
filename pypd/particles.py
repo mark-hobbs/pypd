@@ -108,14 +108,17 @@ class ParticleSet:
         """
 
         self.x = x
-        self.dx = dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
         self.n_nodes = np.shape(self.x)[0]
         self.n_dim = np.shape(self.x)[1]
-        self.horizon = m * dx  # TODO: is this an attribute of the particle set?
+
         self.bc = bc
-        self.material = material
+
+        self.dx = dx           # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
+        self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.cell_area = dx**2
         self.cell_volume = dx**3
+
+        self.material = material
         self.node_density = self.material.density
 
         self.nlist = nlist
