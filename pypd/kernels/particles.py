@@ -7,7 +7,7 @@ import sklearn.neighbors as neighbors
 from numba import njit, prange
 
 
-@njit(parallel=True)
+@njit(parallel=True, fastmath=True)
 def calculate_nodal_forces(
     x,
     u,
