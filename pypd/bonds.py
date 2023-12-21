@@ -81,8 +81,8 @@ class BondSet:
 
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
         self.n_bonds = len(self.bondlist)
-        self.xi = self._calculate_bond_length(particles.x)
-        self.c = np.zeros(self.n_bonds)
+        self.xi = self._calculate_bond_length(particles.x) # TODO: not used
+        self.c = np.zeros(self.n_bonds)                    # TODO: not used
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
