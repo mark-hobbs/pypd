@@ -4,11 +4,12 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 
 ## Usage
 
-**Explore a crack branching example using PyPD in Google Colab**
+**Explore examples using PyPD in Google Colab**
 
-<a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent">
-<img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+| Example description | Notebook |
+| ------- | -------- |
+| Crack branching in Homalite |  <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
+| Half-notched quasi-brittle beam in three-point bending | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/half_notched_beam.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 
 ## Code structure
 
