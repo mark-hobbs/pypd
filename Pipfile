@@ -12,8 +12,8 @@ tqdm = "*"
 pypd = {file = "."}
 
 [dev-packages]
-black = "*"
 jupyter = "*"
+black = {extras = ["jupyter"], version = "*"}
 
 [requires]
 python_version = "3.11"
