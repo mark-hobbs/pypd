@@ -7,7 +7,7 @@ ring compression test." Journal of Nuclear Materials 511 (2018): 134-140.
 
 Run the following command from the root folder:
 
-python -m examples.2D_graphite_ring
+python -m examples.graphite_ring
 
 """
 import numpy as np

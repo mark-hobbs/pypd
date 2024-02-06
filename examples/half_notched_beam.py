@@ -9,7 +9,7 @@ for Numerical and Analytical Methods in Geomechanics, 37(10), 1434-1452.
 
 Run the following command from the root folder:
 
-python -m examples.2D_B4_HN
+python -m examples.half_notched_beam
 
 """
 import os

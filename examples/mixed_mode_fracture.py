@@ -9,7 +9,7 @@ model. Sadhana, 37(1):187–205.
 
 Run the following command from the root folder:
 
-python -m examples.2D_mixed_mode
+python -m examples.mixed_mode_fracture
 
 """
 import os

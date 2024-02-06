@@ -4,7 +4,7 @@ Example: 2D plate with a hole
 
 Run the following command from the root folder:
 
-python -m examples.2D_plate
+python -m examples.plate_with_hole
 
 """
 import numpy as np

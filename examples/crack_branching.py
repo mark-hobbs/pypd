@@ -12,7 +12,7 @@ Run
 ---
 Run the following command from the root folder:
 
-python -m examples.2D_notch
+python -m examples.crack_branching
 
 """
 import numpy as np
