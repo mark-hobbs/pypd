@@ -2,6 +2,12 @@
 
 A simple and performant Python implementation of the bond-based peridynamic model. PyPD offers an intuitive class structure with fully interchangeable material models and integration schemes.
 
+### Features:
+- **Pure Python:** Written entirely in Python, leveraging the power of [Numba](https://numba.pydata.org/) for optimal performance
+- **Material Models:** Seamlessly switch between various material models including linear, trilinear, and nonlinear
+- **Integration schemes:** Fully interchangeable integration schemes
+- **Examples:** Several examples are provided and validated using published experimental data
+
 ## Usage
 
 **Explore examples using PyPD in Google Colab**
@@ -11,51 +17,32 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 | Crack branching in Homalite |  <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 | Half-notched quasi-brittle beam in three-point bending | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/half_notched_beam.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 
-## Code structure
-
-## Dependencies
-
 ## Getting started
 
-Make sure you have Pipenv installed on your system. If you don't have it, you can install it using pip:
+Development version from GitHub:
 
 ```shell
-$ pip install pipenv
+$ pip install https://github.com/mark-hobbs/PyPD.git
 ```
 
-Pipenv provides a convenient way to manage Python package dependencies and virtual environments. By following these steps, you'll be able to install and work with the package in a controlled and isolated environment.
+or for contributors using [Pipenv](https://pipenv.pypa.io/en/latest/):
 
-Clone the repository:
 
 ```shell
 $ git clone git@github.com:mark-hobbs/PyPD.git
-```
-
-Change into the cloned repository's directory:
-
-```shell
 $ cd PyPD/
-```
-
-Create a virtual environment and install the package dependencies using Pipenv:
-
-```shell
 $ pipenv install --dev
-```
-
-This command will create a new virtual environment and install the package dependencies, including both the required dependencies and any development dependencies specified in the Pipfile.
-
-Activate the virtual environment:
-
-```shell
 $ pipenv shell
 ```
 
-This command will activate the virtual environment so that you can work within it.
+## Dependencies
 
-You are now ready to use the package. You can run the package's scripts, import its modules, or use any other functionality it provides.
+- NumPy
+- Numba
+- Matplotlib
+- tqdm
 
-## Features
+## Code structure
 
 ## Examples
 
