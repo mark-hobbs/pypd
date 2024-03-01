@@ -42,6 +42,12 @@ $ pipenv shell
 - Matplotlib
 - tqdm
 
+**Development dependencies**
+
+- Black
+- Ruff
+- Jupyter
+
 ## Code structure
 
 ## Examples
