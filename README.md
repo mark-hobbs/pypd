@@ -22,14 +22,14 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 Development version from GitHub:
 
 ```shell
-$ pip install https://github.com/mark-hobbs/PyPD.git
+$ pip install git+https://github.com/mark-hobbs/PyPD.git
 ```
 
 or for contributors using [Pipenv](https://pipenv.pypa.io/en/latest/):
 
 
 ```shell
-$ git clone git@github.com:mark-hobbs/PyPD.git
+$ git clone https://github.com/mark-hobbs/PyPD.git
 $ cd PyPD/
 $ pipenv install --dev
 $ pipenv shell
