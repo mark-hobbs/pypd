@@ -10,11 +10,11 @@ matplotlib = "*"
 scikit-learn = "*"
 tqdm = "*"
 pypd = {file = "."}
-ruff = "*"
 
 [dev-packages]
 jupyter = "*"
 black = {extras = ["jupyter"], version = "*"}
+ruff = "*"
 
 [requires]
 python_version = "3.11"
