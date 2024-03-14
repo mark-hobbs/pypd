@@ -96,7 +96,7 @@ def build_notch(x, bondlist, notch):
 
         intersect = determine_intersection(P1, P2, P3, P4)
 
-        if intersect == True:
+        if intersect:
             mask.append(k_bond)
 
     reduced_bondlist = np.delete(bondlist, mask, axis=0)
@@ -187,7 +187,7 @@ def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
     fig.tight_layout()
     fig.savefig(fig_title, dpi=300)
 
-    if save_csv == True:
+    if save_csv:
         data = [(cmod[:, 0] * m_to_mm), load[:, 1]]
         np.savetxt(
             "load_cmod.csv", np.transpose(np.array(data)), delimiter=",", fmt="%f"
