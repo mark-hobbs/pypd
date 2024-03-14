@@ -6,7 +6,6 @@ TODO: rename classes as base or baseclasses?
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from .tools import smooth_step_data
 from .kernels.particles import (
