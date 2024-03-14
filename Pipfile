@@ -10,6 +10,7 @@ matplotlib = "*"
 scikit-learn = "*"
 tqdm = "*"
 pypd = {file = "."}
+ruff = "*"
 
 [dev-packages]
 jupyter = "*"

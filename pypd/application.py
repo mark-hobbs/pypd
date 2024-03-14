@@ -20,7 +20,7 @@ class Application:
         self.horizon = horizon
         self.input_file = input_file
         self.solver = solver
-        # degress of freedom
+        # degrees of freedom
 
         if self.input_file is not None:
             #  Read input file in a number of formats
@@ -89,7 +89,7 @@ class Application:
         """
         pass
 
-    def run():
+    def run(self):
         """Run the application.
         This method calls ``setup()`` and then ``solve()``.
 

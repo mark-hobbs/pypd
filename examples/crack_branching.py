@@ -83,7 +83,7 @@ def build_notch(x, bondlist, notch):
 
         intersect = determine_intersection(P1, P2, P3, P4)
 
-        if intersect == True:
+        if intersect:
             mask.append(k_bond)
 
     reduced_bondlist = np.delete(bondlist, mask, axis=0)

@@ -31,7 +31,7 @@ class Penetrator:
         self.search_radius = radius * 1.25
         self.family = self._build_family(particles)
         self.name = name
-        if plot == True:
+        if plot:
             self.plot_penetrator(particles)
         self.penetrator_force_history = []
 

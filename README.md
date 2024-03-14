@@ -39,6 +39,7 @@ $ pipenv shell
 
 - NumPy
 - Numba
+- scikit-learn
 - Matplotlib
 - tqdm
 
