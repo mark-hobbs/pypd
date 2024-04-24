@@ -10,6 +10,7 @@ Run the following command from the root folder:
 python -m examples.graphite_ring
 
 """
+
 import numpy as np
 
 import pypd
@@ -139,15 +140,10 @@ def main():
     linear = pypd.Linear(material, particles, t=dx)
     bonds = pypd.BondSet(particles, linear)
     simulation = pypd.Simulation(dt=None, n_time_steps=50000, damping=0)
-    model = pypd.Model(
-        particles,
-        bonds,
-        simulation,
-        integrator,
-        linear
-    )
+    model = pypd.Model(particles, bonds, simulation, integrator, linear)
 
     model.run_simulation()
-    model.save_final_state_fig(sz=.5, dsf=0, fig_title="graphite-ring")
+    model.save_final_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
+
 
 main()

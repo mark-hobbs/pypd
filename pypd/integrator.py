@@ -11,7 +11,6 @@ Notes
                 - /pysph/sph/tests/test_acceleration_eval.py
 """
 
-
 from .kernels.integrator import euler_cromer
 
 
