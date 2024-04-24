@@ -7,6 +7,7 @@ Run the following command from the root folder:
 python -m examples.plate_with_hole
 
 """
+
 import numpy as np
 
 import pypd
@@ -114,7 +115,7 @@ def main():
     )
 
     model.run_simulation()
-    model.save_final_state_fig(sz=.75, fig_title="plate-with-a-hole")
+    model.save_final_state_fig(sz=0.75, fig_title="plate-with-a-hole")
 
 
 main()

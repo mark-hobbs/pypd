@@ -12,6 +12,7 @@ Run the following command from the root folder:
 python -m examples.mixed_mode_fracture
 
 """
+
 import os
 
 import numpy as np

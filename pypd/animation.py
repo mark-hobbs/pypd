@@ -4,6 +4,7 @@ Animation class
 
 A class for creating and saving animated scatter plots using Matplotlib.
 """
+
 from datetime import datetime
 import copy
 

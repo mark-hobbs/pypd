@@ -6,6 +6,7 @@ Notes
 -----
 
 """
+
 import numpy as np
 from numba import njit
 
@@ -116,8 +117,9 @@ class Linear(ConstitutiveLaw):
         self.c = c or self._calculate_bond_stiffness(material, particles)
         self.sc = sc or self._calculate_sc(material, particles)
         self.damage_on = damage_on
-        self.calculate_bond_damage = self._calculate_bond_damage(self.sc, 
-                                                                 self.damage_on)
+        self.calculate_bond_damage = self._calculate_bond_damage(
+            self.sc, self.damage_on
+        )
 
     def _calculate_sc(self, material, particles):
         """
@@ -156,6 +158,7 @@ class Linear(ConstitutiveLaw):
         -----
         """
         if damage_on:
+
             @njit
             def wrapper(stretch, d):
                 """
@@ -185,15 +188,16 @@ class Linear(ConstitutiveLaw):
                 * Examine closures and factory functions
                 """
                 return linear(stretch, d, sc)
-            
+
         else:
+
             @njit
             def wrapper(stretch, d):
                 """
                 Returns
                 -------
                 d: float
-                    An array of zeros with the same size as the input array `d`, 
+                    An array of zeros with the same size as the input array `d`,
                     indicating no bond damage.
                 """
                 return np.zeros_like(d)
