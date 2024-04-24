@@ -16,6 +16,7 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 | ------- | -------- |
 | Crack branching in Homalite |  <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 | Half-notched quasi-brittle beam in three-point bending | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/half_notched_beam.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
+| Plate with a hole under tension | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/plate_with_hole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 
 ## Getting started
 
