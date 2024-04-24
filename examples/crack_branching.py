@@ -15,6 +15,7 @@ Run the following command from the root folder:
 python -m examples.crack_branching
 
 """
+
 import numpy as np
 
 import pypd
@@ -158,15 +159,12 @@ def main():
     dx = 1e-3
     n_div_x = np.rint(0.4 / dx).astype(int)
     n_div_y = np.rint(0.2 / dx).astype(int)
-    notch = [np.array([0 - dx, 0.1 - (dx / 2)]), 
-             np.array([0.2, 0.1 - (dx / 2)])]
+    notch = [np.array([0 - dx, 0.1 - (dx / 2)]), np.array([0.2, 0.1 - (dx / 2)])]
 
     x = build_particle_coordinates(dx, n_div_x, n_div_y)
     flag, unit_vector = build_boundary_conditions(x, dx)
 
-    material = pypd.Material(
-        name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5
-    )
+    material = pypd.Material(name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5)
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
@@ -176,18 +174,13 @@ def main():
         particles.x, bonds.bondlist, notch
     )
     simulation = pypd.Simulation(dt=None, n_time_steps=5000, damping=0)
-    animation = pypd.Animation(frequency=100, sz=.25)
+    animation = pypd.Animation(frequency=100, sz=0.25)
     model = pypd.Model(
-        particles,
-        bonds,
-        simulation,
-        integrator,
-        linear,
-        animation=animation
+        particles, bonds, simulation, integrator, linear, animation=animation
     )
 
     model.run_simulation()
-    model.save_final_state_fig(fig_title='crack-branching')
+    model.save_final_state_fig(fig_title="crack-branching")
 
 
 main()

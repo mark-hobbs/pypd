@@ -12,6 +12,7 @@ Run the following command from the root folder:
 python -m examples.half_notched_beam
 
 """
+
 import os
 import copy
 

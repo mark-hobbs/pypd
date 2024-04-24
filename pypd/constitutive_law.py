@@ -6,6 +6,7 @@ Notes
 -----
 
 """
+
 import numpy as np
 from numba import njit
 
@@ -86,7 +87,7 @@ class Linear(ConstitutiveLaw):
         - class Linear(ConstitutiveLaw):
     """
 
-    def __init__(self, material, particles, t, c=None, sc=None):
+    def __init__(self, material, particles, t, c=None, sc=None, damage_on=True):
         """
         Linear constitutive model class constructor
 
@@ -115,7 +116,10 @@ class Linear(ConstitutiveLaw):
         self.t = t
         self.c = c or self._calculate_bond_stiffness(material, particles)
         self.sc = sc or self._calculate_sc(material, particles)
-        self.calculate_bond_damage = self._calculate_bond_damage(self.sc)
+        self.damage_on = damage_on
+        self.calculate_bond_damage = self._calculate_bond_damage(
+            self.sc, self.damage_on
+        )
 
     def _calculate_sc(self, material, particles):
         """
@@ -135,7 +139,7 @@ class Linear(ConstitutiveLaw):
         return np.sqrt((4 * np.pi * material.Gf) / (9 * material.E * particles.horizon))
 
     @staticmethod
-    def _calculate_bond_damage(sc):
+    def _calculate_bond_damage(sc, damage_on):
         """
         Calculate bond damage
 
@@ -153,36 +157,50 @@ class Linear(ConstitutiveLaw):
         Notes
         -----
         """
+        if damage_on:
 
-        @njit
-        def wrapper(stretch, d):
-            """
-            Calculate bond damage
+            @njit
+            def wrapper(stretch, d):
+                """
+                Calculate bond damage
 
-            Parameters
-            ----------
-            stretch : float
-                Bond stretch
+                Parameters
+                ----------
+                stretch : float
+                    Bond stretch
 
-            d : float
-                Bond damage (softening parameter) at time t. The value of d
-                will range from 0 to 1, where 0 indicates that the bond is
-                still in the elastic range, and 1 represents a bond that has
-                failed
+                d : float
+                    Bond damage (softening parameter) at time t. The value of d
+                    will range from 0 to 1, where 0 indicates that the bond is
+                    still in the elastic range, and 1 represents a bond that has
+                    failed
 
-            Returns
-            -------
-            d : float
-                Bond damage (softening parameter) at time t+1. The value of d
-                will range from 0 to 1, where 0 indicates that the bond is
-                still in the elastic range, and 1 represents a bond that has
-                failed
+                Returns
+                -------
+                d : float
+                    Bond damage (softening parameter) at time t+1. The value of d
+                    will range from 0 to 1, where 0 indicates that the bond is
+                    still in the elastic range, and 1 represents a bond that has
+                    failed
 
-            Notes
-            -----
-            * Examine closures and factory functions
-            """
-            return linear(stretch, d, sc)
+                Notes
+                -----
+                * Examine closures and factory functions
+                """
+                return linear(stretch, d, sc)
+
+        else:
+
+            @njit
+            def wrapper(stretch, d):
+                """
+                Returns
+                -------
+                d: float
+                    An array of zeros with the same size as the input array `d`,
+                    indicating no bond damage.
+                """
+                return np.zeros_like(d)
 
         return wrapper
 

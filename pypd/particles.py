@@ -112,7 +112,7 @@ class ParticleSet:
 
         self.bc = bc
 
-        self.dx = dx           # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
+        self.dx = dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
         self.horizon = m * dx  # TODO: is this an attribute of the particle set?
         self.cell_area = dx**2
         self.cell_volume = dx**3
