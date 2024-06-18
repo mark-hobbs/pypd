@@ -280,12 +280,12 @@ class Trilinear(ConstitutiveLaw):
 
     def _calculate_sc(self, material, particles):
         """
-        Trilinear model - calculate the critical stretch
+        Trilinear model (2D case) - calculate the critical stretch
         """
-        numerator = 10 * self.gamma * material.Gf
+        numerator = 4 * self.gamma * material.Gf
         denominator = (
-            np.pi
-            * particles.horizon**5
+            self.t
+            * particles.horizon**4
             * self.c
             * self.s0
             * (1 + (self.gamma * self.beta))
@@ -422,7 +422,7 @@ class NonLinear(ConstitutiveLaw):
 
     def _calculate_sc(self, material, particles):
         """
-        Nonlinear model - calculate the critical stretch
+        Nonlinear model (2D case) - calculate the critical stretch
         """
         numerator_a = 4 * self.k * (1 - np.exp(self.k)) * (1 + self.alpha)
         numerator_b = (
