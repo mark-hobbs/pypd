@@ -41,7 +41,7 @@ class EulerCromer:
     # def __init__(self) -> None:
     #     super().__init__()
 
-    def one_timestep(self, node_force, particles, simulation):
+    def one_timestep(self, particles, simulation):
         """
         Update particle positions using an Euler-Cromer time integration scheme
 
@@ -57,7 +57,7 @@ class EulerCromer:
 
         """
         return euler_cromer(
-            node_force,
+            particles.f,
             particles.u,
             particles.v,
             particles.a,

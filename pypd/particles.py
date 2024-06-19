@@ -15,7 +15,6 @@ from .kernels.particles import (
 )
 
 
-# Particles, ParticleArray, or ParticleSet?
 class ParticleSet:
     """
     The main class for storing the particle (node) set.
@@ -124,9 +123,8 @@ class ParticleSet:
         if self.nlist is None:
             self.nlist, self.n_family_members = self._build_particle_families()
 
-        # TODO: move the following to an initialise method in Model or
-        # Simulation?
-        self.node_force = np.zeros((self.n_nodes, self.n_dim))
+        # TODO: move the following to an initialise method in Model or Simulation?
+        self.f = np.zeros((self.n_nodes, self.n_dim))
         self.u = np.zeros((self.n_nodes, self.n_dim))
         self.v = np.zeros((self.n_nodes, self.n_dim))
         self.a = np.zeros((self.n_nodes, self.n_dim))
@@ -193,7 +191,7 @@ class ParticleSet:
         of the consistutive_law class?
             - constitutive_law.calculate_nodal_forces()
         """
-        return calculate_nodal_forces(
+        self.f, _ = calculate_nodal_forces(
             self.x,
             self.u,
             self.cell_volume,
@@ -229,9 +227,7 @@ class ParticleSet:
             self.x, bonds.bondlist, bonds.d, self.n_family_members
         )
 
-    def update_particle_positions(
-        self, node_force, simulation, integrator, i_time_step
-    ):
+    def update_particle_positions(self, simulation, integrator, i_time_step):
         """
         Update particle positions using an Euler-Cromer time integration scheme
 
@@ -257,7 +253,7 @@ class ParticleSet:
             i_time_step, 0, simulation.n_time_steps, 0, self.bc.magnitude
         )
 
-        return integrator.one_timestep(node_force, self, simulation)
+        return integrator.one_timestep(self, simulation)
 
     def plot_particles(self, fig, sz=1, dsf=10, data=None):
         """

@@ -90,11 +90,11 @@ class Model:
         -----
         """
 
-        nf, _ = self.particles.calculate_particle_forces(
+        self.particles.calculate_particle_forces(
             self.bonds, self.constitutive_law.calculate_bond_damage
         )
         self.particles.update_particle_positions(
-            nf, self.simulation, self.integrator, i_time_step
+            self.simulation, self.integrator, i_time_step
         )
 
         if self.penetrators:
