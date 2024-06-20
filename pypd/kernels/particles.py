@@ -8,7 +8,7 @@ from numba import njit, prange
 
 
 @njit(parallel=True, fastmath=True)
-def calculate_nodal_forces(
+def compute_nodal_forces(
     x,
     u,
     cell_volume,
@@ -21,7 +21,7 @@ def calculate_nodal_forces(
     surface_correction_factors,
 ):
     """
-    Calculate particle forces - employs bondlist
+    Compute particle forces - employs bondlist
 
     Parameters
     ----------
@@ -100,9 +100,9 @@ def calculate_nodal_forces(
 
 
 @njit
-def calculate_node_damage(x, bondlist, d, n_family_members):
+def compute_node_damage(x, bondlist, d, n_family_members):
     """
-    Calculate the nodal damage
+    Compute the nodal damage
 
     Parameters
     ----------

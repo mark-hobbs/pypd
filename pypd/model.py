@@ -90,12 +90,10 @@ class Model:
         -----
         """
 
-        nf, _ = self.particles.calculate_particle_forces(
+        self.particles.compute_forces(
             self.bonds, self.constitutive_law.calculate_bond_damage
         )
-        self.particles.update_particle_positions(
-            nf, self.simulation, self.integrator, i_time_step
-        )
+        self.particles.update_positions(self.simulation, self.integrator, i_time_step)
 
         if self.penetrators:
             for penetrator in self.penetrators:
@@ -105,7 +103,7 @@ class Model:
 
         if self.animation:
             if i_time_step % self.animation.frequency == 0:
-                self.particles.calculate_particle_damage(self.bonds)
+                self.particles.calculate_damage(self.bonds)
                 self.animation.save_frame(self.particles)
 
     def run_simulation(self):
@@ -159,8 +157,8 @@ class Model:
         -----
         """
         fig = plt.figure(figsize=(12, 6))
-        self.particles.calculate_particle_damage(self.bonds)
-        self.particles.plot_particles(fig, sz=sz, dsf=dsf, data=self.particles.damage)
+        self.particles.compute_damage(self.bonds)
+        self.particles.plot(fig, sz=sz, dsf=dsf, data=self.particles.damage)
         fig.gca().set_aspect("equal", "box")
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
