@@ -131,13 +131,6 @@ class ParticleSet:
 
         self.damage = np.zeros(self.n_nodes)
 
-    # TODO: see PySPH
-    def add_property():
-        pass
-
-    def add_constant():
-        pass
-
     def _build_particle_families(self):
         """
         Build particle families
@@ -158,10 +151,6 @@ class ParticleSet:
         -----
         """
         return build_particle_families(self.x, self.horizon)
-
-    def _build_boundary_conditions():
-        # TODO: probably not needed?
-        pass
 
     def calculate_particle_forces(self, bonds, material_law):
         """
@@ -229,7 +218,7 @@ class ParticleSet:
 
     def update_particle_positions(self, simulation, integrator, i_time_step):
         """
-        Update particle positions using an Euler-Cromer time integration scheme
+        Update particle positions - time integration scheme
 
         Parameters
         ----------
