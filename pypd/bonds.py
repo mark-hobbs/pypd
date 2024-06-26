@@ -8,7 +8,6 @@ import numpy as np
 from .kernels.bonds import build_bond_list, build_bond_length
 
 
-# Bonds, BondArray, or BondSet?
 class BondSet:
     """
     The main class for storing the bond set.
