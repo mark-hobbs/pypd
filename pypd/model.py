@@ -135,7 +135,7 @@ class Model:
         if self.animation:
             self.animation.generate_animation()
 
-    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage"):
+    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
         """
         Save a figure of the final state of the simulation
 
@@ -149,6 +149,9 @@ class Model:
 
         fig_title : str
             The figure is saved as fig_title
+        
+        show_axis : bool
+            Display the axis (default = True)
 
         Returns
         -------
@@ -159,6 +162,11 @@ class Model:
         fig = plt.figure(figsize=(12, 6))
         self.particles.compute_damage(self.bonds)
         self.particles.plot(fig, sz=sz, dsf=dsf, data=self.particles.damage)
-        fig.gca().set_aspect("equal", "box")
+        
+        ax = fig.gca()
+        ax.set_aspect("equal", "box")
+        if not show_axis:
+            ax.axis('off')
+        
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
