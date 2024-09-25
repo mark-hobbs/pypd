@@ -1,6 +1,6 @@
-# PyPD
+# pypd
 
-A simple and performant Python implementation of the bond-based peridynamic model. PyPD offers an intuitive class structure with fully interchangeable material models and integration schemes.
+A simple and performant Python implementation of the bond-based peridynamic model. `pypd` offers an intuitive class structure with fully interchangeable material models and integration schemes.
 
 ### Features:
 - **Pure Python:** Written entirely in Python, leveraging the power of [Numba](https://numba.pydata.org/) for optimal performance
@@ -10,28 +10,28 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 
 ## Usage
 
-**Explore examples using PyPD in Google Colab**
+**Explore examples using `pypd` in Google Colab**
 
 | Example description | Notebook |
 | ------- | -------- |
-| Crack branching in Homalite |  <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/crack_branching.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| Half-notched quasi-brittle beam in three-point bending | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/half_notched_beam.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| Plate with a hole under tension | <a href="https://colab.research.google.com/github/mark-hobbs/PyPD/blob/main/examples/plate_with_hole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
+| Crack branching in Homalite |  <a href="https://colab.research.google.com/github/mark-hobbs/pypd/blob/main/examples/crack_branching.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
+| Half-notched quasi-brittle beam in three-point bending | <a href="https://colab.research.google.com/github/mark-hobbs/pypd/blob/main/examples/half_notched_beam.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
+| Plate with a hole under tension | <a href="https://colab.research.google.com/github/mark-hobbs/pypd/blob/main/examples/plate_with_hole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
 
 ## Getting started
 
 Development version from GitHub:
 
 ```shell
-$ pip install git+https://github.com/mark-hobbs/PyPD.git
+$ pip install git+https://github.com/mark-hobbs/pypd.git
 ```
 
 or for contributors using [Pipenv](https://pipenv.pypa.io/en/latest/):
 
 
 ```shell
-$ git clone https://github.com/mark-hobbs/PyPD.git
-$ cd PyPD/
+$ git clone https://github.com/mark-hobbs/pypd.git
+$ cd pypd/
 $ pipenv install --dev
 $ pipenv shell
 ```
