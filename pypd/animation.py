@@ -1,19 +1,11 @@
-"""
-Animation class
----------------
-
-A class for creating and saving animated scatter plots using Matplotlib.
-"""
-
 from datetime import datetime
 import copy
-
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
 class Animation:
-    def __init__(self, frequency=100, name=None, sz=1, dsf=0):
+    def __init__(self, frequency=100, name=None, sz=1, dsf=0, show_title=True):
         """
         Initialise the Animation object
 
@@ -31,12 +23,16 @@ class Animation:
 
         dsf : float, optional
             Data scaling factor for particles in the scatter plot. Default is 0.
+
+        show_title : bool, optional
+            If True, displays the title with the frame number. Default is True.
         """
         self.frequency = frequency
         self.name = name or self._generate_animation_name()
         self.sz = sz
         self.dsf = dsf
         self.frames = []
+        self.show_title = show_title
         self.fig, self.ax = plt.subplots()
 
     @staticmethod
@@ -77,11 +73,16 @@ class Animation:
         Required signature: `def func(frame, *fargs) -> iterable_of_artists`
         """
         self.ax.clear()
+        self.ax.set_facecolor((1, 1, 1, 0))
+        self.fig.patch.set_alpha(0)
         current_scatter = self.frames[frame].get_axes()[0].collections[0]
         self._set_axis_limits(frame)
         scatter = self._set_scatter_data(current_scatter)
-        self.ax.set_title(f"frame {frame}")
-        self.ax.set_aspect("equal", "box")
+
+        if self.show_title:
+            self.ax.set_title(f"frame {frame}")
+
+        self.ax.set_aspect("equal")
         self.ax.axis("off")
         self.fig.tight_layout()
         return scatter
@@ -91,8 +92,9 @@ class Animation:
         Generate an animation from the saved frames (matplotlib.figure.Figure
         objects)
 
-        TODO: it is possible to pass an iterable to frames:
-        e.g. frames=self.frames
+        Parameters
+        ----------
+        None
         """
         self.ani = animation.FuncAnimation(
             self.fig, self._update, frames=len(self.frames), interval=100, blit=False
