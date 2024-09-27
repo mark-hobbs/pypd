@@ -50,7 +50,7 @@ class Animation:
         frequency defined by self.frequency
         """
         fig = plt.figure(figsize=(12, 6))
-        particles.plot_particles(fig, sz=self.sz, dsf=self.dsf, data=particles.damage)
+        particles.plot(fig, sz=self.sz, dsf=self.dsf, data=particles.damage)
         self.frames.append(copy.deepcopy(fig))
 
     def _set_axis_limits(self, i):

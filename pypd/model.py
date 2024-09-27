@@ -103,7 +103,7 @@ class Model:
 
         if self.animation:
             if i_time_step % self.animation.frequency == 0:
-                self.particles.calculate_damage(self.bonds)
+                self.particles.compute_damage(self.bonds)
                 self.animation.save_frame(self.particles)
 
     def run_simulation(self):
