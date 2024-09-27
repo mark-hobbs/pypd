@@ -12,6 +12,7 @@ from .kernels.particles import (
     build_particle_families,
     compute_nodal_forces,
     compute_node_damage,
+    compute_strain_energy_density,
 )
 
 
@@ -66,6 +67,9 @@ class ParticleSet:
         Flag to... 1 if a boundary condition is applied, 0 if no...
 
     boundary_condition_value : ndarray (float)
+
+    W : ndarray (float)
+        Strain energy density (J/m^3) at every node
 
     Methods
     -------
@@ -130,6 +134,7 @@ class ParticleSet:
         self.a = np.zeros((self.n_nodes, self.n_dim))
 
         self.damage = np.zeros(self.n_nodes)
+        self.W = np.zeros(self.n_nodes)
 
     def _build_particle_families(self):
         """
@@ -243,6 +248,24 @@ class ParticleSet:
         )
 
         return integrator.one_timestep(self, simulation)
+
+    def compute_strain_energy_density(self, bonds):
+        """
+        Compute the strain energy density (J/m^3) at every node
+
+        Returns
+        -------
+        W : ndarray (float)
+            Strain energy density
+        """
+        self.W = compute_strain_energy_density(
+            self.x,
+            self.u,
+            self.cell_volume,
+            bonds.bondlist,
+            bonds.d,
+            bonds.constitutive_law.c
+        )
 
     def plot(self, fig, sz=1, dsf=10, data=None):
         """
