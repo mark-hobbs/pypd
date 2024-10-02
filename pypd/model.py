@@ -103,8 +103,7 @@ class Model:
 
         if self.animation:
             if i_time_step % self.animation.frequency == 0:
-                self.particles.compute_damage(self.bonds)
-                self.animation.save_frame(self.particles)
+                self.animation.save_frame(self.particles, self.bonds)
 
     def run_simulation(self):
         """
@@ -149,7 +148,7 @@ class Model:
 
         fig_title : str
             The figure is saved as fig_title
-        
+
         show_axis : bool
             Display the axis (default = True)
 
@@ -162,11 +161,11 @@ class Model:
         fig = plt.figure(figsize=(12, 6))
         self.particles.compute_damage(self.bonds)
         self.particles.plot(fig, sz=sz, dsf=dsf, data=self.particles.damage)
-        
+
         ax = fig.gca()
         ax.set_aspect("equal", "box")
         if not show_axis:
-            ax.axis('off')
-        
+            ax.axis("off")
+
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)

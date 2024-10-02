@@ -174,7 +174,9 @@ def main():
         particles.x, bonds.bondlist, notch
     )
     simulation = pypd.Simulation(dt=None, n_time_steps=5000, damping=0)
-    animation = pypd.Animation(frequency=100, sz=0.25)
+    animation = pypd.Animation(
+        frequency=100, sz=0.25, show_title=False, data="strain energy density"
+    )
     model = pypd.Model(
         particles, bonds, simulation, integrator, linear, animation=animation
     )
