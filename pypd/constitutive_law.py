@@ -18,7 +18,21 @@ class ConstitutiveLaw:
     Subclass this to define a new constitutive law. This class ensures that
     all constitutive models follow the correct format.
 
-    TODO: rename ConstitutiveLaw2D?
+    Attributes
+    ----------
+    material : Material
+        An instance of the Material class representing the material properties
+    
+    c : ndarray (float)
+        Bond stiffness (micromodulus)    
+
+    influence : InfluenceFunction
+        An instance of the InfluenceFunction class. The influence function, 
+        also referred to as the weight function or kernel function, describes 
+        how the interaction between particles diminishes with increasing distance.
+
+    Methods
+    ------- 
     """
 
     def __init__():
@@ -47,25 +61,13 @@ class ConstitutiveLaw:
         """
         return (9 * material.E) / (np.pi * self.t * particles.horizon**3)
 
-    def required_parameters():
-        """
-        Define the required parameters
-        """
-        pass
-
-    def calculate_parameter_values():
-        """
-        Determine the parameter values for the implemented constitutive law
-        """
-        raise NotImplementedError("This method must be implemented!")
-
     def calculate_bond_damage():
         """
         Calculate bond damage (softening parameter). The value of d will range
         from 0 to 1, where 0 indicates that the bond is still in the elastic
         range, and 1 represents a bond that has failed
         """
-        pass
+        raise NotImplementedError("This method must be implemented!")
 
 
 class Linear(ConstitutiveLaw):
@@ -80,11 +82,6 @@ class Linear(ConstitutiveLaw):
 
     Notes
     -----
-    * Examine compiling classes with @jitclass
-    * How do we employ a material model?
-        - bond.material_model.calculate_bond_damage()
-    * Should the class inherit from ConstitutiveLaw?
-        - class Linear(ConstitutiveLaw):
     """
 
     def __init__(self, material, particles, t, c=None, sc=None, damage_on=True):
@@ -98,7 +95,8 @@ class Linear(ConstitutiveLaw):
         particles: ParticleSet class
 
         thickness : float
-            Discretisation dx...
+            In a 2D problem, the thickness is equivalent to the discretisation 
+            resolution, denoted as dx.
 
         Returns
         -------
@@ -203,25 +201,6 @@ class Linear(ConstitutiveLaw):
                 return np.zeros_like(d)
 
         return wrapper
-
-    def calculate_nodal_forces(self):
-        """
-        Calculate nodal force
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-
-        Notes
-        -----
-        * Ideally this method would not be required.
-        * Methods in this class should be concerned with the behaviour of a
-        single bond
-        * Called by particles.calculate_particle_forces()
-        """
-        pass
 
 
 class Bilinear(ConstitutiveLaw):
