@@ -20,6 +20,9 @@ class BondSet:
     nlist : ndarray (int)
         TODO: define a new name and description
         TODO: ndarray or list of numpy arrays?
+    
+    xi : ndarray (float)
+        Reference bond length
 
     material: ndarray (int)
         Array defining the material type of every bond
@@ -108,19 +111,8 @@ class BondSet:
         -------
         bondlist : ndarray (int)
             Array of pairwise interactions (bond list)
-
-        Notes
-        -----
-        TODO: is this programming pattern good practice?
-
         """
         return build_bond_list(nlist)
-
-    def calculate_bond_stiffness():
-        """
-        * Should this be part of the ConstitutiveModel class?
-        """
-        pass
 
     def _calculate_bond_length(self, x):
         """
@@ -132,6 +124,12 @@ class BondSet:
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
+    
+    def calculate_bond_stiffness():
+        """
+        * Should this be part of the ConstitutiveModel class?
+        """
+        pass
 
     def _calculate_surface_correction_factors(self, particles):
         """
@@ -152,63 +150,3 @@ class BondSet:
             surface_correction_factors[k_bond] = (2 * v0) / (v_i + v_j)
 
         return surface_correction_factors
-
-    def calculate_bond_stretch():
-        pass
-
-    def calculate_bond_force(self):
-        """
-        Calculate bond forces
-
-        Parameters
-        ----------
-        x : ndarray (float)
-            Material point coordinates in the reference configuration
-
-        Returns
-        -------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
-
-        Notes
-        -----
-        TODO: it would be inefficient to define this as a class method. A more
-        efficient approach would be to implement the following methods as a
-        single method in the particles class.
-
-        1. bonds.calculate_bond_stretch(particles)
-        2. bonds.calculate_bond_damage(particles)
-        3. bonds.calculate_bond_force(particles)
-
-        1. particles.calculate_particle_forces(bonds)
-        """
-        pass
-
-    def calculate_bond_damage(self):
-        """
-        Calculate bond damage (softening parameter)
-
-        Parameters
-        ----------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
-
-
-        Returns
-        -------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
-
-        Notes
-        -----
-        * User must select or define a constitutive law (linear / bilinear /
-        trilinear / non-linear)
-        * from solver.constitutive_model import trilinear
-        """
-        pass
