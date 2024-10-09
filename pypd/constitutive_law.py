@@ -22,21 +22,21 @@ class ConstitutiveLaw:
     ----------
     material : Material
         An instance of the Material class representing the material properties
-    
+
     c : ndarray (float)
-        Bond stiffness (micromodulus)    
+        Bond stiffness (micromodulus)
 
     influence : InfluenceFunction
-        An instance of the InfluenceFunction class. The influence function, 
-        also referred to as the weight function or kernel function, describes 
+        An instance of the InfluenceFunction class. The influence function,
+        also referred to as the weight function or kernel function, describes
         how the interaction between particles diminishes with increasing distance.
 
     Methods
-    ------- 
+    -------
     """
 
-    def __init__():
-        pass
+    def __init__(self, t):
+        self.t = t
 
     def _calculate_bond_stiffness(self, material, particles):
         """
@@ -95,7 +95,7 @@ class Linear(ConstitutiveLaw):
         particles: ParticleSet class
 
         thickness : float
-            In a 2D problem, the thickness is equivalent to the discretisation 
+            In a 2D problem, the thickness is equivalent to the discretisation
             resolution, denoted as dx.
 
         Returns
