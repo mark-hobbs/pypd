@@ -191,7 +191,7 @@ class ParticleSet:
             self.cell_volume,
             bonds.bondlist,
             bonds.d,
-            bonds.constitutive_law.c,
+            bonds.c,
             bonds.f_x,
             bonds.f_y,
             material_law,
@@ -264,7 +264,7 @@ class ParticleSet:
             self.cell_volume,
             bonds.bondlist,
             bonds.d,
-            bonds.constitutive_law.c,
+            bonds.c,
         )
 
     def plot(self, fig, sz=1, dsf=10, data=None):

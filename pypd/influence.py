@@ -33,7 +33,7 @@ class InfluenceFunction:
         self.c = c
         self.omega = omega
 
-    def __call__(self, *args: np.Any, **kwds: np.Any) -> np.Any:
+    def __call__(self):
         pass
 
     def _return_c():
@@ -43,13 +43,20 @@ class InfluenceFunction:
         pass
 
 
-class Constant(InfluenceFunction):
+class Constant:
 
-    def _return_c():
-        return (9 * material.E) / (np.pi * t * particles.horizon**3)
+    def __init__(self, particles, xi):
+        self.particles = particles
+        self.xi = xi
 
-    def _return_omega():
-        return 1
+    def __call__(self):
+        return self._c() * self._omega()
+
+    def _c(self):
+        return (9 * self.particles.material.E) / (np.pi * self.particles.dx * self.particles.horizon**3)
+
+    def _omega(self):
+        return np.ones(len(self.xi))
 
 
 class Triangular(InfluenceFunction):
@@ -65,17 +72,20 @@ class Triangular(InfluenceFunction):
         return 1 - xi / horizon
 
 
-class Quartic(InfluenceFunction):
+class Quartic:
 
-    def _return_c():
-        return (315 * E) / (8 * np.pi * horizon**3)
+    def __init__(self, particles, xi):
+        self.particles = particles
+        self.xi = xi
 
-    def _return_omega(xi):
-        """
-        xi : ndarray (float)
-            Reference bond length
-        """
-        return (xi / horizon) ** 4 - 2 * (xi / horizon) ** 2 + 1
+    def __call__(self):
+        return self._c() * self._omega()
+
+    def _c(self):
+        return (315 * self.particles.material.E) / (8 * np.pi * self.particles.dx * self.particles.horizon**3)
+
+    def _omega(self):
+        return (self.xi / self.particles.horizon) ** 4 - 2 * (self.xi / self.particles.horizon) ** 2 + 1
 
 
 class Normal(InfluenceFunction):

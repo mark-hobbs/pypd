@@ -6,6 +6,7 @@ Bond array class
 import numpy as np
 
 from .kernels.bonds import build_bond_list, build_bond_length
+from .influence import Constant
 
 
 class BondSet:
@@ -58,7 +59,12 @@ class BondSet:
     """
 
     def __init__(
-        self, particles, constitutive_law, bondlist=None, surface_correction=False
+        self,
+        particles,
+        constitutive_law,
+        influence=None,
+        bondlist=None,
+        surface_correction=False,
     ):
         """
         BondSet class constructor
@@ -74,6 +80,8 @@ class BondSet:
 
         constitutive_law : ConstitutiveLaw class
 
+        influence_function : InfluenceFunction class
+
         Returns
         -------
 
@@ -83,8 +91,12 @@ class BondSet:
 
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
         self.n_bonds = len(self.bondlist)
-        self.xi = self._calculate_bond_length(particles.x)  # TODO: not used
-        self.c = np.zeros(self.n_bonds)  # TODO: not used
+        self.xi = self._calculate_bond_length(particles.x)
+
+        if influence is None:
+            self.influence = Constant(particles, self.xi)
+
+        self.c = self._compute_bond_stiffness()
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
@@ -125,11 +137,16 @@ class BondSet:
         """
         return build_bond_length(x, self.bondlist)
 
-    def calculate_bond_stiffness():
+    def _compute_bond_stiffness(self):
         """
-        * Should this be part of the ConstitutiveModel class?
+        Compute the stiffness of all bonds
+
+        Returns
+        -------
+        c : ndarray (float)
+            Bond stiffness
         """
-        pass
+        return self.influence()
 
     def _calculate_surface_correction_factors(self, particles):
         """
