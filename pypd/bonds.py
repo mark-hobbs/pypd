@@ -95,6 +95,8 @@ class BondSet:
 
         if influence is None:
             self.influence = Constant(particles, self.xi)
+        elif isinstance(influence, type):
+            self.influence = influence(particles, self.xi)
 
         self.c = self._compute_bond_stiffness()
         self.d = np.zeros(self.n_bonds)
