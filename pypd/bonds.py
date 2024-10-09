@@ -20,7 +20,7 @@ class BondSet:
     nlist : ndarray (int)
         TODO: define a new name and description
         TODO: ndarray or list of numpy arrays?
-    
+
     xi : ndarray (float)
         Reference bond length
 
@@ -124,7 +124,7 @@ class BondSet:
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
-    
+
     def calculate_bond_stiffness():
         """
         * Should this be part of the ConstitutiveModel class?
