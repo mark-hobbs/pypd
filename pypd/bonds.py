@@ -8,6 +8,7 @@ import numpy as np
 from .kernels.bonds import build_bond_list, build_bond_length
 from .influence import Constant
 from .constitutive_law import Linear
+from .tools import determine_intersection, rebuild_node_families
 
 
 class BondSet:
@@ -66,31 +67,30 @@ class BondSet:
         influence=None,
         bondlist=None,
         surface_correction=False,
+        notch=None,
     ):
         """
         BondSet class constructor
 
         Parameters
         ----------
-        nlist : ndarray
-            TODO: write description
-
         particles : Particle class
-
-        material : Material class
 
         constitutive_law : ConstitutiveLaw class
 
         influence_function : InfluenceFunction class
 
-        Returns
-        -------
+        notch : tuple of points defining the notch (optional)
+            A tuple containing two points (P1, P2) that define the line of the notch
 
-        Notes
-        -----
         """
-
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
+
+        if notch is not None:
+            self.bondlist, particles.n_family_members = self._build_notch(
+                particles, notch
+            )
+
         self.n_bonds = len(self.bondlist)
         self.xi = self._calculate_bond_length(particles.x)
 
@@ -113,11 +113,11 @@ class BondSet:
 
         if constitutive_law is None:
             self.constitutive_law = Linear(
-                particles.material, particles, t=particles.dx
+                particles.material, particles, c=self.c, t=particles.dx
             )
         elif isinstance(constitutive_law, type):
             self.constitutive_law = constitutive_law(
-                particles.material, particles, t=particles.dx
+                particles.material, particles, c=self.c, t=particles.dx
             )
 
     def _build_bond_list(self, nlist):
@@ -175,3 +175,29 @@ class BondSet:
             surface_correction_factors[k_bond] = (2 * v0) / (v_i + v_j)
 
         return surface_correction_factors
+
+    def _build_notch(self, particles, notch):
+        n_nodes = np.shape(particles.x)[0]
+        n_bonds = np.shape(self.bondlist)[0]
+
+        P1 = notch[0]
+        P2 = notch[1]
+
+        mask = []
+
+        for k_bond in range(n_bonds):
+            node_i = self.bondlist[k_bond, 0]
+            node_j = self.bondlist[k_bond, 1]
+
+            P3 = particles.x[node_i]
+            P4 = particles.x[node_j]
+
+            intersect = determine_intersection(P1, P2, P3, P4)
+
+            if intersect:
+                mask.append(k_bond)
+
+        reduced_bondlist = np.delete(self.bondlist, mask, axis=0)
+        n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
+
+        return reduced_bondlist, n_family_members
