@@ -110,9 +110,7 @@ class BondSet:
         else:
             self.surface_correction_factors = np.ones(self.n_bonds)
 
-        self.constitutive_law = (
-            constitutive_law  # Constitutive model (material_model / material_law?)
-        )
+        self.constitutive_law = constitutive_law
 
     def _build_bond_list(self, nlist):
         """
