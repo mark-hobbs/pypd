@@ -239,16 +239,26 @@ def main():
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
-    linear = pypd.Linear(material, particles, t=dx)
-    trilinear = pypd.Trilinear(material, particles, t=dx)
-    nonlinear = pypd.NonLinear(material, particles, t=dx)
-    trilinear.print_parameters()
-    nonlinear.print_parameters()
 
-    bonds = pypd.BondSet(particles, linear, surface_correction=True)
-    bonds.bondlist, particles.n_family_members = build_notch(
-        particles.x, bonds.bondlist, notch
+    bonds_linear = pypd.BondSet(particles, surface_correction=True)
+    bonds_linear.bondlist, particles.n_family_members = build_notch(
+        particles.x, bonds_linear.bondlist, notch
     )
+
+    bonds_trilinear = pypd.BondSet(
+        particles, constitutive_law=pypd.Trilinear, surface_correction=True
+    )
+    bonds_trilinear.bondlist, _ = build_notch(
+        particles.x, bonds_trilinear.bondlist, notch
+    )
+
+    bonds_nonlinear = pypd.BondSet(
+        particles, constitutive_law=pypd.NonLinear, surface_correction=True
+    )
+    bonds_nonlinear.bondlist, _ = build_notch(
+        particles.x, bonds_nonlinear.bondlist, notch
+    )
+
     simulation = pypd.Simulation(n_time_steps=200000, damping=0, dt=None)
 
     radius = 25 * mm_to_m
@@ -301,10 +311,9 @@ def main():
 
     linear_model = pypd.Model(
         copy.deepcopy(particles),
-        copy.deepcopy(bonds),
+        bonds_linear,
         copy.deepcopy(simulation),
         copy.deepcopy(integrator),
-        linear,
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
@@ -313,10 +322,9 @@ def main():
 
     trilinear_model = pypd.Model(
         copy.deepcopy(particles),
-        copy.deepcopy(bonds),
+        bonds_trilinear,
         copy.deepcopy(simulation),
         copy.deepcopy(integrator),
-        trilinear,
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
@@ -325,10 +333,9 @@ def main():
 
     nonlinear_model = pypd.Model(
         copy.deepcopy(particles),
-        copy.deepcopy(bonds),
+        bonds_nonlinear,
         copy.deepcopy(simulation),
         copy.deepcopy(integrator),
-        nonlinear,
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
