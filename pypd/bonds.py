@@ -7,6 +7,7 @@ import numpy as np
 
 from .kernels.bonds import build_bond_list, build_bond_length
 from .influence import Constant
+from .constitutive_law import Linear
 
 
 class BondSet:
@@ -61,7 +62,7 @@ class BondSet:
     def __init__(
         self,
         particles,
-        constitutive_law,
+        constitutive_law=None,
         influence=None,
         bondlist=None,
         surface_correction=False,
@@ -110,7 +111,10 @@ class BondSet:
         else:
             self.surface_correction_factors = np.ones(self.n_bonds)
 
-        self.constitutive_law = constitutive_law
+        if constitutive_law is None:
+            self.constitutive_law = Linear(particles.material, particles, t=particles.dx)
+        elif isinstance(constitutive_law, type):
+            self.constitutive_law = constitutive_law(particles.material, particles, t=particles.dx)
 
     def _build_bond_list(self, nlist):
         """
