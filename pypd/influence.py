@@ -104,12 +104,21 @@ class Triangular(InfluenceFunction):
     Conical
     """
 
+    def _c(self) -> float:
+        """
+        Compute the stiffness constant for the triangular (conical) influence
+        function.
+        """
+        return (36 * self.particles.material.E) / (
+            np.pi * self.particles.horizon**3 * self.particles.dx
+        )
+
     def _omega(self) -> np.ndarray:
         """
-        xi : ndarray (float)
-            Reference bond length
+        Triangular (conical) influence function (omega) as a function of bond
+        length xi.
         """
-        return 1 - xi / horizon
+        return 1 - self.xi / self.particles.horizon
 
 
 class Normal(InfluenceFunction):
