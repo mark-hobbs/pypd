@@ -9,7 +9,7 @@ class Simulation:
         self.dt = dt
 
     @staticmethod
-    def calculate_stable_dt(particles, c, sf=0.5):
+    def calculate_stable_dt(particles, c, sf=0.8):
         """
         Calculate stable time step
 
