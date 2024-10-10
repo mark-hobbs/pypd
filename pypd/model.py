@@ -62,9 +62,9 @@ class Model:
         """
         self.particles = particles
         self.bonds = bonds
+        self.constitutive_law = self.bonds.constitutive_law
         self.simulation = simulation
         self.integrator = integrator
-        self.constitutive_law = self.bonds.constitutive_law
         self.penetrators = penetrators
         self.observations = observations
         self.animation = animation
