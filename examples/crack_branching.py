@@ -176,9 +176,7 @@ def main():
     animation = pypd.Animation(
         frequency=100, sz=0.25, show_title=False, data="strain energy density"
     )
-    model = pypd.Model(
-        particles, bonds, simulation, integrator, animation=animation
-    )
+    model = pypd.Model(particles, bonds, simulation, integrator, animation=animation)
 
     model.run_simulation()
     model.save_final_state_fig(fig_title="crack-branching")

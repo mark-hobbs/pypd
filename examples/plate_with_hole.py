@@ -103,16 +103,9 @@ def main():
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
-    linear = pypd.Linear(material, particles, t=dx)
-    bonds = pypd.BondSet(particles, linear)
+    bonds = pypd.BondSet(particles)
     simulation = pypd.Simulation(dt=None, n_time_steps=20000, damping=0)
-    model = pypd.Model(
-        particles,
-        bonds,
-        simulation,
-        integrator,
-        linear,
-    )
+    model = pypd.Model(particles, bonds, simulation, integrator)
 
     model.run_simulation()
     model.save_final_state_fig(sz=0.75, fig_title="plate-with-a-hole")
