@@ -74,7 +74,7 @@ def compute_nodal_forces(
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
         stretch = (y - xi) / xi
 
-        d[k_bond] = material_law(stretch, d[k_bond])
+        d[k_bond] = material_law(k_bond, stretch, d[k_bond])
 
         f = (
             stretch
