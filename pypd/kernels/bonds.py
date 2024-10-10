@@ -34,8 +34,3 @@ def build_bond_length(x, bondlist):
         xi[k_bond] = np.sqrt(xi_x**2 + xi_y**2)
 
     return xi
-
-
-def calculate_bond_stiffness(E, delta):
-    c = (12 * E) / (np.pi * delta**4)
-    return c
