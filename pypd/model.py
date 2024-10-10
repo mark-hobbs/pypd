@@ -31,7 +31,6 @@ class Model:
         bonds,
         simulation,
         integrator,
-        constitutive_law,
         penetrators=None,
         observations=None,
         animation=None,
@@ -65,7 +64,7 @@ class Model:
         self.bonds = bonds
         self.simulation = simulation
         self.integrator = integrator
-        self.constitutive_law = constitutive_law
+        self.constitutive_law = self.bonds.constitutive_law
         self.penetrators = penetrators
         self.observations = observations
         self.animation = animation
