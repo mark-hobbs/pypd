@@ -112,9 +112,13 @@ class BondSet:
             self.surface_correction_factors = np.ones(self.n_bonds)
 
         if constitutive_law is None:
-            self.constitutive_law = Linear(particles.material, particles, t=particles.dx)
+            self.constitutive_law = Linear(
+                particles.material, particles, t=particles.dx
+            )
         elif isinstance(constitutive_law, type):
-            self.constitutive_law = constitutive_law(particles.material, particles, t=particles.dx)
+            self.constitutive_law = constitutive_law(
+                particles.material, particles, t=particles.dx
+            )
 
     def _build_bond_list(self, nlist):
         """
