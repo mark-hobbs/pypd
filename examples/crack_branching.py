@@ -168,8 +168,7 @@ def main():
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
-    linear = pypd.Linear(material, particles, t=dx)
-    bonds = pypd.BondSet(particles, linear)
+    bonds = pypd.BondSet(particles)
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
@@ -178,7 +177,7 @@ def main():
         frequency=100, sz=0.25, show_title=False, data="strain energy density"
     )
     model = pypd.Model(
-        particles, bonds, simulation, integrator, linear, animation=animation
+        particles, bonds, simulation, integrator, animation=animation
     )
 
     model.run_simulation()

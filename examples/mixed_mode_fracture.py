@@ -240,10 +240,7 @@ def main():
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
-    nonlinear = pypd.NonLinear(material, particles, t=dx)
-    nonlinear.print_parameters()
-
-    bonds = pypd.BondSet(particles, nonlinear)
+    bonds = pypd.BondSet(particles, constitutive_law=pypd.NonLinear)
     bonds.bondlist, particles.n_family_members = build_notch(
         particles.x, bonds.bondlist, notch
     )
@@ -308,7 +305,6 @@ def main():
         bonds,
         simulation,
         integrator,
-        nonlinear,
         penetrators,
         observations,
     )
