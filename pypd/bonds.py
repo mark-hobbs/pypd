@@ -6,6 +6,9 @@ Bond array class
 import numpy as np
 
 from .kernels.bonds import build_bond_list, build_bond_length
+from .influence import Constant
+from .constitutive_law import Linear
+from .tools import determine_intersection, rebuild_node_families
 
 
 class BondSet:
@@ -20,6 +23,9 @@ class BondSet:
     nlist : ndarray (int)
         TODO: define a new name and description
         TODO: ndarray or list of numpy arrays?
+
+    xi : ndarray (float)
+        Reference bond length
 
     material: ndarray (int)
         Array defining the material type of every bond
@@ -55,33 +61,45 @@ class BondSet:
     """
 
     def __init__(
-        self, particles, constitutive_law, bondlist=None, surface_correction=False
+        self,
+        particles,
+        constitutive_law=None,
+        influence=None,
+        bondlist=None,
+        surface_correction=False,
+        notch=None,
     ):
         """
         BondSet class constructor
 
         Parameters
         ----------
-        nlist : ndarray
-            TODO: write description
-
         particles : Particle class
-
-        material : Material class
 
         constitutive_law : ConstitutiveLaw class
 
-        Returns
-        -------
+        influence_function : InfluenceFunction class
 
-        Notes
-        -----
+        notch : tuple of points defining the notch (optional)
+            A tuple containing two points (P1, P2) that define the line of the notch
+
         """
-
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
+
+        if notch is not None:
+            self.bondlist, particles.n_family_members = self._build_notch(
+                particles, notch
+            )
+
         self.n_bonds = len(self.bondlist)
-        self.xi = self._calculate_bond_length(particles.x)  # TODO: not used
-        self.c = np.zeros(self.n_bonds)  # TODO: not used
+        self.xi = self._calculate_bond_length(particles.x)
+
+        if influence is None:
+            self.influence = Constant(particles, self.xi)
+        elif isinstance(influence, type):
+            self.influence = influence(particles, self.xi)
+
+        self.c = self._compute_bond_stiffness()
         self.d = np.zeros(self.n_bonds)
         self.f_x = np.zeros(self.n_bonds)
         self.f_y = np.zeros(self.n_bonds)
@@ -93,9 +111,12 @@ class BondSet:
         else:
             self.surface_correction_factors = np.ones(self.n_bonds)
 
-        self.constitutive_law = (
-            constitutive_law  # Constitutive model (material_model / material_law?)
-        )
+        if constitutive_law is None:
+            self.constitutive_law = Linear(particles, c=self.c, t=particles.dx)
+        elif isinstance(constitutive_law, type):
+            self.constitutive_law = constitutive_law(
+                particles, c=self.c, t=particles.dx
+            )
 
     def _build_bond_list(self, nlist):
         """
@@ -108,19 +129,8 @@ class BondSet:
         -------
         bondlist : ndarray (int)
             Array of pairwise interactions (bond list)
-
-        Notes
-        -----
-        TODO: is this programming pattern good practice?
-
         """
         return build_bond_list(nlist)
-
-    def calculate_bond_stiffness():
-        """
-        * Should this be part of the ConstitutiveModel class?
-        """
-        pass
 
     def _calculate_bond_length(self, x):
         """
@@ -132,6 +142,17 @@ class BondSet:
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
+
+    def _compute_bond_stiffness(self):
+        """
+        Compute the stiffness of all bonds
+
+        Returns
+        -------
+        c : ndarray (float)
+            Bond stiffness
+        """
+        return self.influence()
 
     def _calculate_surface_correction_factors(self, particles):
         """
@@ -153,62 +174,28 @@ class BondSet:
 
         return surface_correction_factors
 
-    def calculate_bond_stretch():
-        pass
+    def _build_notch(self, particles, notch):
+        n_nodes = np.shape(particles.x)[0]
+        n_bonds = np.shape(self.bondlist)[0]
 
-    def calculate_bond_force(self):
-        """
-        Calculate bond forces
+        P1 = notch[0]
+        P2 = notch[1]
 
-        Parameters
-        ----------
-        x : ndarray (float)
-            Material point coordinates in the reference configuration
+        mask = []
 
-        Returns
-        -------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
+        for k_bond in range(n_bonds):
+            node_i = self.bondlist[k_bond, 0]
+            node_j = self.bondlist[k_bond, 1]
 
-        Notes
-        -----
-        TODO: it would be inefficient to define this as a class method. A more
-        efficient approach would be to implement the following methods as a
-        single method in the particles class.
+            P3 = particles.x[node_i]
+            P4 = particles.x[node_j]
 
-        1. bonds.calculate_bond_stretch(particles)
-        2. bonds.calculate_bond_damage(particles)
-        3. bonds.calculate_bond_force(particles)
+            intersect = determine_intersection(P1, P2, P3, P4)
 
-        1. particles.calculate_particle_forces(bonds)
-        """
-        pass
+            if intersect:
+                mask.append(k_bond)
 
-    def calculate_bond_damage(self):
-        """
-        Calculate bond damage (softening parameter)
+        reduced_bondlist = np.delete(self.bondlist, mask, axis=0)
+        n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
 
-        Parameters
-        ----------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
-
-
-        Returns
-        -------
-        d : ndarray (float)
-            Bond damage (softening parameter). The value of d will range from 0
-            to 1, where 0 indicates that the bond is still in the elastic range,
-            and 1 represents a bond that has failed
-
-        Notes
-        -----
-        * User must select or define a constitutive law (linear / bilinear /
-        trilinear / non-linear)
-        * from solver.constitutive_model import trilinear
-        """
-        pass
+        return reduced_bondlist, n_family_members

@@ -74,11 +74,11 @@ def compute_nodal_forces(
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
         stretch = (y - xi) / xi
 
-        d[k_bond] = material_law(stretch, d[k_bond])
+        d[k_bond] = material_law(k_bond, stretch, d[k_bond])
 
         f = (
             stretch
-            * c
+            * c[k_bond]
             * (1 - d[k_bond])
             * cell_volume
             * surface_correction_factors[k_bond]
@@ -196,7 +196,7 @@ def compute_strain_energy_density(x, u, cell_volume, bondlist, d, c):
         y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
         stretch = (y - xi) / xi
 
-        w[k_bond] = (0.5 * c * stretch**2 * xi) * (1 - d[k_bond]) * cell_volume
+        w[k_bond] = (0.5 * c[k_bond] * stretch**2 * xi) * (1 - d[k_bond]) * cell_volume
 
     # Reduce the micropotential (energy stored in a bond) to strain energy density
     for k_bond in range(n_bonds):

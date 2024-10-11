@@ -2,11 +2,11 @@
 Model class
 -----------
 
-TODO: rename classes as base or baseclasses?
 """
 
 from tqdm import trange
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Model:
@@ -31,7 +31,6 @@ class Model:
         bonds,
         simulation,
         integrator,
-        constitutive_law,
         penetrators=None,
         observations=None,
         animation=None,
@@ -63,16 +62,16 @@ class Model:
         """
         self.particles = particles
         self.bonds = bonds
+        self.constitutive_law = self.bonds.constitutive_law
         self.simulation = simulation
         self.integrator = integrator
-        self.constitutive_law = constitutive_law
         self.penetrators = penetrators
         self.observations = observations
         self.animation = animation
 
         if self.simulation.dt is None:
             self.simulation.dt = self.simulation.calculate_stable_dt(
-                self.particles, self.constitutive_law
+                self.particles, np.max(self.bonds.c)
             )
 
     def _single_time_step(self, i_time_step):

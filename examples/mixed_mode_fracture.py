@@ -78,95 +78,6 @@ def build_boundary_conditions(particles):
     return bc_flag, bc_unit_vector
 
 
-def build_notch(x, bondlist, notch):
-    n_nodes = np.shape(x)[0]
-    n_bonds = np.shape(bondlist)[0]
-
-    P1 = notch[0]
-    P2 = notch[1]
-
-    mask = []
-
-    for k_bond in range(n_bonds):
-        node_i = bondlist[k_bond, 0]
-        node_j = bondlist[k_bond, 1]
-
-        P3 = x[node_i]
-        P4 = x[node_j]
-
-        intersect = determine_intersection(P1, P2, P3, P4)
-
-        if intersect:
-            mask.append(k_bond)
-
-    reduced_bondlist = np.delete(bondlist, mask, axis=0)
-    n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
-
-    return reduced_bondlist, n_family_members
-
-
-def determine_intersection(P1, P2, P3, P4):
-    """
-    Determine if a bond intersects with a notch
-        - Given two line segments, find if the
-          given line segments intersect with
-          each other.
-
-    Parameters
-    ----------
-    P :
-        P = (x, y)
-
-    Returns
-    ------
-    Returns True if two lines intersect
-
-    Notes
-    -----
-    * This solution is based on the following
-      paper:
-
-      Antonio, F. (1992). Faster line segment
-      intersection. In Graphics Gems III
-      (IBM Version) (pp. 199-202). Morgan
-      Kaufmann.
-
-    """
-
-    A = P2 - P1
-    B = P3 - P4
-    C = P1 - P3
-
-    denominator = (A[1] * B[0]) - (A[0] * B[1])
-
-    alpha_numerator = (B[1] * C[0]) - (B[0] * C[1])
-    beta_numerator = (A[0] * C[1]) - (A[1] * C[0])
-
-    alpha = alpha_numerator / denominator
-    beta = beta_numerator / denominator
-
-    if (0 <= alpha <= 1) and (0 <= beta <= 1):
-        intersect = True
-    else:
-        intersect = False
-
-    return intersect
-
-
-def rebuild_node_families(n_nodes, bondlist):
-    n_bonds = np.shape(bondlist)[0]
-    n_family_members = np.zeros(n_nodes)
-
-    for k_bond in range(n_bonds):
-        node_i = bondlist[k_bond, 0]
-        node_j = bondlist[k_bond, 1]
-
-        n_family_members[node_i] += 1
-        n_family_members[node_j] += 1
-
-    return n_family_members
-
-
 def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
     load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z
     cmod = np.array(model.observations[1].history) - np.array(
@@ -240,12 +151,11 @@ def main():
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
     particles = pypd.ParticleSet(x, dx, bc, material)
-    nonlinear = pypd.NonLinear(material, particles, t=dx)
-    nonlinear.print_parameters()
-
-    bonds = pypd.BondSet(particles, nonlinear)
-    bonds.bondlist, particles.n_family_members = build_notch(
-        particles.x, bonds.bondlist, notch
+    bonds = pypd.BondSet(
+        particles,
+        constitutive_law=pypd.Trilinear,
+        influence=pypd.Triangular,
+        notch=notch,
     )
     simulation = pypd.Simulation(n_time_steps=100000, damping=0, dt=None)
 
@@ -308,7 +218,6 @@ def main():
         bonds,
         simulation,
         integrator,
-        nonlinear,
         penetrators,
         observations,
     )
