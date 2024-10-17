@@ -103,7 +103,7 @@ def main():
     integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(particles)
+    bonds = pypd.BondSet(particles, damage_on=False)
     simulation = pypd.Simulation(dt=None, n_time_steps=20000, damping=0)
     model = pypd.Model(particles, bonds, simulation, integrator)
 

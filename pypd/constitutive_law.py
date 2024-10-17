@@ -179,7 +179,7 @@ class Linear(ConstitutiveLaw):
                     An array of zeros with the same size as the input array `d`,
                     indicating no bond damage.
                 """
-                return np.zeros_like(d)
+                return 0
 
         return wrapper
 
