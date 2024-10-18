@@ -62,7 +62,6 @@ class Model:
         """
         self.particles = particles
         self.bonds = bonds
-        self.constitutive_law = self.bonds.constitutive_law
         self.simulation = simulation
         self.integrator = integrator
         self.penetrators = penetrators
@@ -89,9 +88,7 @@ class Model:
         -----
         """
 
-        self.particles.compute_forces(
-            self.bonds, self.constitutive_law.calculate_bond_damage
-        )
+        self.particles.compute_forces(self.bonds)
         self.particles.update_positions(self.simulation, self.integrator, i_time_step)
 
         if self.penetrators:

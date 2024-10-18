@@ -157,7 +157,7 @@ class ParticleSet:
         """
         return build_particle_families(self.x, self.horizon)
 
-    def compute_forces(self, bonds, material_law):
+    def compute_forces(self, bonds):
         """
         Compute particle forces
 
@@ -194,7 +194,7 @@ class ParticleSet:
             bonds.c,
             bonds.f_x,
             bonds.f_y,
-            material_law,
+            bonds.constitutive_law.calculate_bond_damage,
             bonds.surface_correction_factors,
         )
 
