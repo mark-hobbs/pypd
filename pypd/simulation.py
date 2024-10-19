@@ -30,9 +30,9 @@ class Simulation:
         )
 
 
-class Simulation_2D(Simulation):
+class Simulation2D(Simulation):
     pass
 
 
-class Simulation_3D(Simulation):
+class Simulation3D(Simulation):
     pass
