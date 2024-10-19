@@ -36,10 +36,7 @@ class Euler(Integrator):
     pass
 
 
-# class EulerCromer(Integrator):
 class EulerCromer:
-    # def __init__(self) -> None:
-    #     super().__init__()
 
     def one_timestep(self, particles, simulation):
         """
