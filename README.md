@@ -104,4 +104,5 @@ python -m examples.2D_B4_HN.py
 - [ ] GPU acceleration (see this [notebook](https://github.com/lukepolson/youtube_channel/blob/main/Python%20GPU/multibody_boltzmann.ipynb) where `pytorch` is used to speed up particle simulations)
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
 - [x] Implement a surface correction scheme to correct the peridynamic surface effect
-- [x] Implement different influence functions (constant/triangular/quartic) 
+- [x] Implement different influence functions (constant/triangular/quartic)S
+- [ ] Separate model and simulation logic: `simulation.run(model)`
