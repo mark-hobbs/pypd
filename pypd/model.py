@@ -30,9 +30,8 @@ class Model:
         particles,
         bonds,
         penetrators=None,
-        observations=None,
-        animation=None,
-    ):
+        observations=None
+        ):
         """
         Model class constructor
 
@@ -69,7 +68,6 @@ class Model:
 
         self.penetrators = penetrators
         self.observations = observations
-        self.animation = animation
 
     def _single_time_step(self, i_time_step):
         """
@@ -94,10 +92,6 @@ class Model:
                 penetrator.calculate_penetrator_force(
                     self.particles, self.simulation, i_time_step
                 )
-
-        if self.animation:
-            if i_time_step % self.animation.frequency == 0:
-                self.animation.save_frame(self.particles, self.bonds)
 
     def run_simulation(self):
         """
@@ -124,9 +118,6 @@ class Model:
             if self.observations:
                 for observation in self.observations:
                     observation.record_history(i_time_step, self.particles.u)
-
-        if self.animation:
-            self.animation.generate_animation()
 
     def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
         """
