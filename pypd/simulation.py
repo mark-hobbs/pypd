@@ -6,11 +6,12 @@ from .tools import calculate_stable_time_step
 
 class Simulation:
 
-    def __init__(self, n_time_steps, damping, dt=None, integrator=None):
+    def __init__(self, n_time_steps, damping, dt=None, integrator=None, animation=None):
         self.n_time_steps = n_time_steps
         self.damping = damping
         self.dt = dt
         self.integrator = integrator
+        self.animation = animation
 
     def run(self, model):
         if self.dt is None:
@@ -19,9 +20,16 @@ class Simulation:
         for i in trange(self.n_time_steps, desc="Simulation progress", unit="steps"):
             self._single_time_step(i, model)
 
+        if self.animation:
+            self.animation.generate_animation()
+
     def _single_time_step(self, i, model):
         model.particles.compute_forces(model.bonds)
         model.particles.update_positions(i, self)
+
+        if self.animation:
+            if i % self.animation.frequency == 0:
+                self.animation.save_frame(model.particles, model.bonds)
 
     @staticmethod
     def _calculate_stable_dt(particles, c, sf=0.8):

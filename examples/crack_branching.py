@@ -80,10 +80,10 @@ def main():
     bonds = pypd.BondSet(particles, influence=pypd.Constant, notch=notch)
     model = pypd.Model(particles, bonds)
 
-    # animation = pypd.Animation(
-    #     frequency=100, sz=0.25, show_title=False, data="strain energy density"
-    # )
-    simulation = pypd.Simulation(n_time_steps=5000, damping=0, integrator=pypd.EulerCromer())
+    animation = pypd.Animation(
+        frequency=100, sz=0.25, show_title=False, data="strain energy density"
+    )
+    simulation = pypd.Simulation(n_time_steps=5000, damping=0, integrator=pypd.EulerCromer(), animation=animation)
     simulation.run(model)
     model.save_final_state_fig(fig_title="crack-branching")
 
