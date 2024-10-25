@@ -221,7 +221,7 @@ class ParticleSet:
             self.x, bonds.bondlist, bonds.d, self.n_family_members
         )
 
-    def update_positions(self, i_time_step, simulation):
+    def update_positions(self, simulation):
         """
         Update particle positions - time integration scheme
 
@@ -244,7 +244,7 @@ class ParticleSet:
         """
 
         self.bc.i_magnitude = smooth_step_data(
-            i_time_step, 0, simulation.n_time_steps, 0, self.bc.magnitude
+            simulation.i_time_step, 0, simulation.n_time_steps, 0, self.bc.magnitude
         )
 
         return simulation.integrator.one_timestep(self, simulation)

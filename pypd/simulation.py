@@ -12,22 +12,23 @@ class Simulation:
         self.dt = dt
         self.integrator = integrator
         self.animation = animation
+        self.i_time_step = 0
 
     def run(self, model):
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
 
-        for i in trange(self.n_time_steps, desc="Simulation progress", unit="steps"):
-            self._single_time_step(i, model)
+        for self.i_time_step in trange(self.n_time_steps, desc="Simulation progress", unit="steps"):
+            self._single_time_step(model)
 
         if self.animation:
             self.animation.generate_animation()
 
-    def _single_time_step(self, i, model):
+    def _single_time_step(self, model):
         model.particles.compute_forces(model.bonds)
-        model.particles.update_positions(i, self)
+        model.particles.update_positions(self)
 
-        if self.animation and i % self.animation.frequency == 0:
+        if self.animation and self.i_time_step % self.animation.frequency == 0:
             self.animation.save_frame(model.particles, model.bonds)
 
     @staticmethod
