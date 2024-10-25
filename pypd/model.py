@@ -29,8 +29,6 @@ class Model:
         self,
         particles,
         bonds,
-        simulation,
-        integrator,
         penetrators=None,
         observations=None,
         animation=None,
@@ -68,16 +66,11 @@ class Model:
         """
         self.particles = particles
         self.bonds = bonds
-        self.simulation = simulation
-        self.integrator = integrator
+
         self.penetrators = penetrators
         self.observations = observations
         self.animation = animation
 
-        if self.simulation.dt is None:
-            self.simulation.dt = self.simulation.calculate_stable_dt(
-                self.particles, np.max(self.bonds.c)
-            )
 
     def _single_time_step(self, i_time_step):
         """
