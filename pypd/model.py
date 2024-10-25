@@ -39,27 +39,27 @@ class Model:
         Parameters
         ----------
         particles : ParticleSet
-            The particle set, including properties such as positions, 
+            The particle set, including properties such as positions,
             velocities, boundary conditions and material type
-            
+
         bonds : BondSet
             The set of bonds that define the interactions between particles,
             including stiffness and damage properties
-            
+
         simulation : Simulation
             The simulation configuration
-            
+
         integrator : Integrator
             The numerical integrator used to update particle positions
-            
+
         penetrators : list, optional
-            A list of penetrator objects representing external bodies 
+            A list of penetrator objects representing external bodies
             that can interact with the particles. Default is None.
-            
+
         observations : list, optional
-            A list of observation objects for tracking quantities or events 
+            A list of observation objects for tracking quantities or events
             during the simulation. Default is None.
-            
+
         animation : Animation, optional
             An animation object for visualising the simulation results.
             Default is None.
@@ -70,7 +70,6 @@ class Model:
         self.penetrators = penetrators
         self.observations = observations
         self.animation = animation
-
 
     def _single_time_step(self, i_time_step):
         """

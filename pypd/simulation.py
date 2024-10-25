@@ -11,13 +11,12 @@ class Simulation:
         self.damping = damping
         self.dt = dt
         self.integrator = integrator
-    
+
     def run(self, model):
         if self.dt is None:
-            self.dt = self._calculate_stable_dt(model.particles, 
-                                               np.max(model.bonds.c))
-        
-        for i in trange(self.n_time_steps, desc='Simulation progress', unit='steps'):
+            self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
+
+        for i in trange(self.n_time_steps, desc="Simulation progress", unit="steps"):
             self._single_time_step(i, model)
 
     def _single_time_step(self, i, model):

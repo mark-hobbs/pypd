@@ -115,8 +115,13 @@ class Linear(ConstitutiveLaw):
         -----
 
         """
-        return np.full(len(self.c), np.sqrt((4 * np.pi * particles.material.Gf) 
-                       / (9 * particles.material.E * particles.horizon)))
+        return np.full(
+            len(self.c),
+            np.sqrt(
+                (4 * np.pi * particles.material.Gf)
+                / (9 * particles.material.E * particles.horizon)
+            ),
+        )
 
     @staticmethod
     def _calculate_bond_damage(sc, damage_on):
@@ -138,6 +143,7 @@ class Linear(ConstitutiveLaw):
         -----
         """
         if damage_on:
+
             @njit
             def wrapper(i, stretch, d):
                 """
@@ -326,9 +332,7 @@ class Trilinear(ConstitutiveLaw):
 
 
 class NonLinear(ConstitutiveLaw):
-    def __init__(
-        self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25
-    ):
+    def __init__(self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25):
         """
         Non-linear constitutive model class constructor
 
