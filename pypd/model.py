@@ -48,7 +48,7 @@ class Model:
         Methods
         -------
         save_final_state_fig(...)
-            Save a figure representing the current state of the simulation.
+            Save a figure representing the final state of the simulation.
         """
         self.particles = particles
         self.bonds = bonds
