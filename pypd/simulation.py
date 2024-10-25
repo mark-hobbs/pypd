@@ -15,6 +15,9 @@ class Simulation:
         self.i_time_step = 0
 
     def run(self, model):
+        """
+        Run the simulation
+        """
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
 
@@ -31,6 +34,9 @@ class Simulation:
             self.animation.generate_animation()
 
     def _single_time_step(self, model):
+        """
+        Single time step
+        """
         model.particles.compute_forces(model.bonds)
         model.particles.update_positions(self)
 
