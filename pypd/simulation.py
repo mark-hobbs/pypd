@@ -27,9 +27,8 @@ class Simulation:
         model.particles.compute_forces(model.bonds)
         model.particles.update_positions(i, self)
 
-        if self.animation:
-            if i % self.animation.frequency == 0:
-                self.animation.save_frame(model.particles, model.bonds)
+        if self.animation and i % self.animation.frequency == 0:
+            self.animation.save_frame(model.particles, model.bonds)
 
     @staticmethod
     def _calculate_stable_dt(particles, c, sf=0.8):
