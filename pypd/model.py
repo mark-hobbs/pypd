@@ -25,13 +25,7 @@ class Model:
 
     """
 
-    def __init__(
-        self,
-        particles,
-        bonds,
-        penetrators=None,
-        observations=None
-        ):
+    def __init__(self, particles, bonds, penetrators=None, observations=None):
         """
         Model class constructor
 
