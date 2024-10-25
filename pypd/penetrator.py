@@ -55,7 +55,7 @@ class Penetrator:
             )
         )
 
-    def calculate_penetrator_force(self, particles, simulation, i_time_step):
+    def calculate_penetrator_force(self, particles, simulation):
         """
         Calculate the contact force between a rigid penetrator and deformable
         peridynamic body
@@ -80,7 +80,8 @@ class Penetrator:
         TODO: this function does not need to return u and v
         TODO: write a decorator to save the force history
         """
-        position = self.update_penetrator_position(i_time_step, simulation.n_time_steps)
+        position = self.update_penetrator_position(simulation.i_time_step, 
+                                                   simulation.n_time_steps)
         force = calculate_contact_force(
             self.family,
             self.radius,

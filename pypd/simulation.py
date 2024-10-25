@@ -21,12 +21,20 @@ class Simulation:
         for self.i_time_step in trange(self.n_time_steps, desc="Simulation progress", unit="steps"):
             self._single_time_step(model)
 
+            if model.observations:
+                for observation in model.observations:
+                    observation.record_history(self.i_time_step, model.particles.u)
+
         if self.animation:
             self.animation.generate_animation()
 
     def _single_time_step(self, model):
         model.particles.compute_forces(model.bonds)
         model.particles.update_positions(self)
+
+        if model.penetrators:
+            for penetrator in model.penetrators:
+                penetrator.calculate_penetrator_force(model.particles, self)
 
         if self.animation and self.i_time_step % self.animation.frequency == 0:
             self.animation.save_frame(model.particles, model.bonds)
