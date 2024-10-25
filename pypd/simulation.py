@@ -1,16 +1,38 @@
 import numpy as np
 from tqdm import trange
 
+from .integrator import EulerCromer
 from .tools import calculate_stable_time_step
 
 
 class Simulation:
 
     def __init__(self, n_time_steps, damping, dt=None, integrator=None, animation=None):
+        """
+        Initialise the Simulation class
+
+        Parameters
+        ----------
+        n_time_steps : int
+            Number of time steps
+
+        damping : float
+            Local damping coefficient (Kg/m^3s)
+
+        dt : float, optional
+            Time step size. If None, it will be calculated based on stability 
+            conditions
+
+        integrator : Integrator, optional
+            Numerical integrator. Defaults to EulerCromer()
+
+        animation : Animation, optional
+            Animation object for visualising the simulation (default is None)
+        """
         self.n_time_steps = n_time_steps
         self.damping = damping
         self.dt = dt
-        self.integrator = integrator
+        self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
 
