@@ -4,9 +4,7 @@ Model class
 
 """
 
-from tqdm import trange
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 class Model:
@@ -29,7 +27,7 @@ class Model:
         """
         Model class constructor
 
-        Parameters
+        Attributes
         ----------
         particles : ParticleSet
             The particle set, including properties such as positions,
@@ -39,12 +37,6 @@ class Model:
             The set of bonds that define the interactions between particles,
             including stiffness and damage properties
 
-        simulation : Simulation
-            The simulation configuration
-
-        integrator : Integrator
-            The numerical integrator used to update particle positions
-
         penetrators : list, optional
             A list of penetrator objects representing external bodies
             that can interact with the particles. Default is None.
@@ -53,65 +45,16 @@ class Model:
             A list of observation objects for tracking quantities or events
             during the simulation. Default is None.
 
-        animation : Animation, optional
-            An animation object for visualising the simulation results.
-            Default is None.
+        Methods
+        -------
+        save_final_state_fig(...)
+            Save a figure representing the current state of the simulation.
         """
         self.particles = particles
         self.bonds = bonds
 
         self.penetrators = penetrators
         self.observations = observations
-
-    def _single_time_step(self, i_time_step):
-        """
-        Single time step
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        simulation_data : SimulationData class
-
-        Notes
-        -----
-        """
-
-        self.particles.compute_forces(self.bonds)
-        self.particles.update_positions(self.simulation, self.integrator, i_time_step)
-
-        if self.penetrators:
-            for penetrator in self.penetrators:
-                penetrator.calculate_penetrator_force(
-                    self.particles, self.simulation, i_time_step
-                )
-
-    def run_simulation(self):
-        """
-        Run the simulation
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        history : SimulationData class
-            History of the simulation run
-
-        Notes
-        -----
-        TODO: clean up observation.record_history()
-
-        """
-        for i_time_step in trange(
-            self.simulation.n_time_steps, desc="Simulation Progress", unit="steps"
-        ):
-            self._single_time_step(i_time_step)
-
-            if self.observations:
-                for observation in self.observations:
-                    observation.record_history(i_time_step, self.particles.u)
 
     def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
         """
