@@ -100,14 +100,13 @@ def main():
     flag, unit_vector = build_boundary_conditions(x, dx)
 
     material = pypd.Material(name="quasi-brittle", E=33e9, Gf=130, density=2400, ft=2.5)
-    integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(particles, damage_on=False)
-    simulation = pypd.Simulation(dt=None, n_time_steps=20000, damping=0)
-    model = pypd.Model(particles, bonds, simulation, integrator)
+    bonds = pypd.BondSet(particles, damage_on=True)
+    model = pypd.Model(particles, bonds)
 
-    model.run_simulation()
+    simulation = pypd.Simulation(n_time_steps=20000, damping=0)
+    simulation.run(model)
     model.save_final_state_fig(sz=0.75, fig_title="plate-with-a-hole")
 
 
