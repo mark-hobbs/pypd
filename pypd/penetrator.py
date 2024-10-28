@@ -96,14 +96,12 @@ class Penetrator:
         )
         self.penetrator_force_history.append(force)
 
-    def plot_penetrator(self, particles):
+    def plot(self, ax=None):
         """
         Plot the position of the penetrator at t=0
         """
-        _, ax = plt.subplots()
+        if ax is None:
+            _, ax = plt.subplots()
         circle = plt.Circle(self.centre, self.radius, fill=False)
         ax.set_aspect(1)
         ax.add_patch(circle)
-        ax.scatter(particles.x[self.family, 0], particles.x[self.family, 1])
-        plt.title(self.name)
-        plt.show()
