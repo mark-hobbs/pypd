@@ -134,14 +134,13 @@ def main():
     material = pypd.Material(
         name="graphite", E=10e9, Gf=100, density=1780, ft=27.6  # Gf=190
     )
-    integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
     bonds = pypd.BondSet(particles)
-    simulation = pypd.Simulation(dt=None, n_time_steps=50000, damping=0)
-    model = pypd.Model(particles, bonds, simulation, integrator)
+    model = pypd.Model(particles, bonds)
 
-    model.run_simulation()
+    simulation = pypd.Simulation(n_time_steps=50000, damping=0)
+    simulation.run(model)
     model.save_final_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
 
 

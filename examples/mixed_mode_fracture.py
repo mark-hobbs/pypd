@@ -146,7 +146,6 @@ def main():
     material = pypd.Material(
         name="quasi-brittle", E=33.8e9, Gf=125.2, density=2346, ft=3.5e6
     )
-    integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
@@ -157,7 +156,6 @@ def main():
         influence=pypd.Triangular,
         notch=notch,
     )
-    simulation = pypd.Simulation(n_time_steps=100000, damping=0, dt=None)
 
     radius = 25 * mm_to_m
     penetrators = []
@@ -216,15 +214,15 @@ def main():
     nonlinear_model = pypd.Model(
         particles,
         bonds,
-        simulation,
-        integrator,
         penetrators,
-        observations,
+        observations
     )
 
-    nonlinear_model.run_simulation()
-    nonlinear_model.save_final_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
 
+    simulation = pypd.Simulation(n_time_steps=100000, damping=0)
+    simulation.run(nonlinear_model)
+
+    nonlinear_model.save_final_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
     plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 

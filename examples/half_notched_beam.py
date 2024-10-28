@@ -145,10 +145,7 @@ def main():
     material = pypd.Material(
         name="quasi-brittle", E=37e9, Gf=143.2, density=2346, ft=3.9e6
     )
-    integrator = pypd.EulerCromer()
-    bc = pypd.BoundaryConditions(
-        flag, unit_vector, magnitude=0
-    )  # TODO: boundary conditions are not required as this example uses a contact model
+    bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=0)
     particles = pypd.ParticleSet(x, dx, bc, material)
 
     bonds_linear = pypd.BondSet(particles, surface_correction=True, notch=notch)
@@ -158,8 +155,6 @@ def main():
     bonds_nonlinear = pypd.BondSet(
         particles, constitutive_law=pypd.NonLinear, surface_correction=True, notch=notch
     )
-
-    simulation = pypd.Simulation(n_time_steps=200000, damping=0, dt=None)
 
     radius = 25 * mm_to_m
     penetrators = []
@@ -212,35 +207,34 @@ def main():
     linear_model = pypd.Model(
         copy.deepcopy(particles),
         bonds_linear,
-        copy.deepcopy(simulation),
-        copy.deepcopy(integrator),
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
-    linear_model.run_simulation()
-    plot_load_cmod(linear_model, n_div_z, fig_title="load-cmod-linear")
 
     trilinear_model = pypd.Model(
         copy.deepcopy(particles),
         bonds_trilinear,
-        copy.deepcopy(simulation),
-        copy.deepcopy(integrator),
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
-    trilinear_model.run_simulation()
-    plot_load_cmod(trilinear_model, n_div_z, fig_title="load-cmod-trilinear")
 
     nonlinear_model = pypd.Model(
         copy.deepcopy(particles),
         bonds_nonlinear,
-        copy.deepcopy(simulation),
-        copy.deepcopy(integrator),
         copy.deepcopy(penetrators),
         copy.deepcopy(observations),
     )
-    nonlinear_model.run_simulation()
+
+    simulation = pypd.Simulation(n_time_steps=200000, damping=0)
+
+    simulation.run(linear_model)
+    simulation.run(trilinear_model)
+    simulation.run(nonlinear_model)
+
     nonlinear_model.save_final_state_fig(sz=25, dsf=10, fig_title="half-notched-beam")
+
+    plot_load_cmod(linear_model, n_div_z, fig_title="load-cmod-linear")
+    plot_load_cmod(trilinear_model, n_div_z, fig_title="load-cmod-trilinear")
     plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 

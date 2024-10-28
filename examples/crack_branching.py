@@ -75,17 +75,16 @@ def main():
     flag, unit_vector = build_boundary_conditions(x, dx)
 
     material = pypd.Material(name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5)
-    integrator = pypd.EulerCromer()
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
     particles = pypd.ParticleSet(x, dx, bc, material)
     bonds = pypd.BondSet(particles, influence=pypd.Constant, notch=notch)
-    simulation = pypd.Simulation(dt=None, n_time_steps=5000, damping=0)
+    model = pypd.Model(particles, bonds)
+
     animation = pypd.Animation(
         frequency=100, sz=0.25, show_title=False, data="strain energy density"
     )
-    model = pypd.Model(particles, bonds, simulation, integrator, animation=animation)
-
-    model.run_simulation()
+    simulation = pypd.Simulation(n_time_steps=5000, damping=0, animation=animation)
+    simulation.run(model)
     model.save_final_state_fig(fig_title="crack-branching")
 
 
