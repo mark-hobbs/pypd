@@ -64,6 +64,7 @@ class BondSet:
         self,
         particles,
         constitutive_law=None,
+        constitutive_law_params=None,
         influence=None,
         bondlist=None,
         surface_correction=False,
@@ -118,7 +119,7 @@ class BondSet:
             )
         elif isinstance(constitutive_law, type):
             self.constitutive_law = constitutive_law(
-                particles, c=self.c, t=particles.dx
+                particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
 
     def _build_bond_list(self, nlist):

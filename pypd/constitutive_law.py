@@ -195,7 +195,7 @@ class Bilinear(ConstitutiveLaw):
 
 
 class Trilinear(ConstitutiveLaw):
-    def __init__(self, particles, c, t, s0=None, sc=None, beta=0.25):
+    def __init__(self, particles, c, t, s0=None, sc=None, beta=0.25, **kwargs):
         """
         Trilinear constitutive model class constructor
 
@@ -235,6 +235,9 @@ class Trilinear(ConstitutiveLaw):
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.s1, self.sc, self.beta
         )
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def _calculate_s0(self, particles):
         """
@@ -332,7 +335,7 @@ class Trilinear(ConstitutiveLaw):
 
 
 class NonLinear(ConstitutiveLaw):
-    def __init__(self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25):
+    def __init__(self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25, **kwargs):
         """
         Non-linear constitutive model class constructor
 
@@ -373,6 +376,9 @@ class NonLinear(ConstitutiveLaw):
         self.calculate_bond_damage = self._calculate_bond_damage(
             self.s0, self.sc, self.alpha, self.k
         )
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def _calculate_s0(self, particles):
         """
