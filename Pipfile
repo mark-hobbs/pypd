@@ -15,6 +15,7 @@ pypd = {file = "."}
 jupyter = "*"
 black = {extras = ["jupyter"], version = "*"}
 ruff = "*"
+gpy = "*"
 
 [requires]
 python_version = "3.11"
