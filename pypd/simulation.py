@@ -1,4 +1,5 @@
 import numpy as np
+from numba import cuda
 from tqdm import trange
 
 from .integrator import EulerCromer
@@ -35,6 +36,8 @@ class Simulation:
         self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
+        self.cuda_available = self._is_cuda_available()
+        print(f"Is CUDA available: {self.cuda_available}")
 
     def run(self, model):
         """
@@ -87,3 +90,9 @@ class Simulation:
         return sf * calculate_stable_time_step(
             particles.material.density, particles.dx, particles.horizon, c
         )
+
+    def _is_cuda_available(self):
+        """
+        Check if CUDA is available
+        """
+        return cuda.is_available()
