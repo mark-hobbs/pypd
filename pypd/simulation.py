@@ -36,8 +36,11 @@ class Simulation:
         self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
+
         self.cuda_available = self._is_cuda_available()
         print(f"Is CUDA available: {self.cuda_available}")
+        if self.cuda_available:
+            self.model._allocate_gpu_arrays()
 
     def run(self, model):
         """
@@ -62,7 +65,7 @@ class Simulation:
         """
         Single time step
         """
-        model.particles.compute_forces(model.bonds)
+        model.particles.compute_forces(model.bonds, self.cuda_available)
         model.particles.update_positions(self)
 
         if model.penetrators:

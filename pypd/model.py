@@ -91,3 +91,8 @@ class Model:
 
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
+
+    def _allocate_gpu_arrays(self):
+        from numba import cuda
+        self.particles.x = cuda.to_device(self.particles.x)
+        self.particles.x = cuda.to_device(self.particles.u)
