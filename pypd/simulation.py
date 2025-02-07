@@ -3,7 +3,7 @@ from numba import cuda
 from tqdm import trange
 
 from .integrator import EulerCromer
-from .tools import calculate_stable_time_step
+from .tools import calculate_stable_time_step, get_cuda_device_info
 
 
 class Simulation:
@@ -40,6 +40,7 @@ class Simulation:
         self.cuda_available = self._is_cuda_available()
         print(f"Is CUDA available: {self.cuda_available}")
         if self.cuda_available:
+            get_cuda_device_info()
             self.model._allocate_gpu_arrays()
 
     def run(self, model):
