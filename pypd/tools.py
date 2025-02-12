@@ -154,26 +154,26 @@ def get_cuda_device_info(verbose=True):
         if verbose:
             print("CUDA Device Information:")
             print("-" * 40)
-            print(f"{'Device Name:':<25} {device_info['name']}")
-            print(f"{'Compute Capability:':<25} {device_info['compute_capability']}")
+            print(f"{'Device Name:':<30} {device_info['name']}")
+            print(f"{'Compute Capability:':<30} {device_info['compute_capability']}")
             
             print("\nMemory:")
-            print(f"{'Total Memory:':<25} {device_info['total_memory_gb']:.2f} GB")
-            print(f"{'Free Memory:':<25} {device_info['free_memory_gb']:.2f} GB")
+            print(f"{'Total Memory:':<30} {device_info['total_memory_gb']:.2f} GB")
+            print(f"{'Free Memory:':<30} {device_info['free_memory_gb']:.2f} GB")
             
             print("\nCompute Resources:")
-            print(f"{'Streaming Multiprocessors:':<25} {device_info['multiprocessors']}")
-            print(f"{'Max Threads per Block:':<25} {device_info['max_threads_per_block']}")
+            print(f"{'Streaming Multiprocessors:':<30} {device_info['multiprocessors']}")
+            print(f"{'Max Threads per Block:':<30} {device_info['max_threads_per_block']}")
             
             print("\nGrid Limitations:")
-            print(f"{'Max Grid Dimensions X:':<25} {device_info['max_grid_dimensions']['x']}")
-            print(f"{'Max Grid Dimensions Y:':<25} {device_info['max_grid_dimensions']['y']}")
-            print(f"{'Max Grid Dimensions Z:':<25} {device_info['max_grid_dimensions']['z']}")
+            print(f"{'Max Grid Dimensions X:':<30} {device_info['max_grid_dimensions']['x']}")
+            print(f"{'Max Grid Dimensions Y:':<30} {device_info['max_grid_dimensions']['y']}")
+            print(f"{'Max Grid Dimensions Z:':<30} {device_info['max_grid_dimensions']['z']}")
             
             print("\nAdditional Characteristics:")
-            print(f"{'Warp Size:':<25} {device_info['warp_size']}")
-            print(f"{'Clock Rate:':<25} {device_info['clock_rate_khz']/1e6:.2f} GHz")
-            print(f"{'Memory Clock Rate:':<25} {device_info['memory_clock_rate_khz']/1e6:.2f} GHz")
+            print(f"{'Warp Size:':<30} {device_info['warp_size']}")
+            print(f"{'Clock Rate:':<30} {device_info['clock_rate_khz']/1e6:.2f} GHz")
+            print(f"{'Memory Clock Rate:':<30} {device_info['memory_clock_rate_khz']/1e6:.2f} GHz")
         
         return device_info if not verbose else None
     
