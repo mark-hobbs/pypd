@@ -162,7 +162,7 @@ def get_cuda_device_info(verbose=True):
             print(f"{'Free Memory:':<25} {device_info['free_memory_gb']:.2f} GB")
             
             print("\nCompute Resources:")
-            print(f"{'Multiprocessors:':<25} {device_info['multiprocessors']}")
+            print(f"{'Streaming Multiprocessors:':<25} {device_info['multiprocessors']}")
             print(f"{'Max Threads per Block:':<25} {device_info['max_threads_per_block']}")
             
             print("\nGrid Limitations:")

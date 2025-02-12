@@ -96,3 +96,13 @@ class Model:
         from numba import cuda
         self.particles.x = cuda.to_device(self.particles.x)
         self.particles.x = cuda.to_device(self.particles.u)
+
+    # def _host_to_device(self):
+    #     from numba import cuda
+    #     cuda.to_device(self.particles.x)
+    #     cuda.to_device(self.particles.u)
+
+    # def _device_to_host(self):
+    #     from numba import cuda
+    #     cuda.to_host(self.particles.x)
+    #     cuda.to_host(self.particles.u)
