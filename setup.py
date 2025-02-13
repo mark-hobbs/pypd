@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="PyPD",
+    name="pypd",
     version="0.0.1",
     description="A simple bond-based peridynamics code written in Python",
     long_description="Long description of your package",
