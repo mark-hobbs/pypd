@@ -41,12 +41,14 @@ class Simulation:
         print(f"Is CUDA available: {self.cuda_available}")
         if self.cuda_available:
             get_cuda_device_info()
-            self.model._allocate_gpu_arrays()
 
     def run(self, model):
         """
         Run the simulation
         """
+        if self.cuda_available:
+            self.model._allocate_gpu_arrays()
+
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
 
