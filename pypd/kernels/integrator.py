@@ -12,12 +12,12 @@ def euler_cromer(
     u,
     v,
     a,
-    damping,
     density,
-    dt,
     bc_flag,
     bc_magnitude,
     bc_unit_vector,
+    damping,
+    dt
 ):
     """
     Update particle positions using an Euler-Cromer time integration scheme

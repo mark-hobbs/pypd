@@ -58,12 +58,12 @@ class EulerCromer:
             particles.u,
             particles.v,
             particles.a,
-            simulation.damping,
             particles.node_density,
-            simulation.dt,
             particles.bc.flag,
             particles.bc.i_magnitude,
             particles.bc.unit_vector,
+            simulation.damping,
+            simulation.dt
         )
 
 
