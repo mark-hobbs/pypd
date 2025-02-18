@@ -48,6 +48,7 @@ class Simulation:
         """
         if self.cuda_available:
             model._allocate_gpu_arrays()
+            model._host_to_device()
 
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))

@@ -53,18 +53,21 @@ class EulerCromer:
         * self.dt or simulation.dt?
 
         """
-        return euler_cromer(
-            particles.f,
-            particles.u,
-            particles.v,
-            particles.a,
-            particles.node_density,
-            particles.bc.flag,
-            particles.bc.i_magnitude,
-            particles.bc.unit_vector,
-            simulation.damping,
-            simulation.dt
-        )
+        if simulation.cuda_available:
+            print("CUDA is available")
+        else:
+            return euler_cromer(
+                particles.f,
+                particles.u,
+                particles.v,
+                particles.a,
+                particles.node_density,
+                particles.bc.flag,
+                particles.bc.i_magnitude,
+                particles.bc.unit_vector,
+                simulation.damping,
+                simulation.dt
+            )
 
 
 class VelocityVerlet(Integrator):
