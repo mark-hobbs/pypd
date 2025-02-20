@@ -92,15 +92,9 @@ class Model:
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
 
-    def _allocate_device_memory(self):
-        """
-        Allocate memory on the GPU
-        """
-        from numba import cuda
-
     def _host_to_device(self):
         """
-        Move arrays from host to device
+        Move arrays from host to device (GPU)
         """
         from numba import cuda
         cuda.to_device(self.particles.x)
@@ -115,7 +109,10 @@ class Model:
         cuda.to_device(self.bonds.f_x)
         cuda.to_device(self.bonds.f_y)
 
-    # def _device_to_host(self):
-    #     from numba import cuda
-    #     cuda.to_host(self.particles.x)
-    #     cuda.to_host(self.particles.u)
+    def _device_to_host(self):
+        """
+        Move arrays from device (GPU) to host
+        """
+        from numba import cuda
+        cuda.to_host(self.particles.x)
+        cuda.to_host(self.particles.u)
