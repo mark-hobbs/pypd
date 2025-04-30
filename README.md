@@ -105,4 +105,4 @@ python -m examples.2D_B4_HN.py
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
 - [x] Implement a surface correction scheme to correct the peridynamic surface effect
 - [x] Implement different influence functions (constant/triangular/quartic)
-- [ ] Separate model and simulation logic: `simulation.run(model)`
+- [x] Separate model and simulation logic: `simulation.run(model)`
