@@ -157,7 +157,7 @@ class ParticleSet:
         """
         return build_particle_families(self.x, self.horizon)
 
-    def compute_forces(self, bonds):
+    def compute_forces(self, bonds, cuda_available):
         """
         Compute particle forces
 
@@ -168,35 +168,27 @@ class ParticleSet:
 
         Returns
         -------
-        particle_forces: ndarray (float)
-
+        particles.f: ndarray (float)
+            Particle forces
+        
         Notes
         -----
-        bonds.calculate_bond_stretch(particles)
-        bonds.calculate_bond_damage(particles)
-        bonds.calculate_bond_force(particles)
-
-        * TODO: should bonds.c and bonds.beta be attributes of a constitutive
-        model class?
-        * TODO: give users the option to use bondlist or neighbourlist
-        * Is it possible to pass bonds.material_model as a variable?
-            - bonds.material_model.calculate_bond_damage()
-        * Perhaps the only solution is to make calculate_nodal_forces a method
-        of the consistutive_law class?
-            - constitutive_law.calculate_nodal_forces()
         """
-        self.f, _ = compute_nodal_forces(
-            self.x,
-            self.u,
-            self.cell_volume,
-            bonds.bondlist,
-            bonds.d,
-            bonds.c,
-            bonds.f_x,
-            bonds.f_y,
-            bonds.constitutive_law.calculate_bond_damage,
-            bonds.surface_correction_factors,
-        )
+        if cuda_available:
+            print("CUDA is available")
+        else:
+            self.f, _ = compute_nodal_forces(
+                self.x,
+                self.u,
+                self.cell_volume,
+                bonds.bondlist,
+                bonds.d,
+                bonds.c,
+                bonds.f_x,
+                bonds.f_y,
+                bonds.constitutive_law.calculate_bond_damage,
+                bonds.surface_correction_factors,
+            )
 
     def compute_damage(self, bonds):
         """

@@ -1,8 +1,9 @@
 import numpy as np
+from numba import cuda
 from tqdm import trange
 
 from .integrator import EulerCromer
-from .tools import calculate_stable_time_step
+from .tools import calculate_stable_time_step, get_cuda_device_info
 
 
 class Simulation:
@@ -36,10 +37,19 @@ class Simulation:
         self.animation = animation
         self.i_time_step = 0
 
+        self.cuda_available = self._is_cuda_available()
+        print(f"Is CUDA available: {self.cuda_available}")
+        if self.cuda_available:
+            get_cuda_device_info()
+
     def run(self, model):
         """
         Run the simulation
         """
+        if self.cuda_available:
+            model._allocate_gpu_arrays()
+            model._host_to_device()
+
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
 
@@ -59,7 +69,7 @@ class Simulation:
         """
         Single time step
         """
-        model.particles.compute_forces(model.bonds)
+        model.particles.compute_forces(model.bonds, self.cuda_available)
         model.particles.update_positions(self)
 
         if model.penetrators:
@@ -87,3 +97,9 @@ class Simulation:
         return sf * calculate_stable_time_step(
             particles.material.density, particles.dx, particles.horizon, c
         )
+
+    def _is_cuda_available(self):
+        """
+        Check if CUDA is available
+        """
+        return cuda.is_available()

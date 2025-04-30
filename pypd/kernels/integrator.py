@@ -8,16 +8,16 @@ from numba import njit, prange
 
 @njit(parallel=True)
 def euler_cromer(
-    node_force,
+    f,
     u,
     v,
     a,
-    damping,
-    node_density,
-    dt,
+    density,
     bc_flag,
     bc_magnitude,
     bc_unit_vector,
+    damping,
+    dt
 ):
     """
     Update particle positions using an Euler-Cromer time integration scheme
@@ -46,14 +46,12 @@ def euler_cromer(
         - Velocity-Verlet
     """
 
-    n_nodes = np.shape(node_force)[0]
-    n_dimensions = np.shape(node_force)[1]
+    n_nodes = np.shape(f)[0]
+    n_dimensions = np.shape(f)[1]
 
     for node_i in prange(n_nodes):
         for dof in range(n_dimensions):
-            a[node_i, dof] = (
-                node_force[node_i, dof] - damping * v[node_i, dof]
-            ) / node_density
+            a[node_i, dof] = (f[node_i, dof] - damping * v[node_i, dof]) / density
             v[node_i, dof] = v[node_i, dof] + (a[node_i, dof] * dt)
             u[node_i, dof] = u[node_i, dof] + (v[node_i, dof] * dt)
 
