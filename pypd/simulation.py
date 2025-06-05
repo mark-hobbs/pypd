@@ -47,7 +47,6 @@ class Simulation:
         Run the simulation
         """
         if self.cuda_available:
-            model._allocate_gpu_arrays()
             model._host_to_device()
 
         if self.dt is None:
@@ -61,6 +60,9 @@ class Simulation:
             if model.observations:
                 for observation in model.observations:
                     observation.record_history(self.i_time_step, model.particles.u)
+
+        if self.cuda_available:
+            model._device_to_host()
 
         if self.animation:
             self.animation.generate_animation()
