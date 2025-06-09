@@ -21,7 +21,7 @@ class Simulation:
             Local damping coefficient (Kg/m^3s)
 
         dt : float, optional
-            Time step size. If None, it will be calculated based on stability 
+            Time step size. If None, it will be calculated based on stability
             conditions
 
         integrator : Integrator, optional

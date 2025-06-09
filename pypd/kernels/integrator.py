@@ -8,16 +8,7 @@ from numba import njit, prange
 
 @njit(parallel=True)
 def euler_cromer(
-    f,
-    u,
-    v,
-    a,
-    density,
-    bc_flag,
-    bc_magnitude,
-    bc_unit_vector,
-    damping,
-    dt
+    f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
 ):
     """
     Update particle positions using an Euler-Cromer time integration scheme

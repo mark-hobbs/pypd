@@ -97,6 +97,7 @@ class Model:
         Move arrays from host to device (GPU)
         """
         from numba import cuda
+
         cuda.to_device(self.particles.x)
         cuda.to_device(self.particles.u)
         cuda.to_device(self.particles.v)
@@ -114,5 +115,6 @@ class Model:
         Move arrays from device (GPU) to host
         """
         from numba import cuda
+
         cuda.to_host(self.particles.x)
         cuda.to_host(self.particles.u)

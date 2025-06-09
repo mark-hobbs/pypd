@@ -66,7 +66,7 @@ class EulerCromer:
                 particles.bc.i_magnitude,
                 particles.bc.unit_vector,
                 simulation.damping,
-                simulation.dt
+                simulation.dt,
             )
 
 
