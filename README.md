@@ -4,7 +4,7 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 
 ### Features:
 - **Pure Python:** Written entirely in Python, leveraging the power of [Numba](https://numba.pydata.org/) for optimal performance
-- **Material Models:** Seamlessly switch between various material models including linear, trilinear, and nonlinear
+- **Material Models:** Seamlessly switch between various material models including linear, trilinear and nonlinear
 - **Integration schemes:** Fully interchangeable integration schemes
 - **Examples:** Several examples are provided and validated using published experimental data
 
