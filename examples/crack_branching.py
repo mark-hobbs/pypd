@@ -76,8 +76,8 @@ def main():
 
     material = pypd.Material(name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5)
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
-    particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(particles, influence=pypd.Constant, notch=notch)
+    particles = pypd.Particles(x, dx, bc, material)
+    bonds = pypd.Bonds(particles, influence=pypd.Constant, notch=notch)
     model = pypd.Model(particles, bonds)
 
     animation = pypd.Animation(
