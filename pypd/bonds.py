@@ -1,6 +1,6 @@
 """
-Bond array class
-----------------
+Bonds class
+-----------
 """
 
 import numpy as np
@@ -11,9 +11,9 @@ from .constitutive_law import Linear
 from .tools import determine_intersection, rebuild_node_families
 
 
-class BondSet:
+class Bonds:
     """
-    The main class for storing the bond set.
+    The main class for storing bonds.
 
     Attributes
     ----------

@@ -1,8 +1,7 @@
 """
-Particle array class
---------------------
+Particles class
+---------------
 
-TODO: rename classes as base or baseclasses?
 """
 
 import numpy as np
@@ -16,9 +15,9 @@ from .kernels.particles import (
 )
 
 
-class ParticleSet:
+class Particles:
     """
-    The main class for storing the particle (node) set.
+    The main class for storing particles (nodes).
 
     Attributes
     ----------
