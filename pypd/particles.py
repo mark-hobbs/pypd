@@ -9,7 +9,8 @@ import numpy as np
 from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
-    compute_nodal_forces,
+    compute_nodal_forces_cpu,
+    compute_nodal_forces_gpu,
     compute_node_damage,
     compute_strain_energy_density,
 )
@@ -170,14 +171,14 @@ class Particles:
         -------
         particles.f: ndarray (float)
             Particle forces
-        
+
         Notes
         -----
         """
         if cuda_available:
-            print("CUDA is available")
+            compute_nodal_forces_gpu()
         else:
-            self.f, _ = compute_nodal_forces(
+            self.f, _ = compute_nodal_forces_cpu(
                 self.x,
                 self.u,
                 self.cell_volume,
