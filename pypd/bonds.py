@@ -118,6 +118,7 @@ class Bonds:
                 particles, c=self.c, t=particles.dx, damage_on=damage_on
             )
         elif isinstance(constitutive_law, type):
+            constitutive_law_params = constitutive_law_params or {}
             self.constitutive_law = constitutive_law(
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
