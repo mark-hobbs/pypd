@@ -146,13 +146,13 @@ def main():
         name="quasi-brittle", E=37e9, Gf=143.2, density=2346, ft=3.9e6
     )
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=0)
-    particles = pypd.ParticleSet(x, dx, bc, material)
+    particles = pypd.Particles(x, dx, bc, material)
 
-    bonds_linear = pypd.BondSet(particles, surface_correction=True, notch=notch)
-    bonds_trilinear = pypd.BondSet(
+    bonds_linear = pypd.Bonds(particles, surface_correction=True, notch=notch)
+    bonds_trilinear = pypd.Bonds(
         particles, constitutive_law=pypd.Trilinear, surface_correction=True, notch=notch
     )
-    bonds_nonlinear = pypd.BondSet(
+    bonds_nonlinear = pypd.Bonds(
         particles, constitutive_law=pypd.NonLinear, surface_correction=True, notch=notch
     )
 

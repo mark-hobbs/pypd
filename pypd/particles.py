@@ -1,8 +1,7 @@
 """
-Particle array class
---------------------
+Particles class
+---------------
 
-TODO: rename classes as base or baseclasses?
 """
 
 import numpy as np
@@ -10,15 +9,16 @@ import numpy as np
 from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
-    compute_nodal_forces,
+    compute_nodal_forces_cpu,
+    compute_nodal_forces_gpu,
     compute_node_damage,
     compute_strain_energy_density,
 )
 
 
-class ParticleSet:
+class Particles:
     """
-    The main class for storing the particle (node) set.
+    The main class for storing particles (nodes).
 
     Attributes
     ----------
@@ -171,14 +171,14 @@ class ParticleSet:
         -------
         particles.f: ndarray (float)
             Particle forces
-        
+
         Notes
         -----
         """
         if cuda_available:
-            print("CUDA is available")
+            compute_nodal_forces_gpu()
         else:
-            self.f, _ = compute_nodal_forces(
+            self.f, _ = compute_nodal_forces_cpu(
                 self.x,
                 self.u,
                 self.cell_volume,

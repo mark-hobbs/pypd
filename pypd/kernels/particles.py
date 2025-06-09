@@ -4,11 +4,11 @@ Small, highly optimised computational units written using Numba
 
 import numpy as np
 import sklearn.neighbors as neighbors
-from numba import njit, prange
+from numba import njit, prange, cuda
 
 
 @njit(parallel=True, fastmath=True)
-def compute_nodal_forces(
+def compute_nodal_forces_cpu(
     x,
     u,
     cell_volume,
@@ -21,7 +21,7 @@ def compute_nodal_forces(
     surface_correction_factors,
 ):
     """
-    Compute particle forces - employs bondlist
+    Compute particle forces - employs bondlist (cpu optimised)
 
     Parameters
     ----------
@@ -97,6 +97,21 @@ def compute_nodal_forces(
         node_force[node_j, 1] -= f_y[k_bond]
 
     return node_force, d
+
+
+def compute_nodal_forces_gpu():
+    """
+    Compute particle forces (gpu optimised)
+    """
+    compute_nodal_forces_kernel[grid_size, block_size]()
+
+
+@cuda.jit
+def compute_nodal_forces_kernel():
+    """
+    CUDA kernel
+    """
+    pass
 
 
 @njit

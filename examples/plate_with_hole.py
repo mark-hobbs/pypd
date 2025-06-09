@@ -101,8 +101,8 @@ def main():
 
     material = pypd.Material(name="quasi-brittle", E=33e9, Gf=130, density=2400, ft=2.5)
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
-    particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(particles, damage_on=True)
+    particles = pypd.Particles(x, dx, bc, material)
+    bonds = pypd.Bonds(particles, damage_on=True)
     model = pypd.Model(particles, bonds)
 
     simulation = pypd.Simulation(n_time_steps=20000, damping=0)

@@ -149,8 +149,8 @@ def main():
     bc = pypd.BoundaryConditions(
         flag, unit_vector, magnitude=0
     )  # TODO: boundary conditions are not required as this example uses a contact model
-    particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(
+    particles = pypd.Particles(x, dx, bc, material)
+    bonds = pypd.Bonds(
         particles,
         constitutive_law=pypd.Trilinear,
         influence=pypd.Triangular,
