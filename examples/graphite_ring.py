@@ -135,8 +135,8 @@ def main():
         name="graphite", E=10e9, Gf=100, density=1780, ft=27.6  # Gf=190
     )
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
-    particles = pypd.ParticleSet(x, dx, bc, material)
-    bonds = pypd.BondSet(particles)
+    particles = pypd.Particles(x, dx, bc, material)
+    bonds = pypd.Bonds(particles)
     model = pypd.Model(particles, bonds)
 
     simulation = pypd.Simulation(n_time_steps=50000, damping=0)
