@@ -1,15 +1,3 @@
-"""
-Integrator base class
----------------------
-
-Notes
------
-* See - pysph/sph/integrator.py
-      - pysph/sph/integrator_step.py
-
-* OpenCL solver - /pysph/sph/acceleration_eval_gpu_helper.py
-                - /pysph/sph/tests/test_acceleration_eval.py
-"""
 
 from .kernels.integrator import euler_cromer
 
@@ -17,6 +5,14 @@ from .kernels.integrator import euler_cromer
 class Integrator:
     """
     Base class for time integrator
+    
+    Notes
+    -----
+    * See - pysph/sph/integrator.py
+        - pysph/sph/integrator_step.py
+
+    * OpenCL solver - /pysph/sph/acceleration_eval_gpu_helper.py
+                    - /pysph/sph/tests/test_acceleration_eval.py
     """
 
     def __init__(self, dt=None):

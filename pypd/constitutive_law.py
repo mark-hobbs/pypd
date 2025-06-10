@@ -1,11 +1,3 @@
-"""
-Constitutive law class
-----------------------
-
-Notes
------
-
-"""
 
 import numpy as np
 from numba import njit

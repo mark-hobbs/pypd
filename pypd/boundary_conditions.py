@@ -1,8 +1,3 @@
-"""
-Boundary conditions class
--------------------------
-
-"""
 
 
 class BoundaryConditions:

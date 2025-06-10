@@ -1,8 +1,3 @@
-"""
-Material class
---------------
-
-"""
 
 
 class Material:

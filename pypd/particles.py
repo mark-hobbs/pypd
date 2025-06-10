@@ -1,8 +1,3 @@
-"""
-Particles class
----------------
-
-"""
 
 import numpy as np
 

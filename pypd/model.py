@@ -1,8 +1,3 @@
-"""
-Model class
------------
-
-"""
 
 import matplotlib.pyplot as plt
 
