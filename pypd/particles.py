@@ -79,7 +79,7 @@ class Particles:
 
     def __init__(self, x, dx, bc, material, m=np.pi, nlist=None):
         """
-        ParticleSet class constructor
+        Particles class constructor
 
         Parameters
         ----------
@@ -159,8 +159,7 @@ class Particles:
 
         Parameters
         ----------
-        bonds : BondSet
-            TODO: write a description
+        bonds : Bonds
 
         Returns
         -------
@@ -192,8 +191,7 @@ class Particles:
 
         Parameters
         ----------
-        bonds : BondSet
-            TODO: write a description
+        bonds : Bonds
 
         Returns
         -------
