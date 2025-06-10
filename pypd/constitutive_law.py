@@ -195,6 +195,7 @@ class Bilinear(ConstitutiveLaw):
 
 
 class Trilinear(ConstitutiveLaw):
+
     def __init__(self, particles, c, t, s0=None, sc=None, beta=0.25, **kwargs):
         """
         Trilinear constitutive model class constructor
@@ -335,6 +336,7 @@ class Trilinear(ConstitutiveLaw):
 
 
 class NonLinear(ConstitutiveLaw):
+
     def __init__(self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25, **kwargs):
         """
         Non-linear constitutive model class constructor
