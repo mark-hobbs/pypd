@@ -29,11 +29,11 @@ class Model:
 
         Attributes
         ----------
-        particles : ParticleSet
+        particles : Particles
             The particle set, including properties such as positions,
             velocities, boundary conditions and material type
 
-        bonds : BondSet
+        bonds : Bonds
             The set of bonds that define the interactions between particles,
             including stiffness and damage properties
 
