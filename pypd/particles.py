@@ -129,7 +129,6 @@ class Particles:
         self.horizon = m * dx
 
         self.material = material
-        self.node_density = self.material.density
 
         self.nlist = nlist
         if self.nlist is None:
