@@ -48,7 +48,7 @@ class Particles:
 
     nlist : ndarray (int)
         Neighbour list for each particle, where each entry stores the indices
-        of particles interacting with the corresponding particle
+        of particles interacting with the corresponding particle (n_nodes, n_family_members)
 
     n_family_members: ndarray (int)
         Array specifying the number of family members for each particle
@@ -107,7 +107,7 @@ class Particles:
         nlist : ndarray (int), optional
             Neighbour list for each particle, where each entry stores the
             indices of particles interacting with the corresponding particle 
-            (n_particles, n_family_members)
+            (n_nodes, n_family_members)
 
         Returns
         -------
@@ -147,9 +147,6 @@ class Particles:
         """
         Build particle families
 
-        Parameters
-        ----------
-
         Returns
         -------
         nlist : ndarray (int)
@@ -172,13 +169,14 @@ class Particles:
         ----------
         bonds : Bonds
 
+        cuda_available : bool
+            Flag indicating if CUDA is available
+
         Returns
         -------
         particles.f: ndarray (float)
             Particle forces
 
-        Notes
-        -----
         """
         if cuda_available:
             compute_nodal_forces_gpu()
@@ -210,9 +208,6 @@ class Particles:
             The value of damage will range from 0 to 1, where 0 indicates that
             all bonds connected to the node are in the elastic range, and 1
             indicates that all bonds connected to the node have failed
-
-        Notes
-        -----
         """
         self.damage = compute_node_damage(
             self.x, bonds.bondlist, bonds.d, self.n_family_members
@@ -249,6 +244,10 @@ class Particles:
     def compute_strain_energy_density(self, bonds):
         """
         Compute the strain energy density (J/m^3) at every node
+
+        Parameters
+        ----------
+        bonds : Bonds
 
         Returns
         -------
