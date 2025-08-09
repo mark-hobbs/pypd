@@ -13,19 +13,38 @@ from .kernels.particles import (
 
 class Particles:
     """
-    The main class for storing particles (nodes).
+    The main class for storing and managing particles (nodes).
 
     Attributes
     ----------
-    mesh_file : str
-        Name of the mesh file defining the system of particles
-        (TODO: attribute or parameter for __init__?)
+    x : ndarray (float)
+        Material point coordinates in the reference configuration
 
     n_nodes : int
         Number of particles
 
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
+
+    bc : BoundaryConditions
+        Boundary conditions
+
+    dx : float
+        Mesh resolution (only valid for regular meshes)
+
+    cell_area : float
+        Cell area. If a regular mesh is employed, this value will be a
+        constant for all nodes
+
+    cell_volume : float
+        Cell volume. If a regular mesh is employed, this value will be a
+        constant for all nodes
+
+    horizon : float
+        Horizon radius
+
+    material : Material
+        Material properties
 
     nlist : ndarray (int)
         Neighbour list for each particle, where each entry stores the indices
@@ -34,8 +53,8 @@ class Particles:
     n_family_members: ndarray (int)
         Array specifying the number of family members for each particle
 
-    x : ndarray (float)
-        Material point coordinates in the reference configuration
+    f : ndarray (float)
+        Force array
 
     u : ndarray (float)
         Displacement array
@@ -50,18 +69,6 @@ class Particles:
         The value of damage will range from 0 to 1, where 0 indicates that
         all bonds connected to the node are in the elastic range, and 1
         indicates that all bonds connected to the node have failed
-
-    material_flag : ndarray (int)
-        Flag to identify the material type. The flag is set by the user.
-
-    cell_volume: ndarray (float)
-        Cell area / volume. If a regular mesh is employed, this value will be
-        a constant for all nodes.
-
-    boundary_condition_flag : ndarray (int)
-        Flag to... 1 if a boundary condition is applied, 0 if no...
-
-    boundary_condition_value : ndarray (float)
 
     W : ndarray (float)
         Strain energy density (J/m^3) at every node
@@ -88,14 +95,19 @@ class Particles:
 
         dx : float
             Mesh resolution (only valid for regular meshes)
+        
+        bc : BoundaryConditions
+
+        material : Material
 
         m : float
             Ratio between the horizon radius and grid resolution (default
             value is pi)
 
-        bc : BoundaryConditions class
-
-        material : Material class
+        nlist : ndarray (int), optional
+            Neighbour list for each particle, where each entry stores the
+            indices of particles interacting with the corresponding particle 
+            (n_particles, n_family_members)
 
         Returns
         -------
