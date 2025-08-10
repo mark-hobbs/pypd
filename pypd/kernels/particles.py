@@ -25,14 +25,16 @@ def compute_nodal_forces_cpu(
 
     Parameters
     ----------
-    bondlist : ndarray (int)
-        Array of pairwise interactions (bond list)
-
     x : ndarray (float)
         Material point coordinates in the reference configuration
 
     u : ndarray (float)
         Nodal displacement
+
+    cell_volume : float
+
+    bondlist : ndarray (int)
+        Array of pairwise interactions (bond list)
 
     d : ndarray (float)
         Bond damage (softening parameter). The value of d will range from 0
@@ -44,6 +46,8 @@ def compute_nodal_forces_cpu(
 
     material_law : function
 
+    surface_correction_factors : ndarray (float)
+    
     Returns
     -------
     node_force : ndarray (float)
