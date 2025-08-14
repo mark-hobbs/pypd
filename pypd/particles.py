@@ -90,7 +90,7 @@ class Particles:
 
         Parameters
         ----------
-        x : ndarray (float)
+        x : ndarray(float, shape=(n_nodes, n_dim))
             Material point coordinates in the reference configuration
 
         dx : float
@@ -104,7 +104,7 @@ class Particles:
             Ratio between the horizon radius and grid resolution (default
             value is pi)
 
-        nlist : ndarray (int), optional
+        nlist : ndarray(int, shape=(n_nodes, n_family_members)), optional
             Neighbour list for each particle, where each entry stores the
             indices of particles interacting with the corresponding particle 
             (n_nodes, n_family_members)
@@ -149,11 +149,11 @@ class Particles:
 
         Returns
         -------
-        nlist : ndarray (int)
+        nlist : ndarray(int, shape=(n_nodes, n_family_members))
             Neighbour list for each particle, where each entry stores the
             indices of particles interacting with the corresponding particle
 
-        n_family_members: ndarray (int)
+        n_family_members: ndarray(int, shape=(n_nodes,))
             Array specifying the number of family members for each particle
 
         Notes
@@ -204,7 +204,7 @@ class Particles:
 
         Returns
         -------
-        damage : ndarray (float)
+        damage : ndarray(float, shape=(n_nodes,))
             The value of damage will range from 0 to 1, where 0 indicates that
             all bonds connected to the node are in the elastic range, and 1
             indicates that all bonds connected to the node have failed
@@ -251,7 +251,7 @@ class Particles:
 
         Returns
         -------
-        W : ndarray (float)
+        W : ndarray(float, shape=(n_nodes,))
             Strain energy density
         """
         self.W = compute_strain_energy_density(

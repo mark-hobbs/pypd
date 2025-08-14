@@ -81,7 +81,7 @@ class Bonds:
 
         influence : InfluenceFunction
 
-        bondlist : ndarray (int), optional
+        bondlist : ndarray(int, shape=(n_bonds, 2)), optional
             Array of pairwise interactions (bond list) of size (n_bonds, 2).
             If not provided, it will be built using the neighbour list.
 
@@ -138,13 +138,13 @@ class Bonds:
 
         Parameters
         ----------
-        nlist : ndarray (int)
-            Neighbour list of size (n_particles, n_neighbours)
+        nlist : ndarray(int, shape=(n_particles, n_neighbours))
+            Neighbour list
 
         Returns
         -------
-        bondlist : ndarray (int)
-            Array of pairwise interactions of size (n_bonds, 2)
+        bondlist : ndarray(int, shape=(n_bonds, 2))
+            Array of pairwise interactions (bond list)
         """
         return build_bond_list(nlist)
 
@@ -154,12 +154,12 @@ class Bonds:
 
         Parameters
         ----------
-        x : ndarray (float)
+        x : ndarray(float, shape=(n_particles, n_dim))
             Particle positions in the reference configuration
 
         Returns
         -------
-        xi : ndarray (float)
+        xi : ndarray(float, shape=(n_bonds,))
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
@@ -170,7 +170,7 @@ class Bonds:
 
         Returns
         -------
-        c : ndarray (float)
+        c : ndarray(float, shape=(n_bonds,))
             Bond stiffness
         """
         return self.influence()
