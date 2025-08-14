@@ -6,16 +6,19 @@ class BoundaryConditions:
 
     Attributes
     ----------
-    flag : ndarray
+    flag : ndarray(int, shape=(n_particles, 2))
         0 - no boundary condition
         1 - the node is subject to a boundary condition
 
-    unit_vector : ndarray
-
-    constraint : ndarray
+    unit_vector : ndarray(float, shape=(n_particles, n_dim))
+        Unit vector defining the direction of the boundary 
+        condition
 
     magnitude : float
-        TODO: should this be a simulation parameter?
+        Magnitude of the applied force/displacement
+
+    i_magnitude : float
+        Magnitude of the applied force/displacement at time step i
 
     Methods
     -------
