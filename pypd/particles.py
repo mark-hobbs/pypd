@@ -17,7 +17,7 @@ class Particles:
 
     Attributes
     ----------
-    x : ndarray (float)
+    x : ndarray(float, shape=(n_nodes, n_dim))
         Material point coordinates in the reference configuration
 
     n_nodes : int
@@ -46,31 +46,31 @@ class Particles:
     material : Material
         Material properties
 
-    nlist : ndarray (int)
+    nlist : ndarray(int, shape=(n_nodes, n_family_members))
         Neighbour list for each particle, where each entry stores the indices
         of particles interacting with the corresponding particle (n_nodes, n_family_members)
 
-    n_family_members: ndarray (int)
+    n_family_members: ndarray(int, shape=(n_nodes,))
         Array specifying the number of family members for each particle
 
-    f : ndarray (float)
+    f : ndarray(float, shape=(n_nodes, n_dim))
         Force array
 
-    u : ndarray (float)
+    u : ndarray(float, shape=(n_nodes, n_dim))
         Displacement array
 
-    v : ndarray (float)
+    v : ndarray(float, shape=(n_nodes, n_dim))
         Velocity array
 
-    a : ndarray (float)
+    a : ndarray(float, shape=(n_nodes, n_dim))
         Acceleration array
 
-    damage : ndarray (float)
+    damage : ndarray(float, shape=(n_nodes,))
         The value of damage will range from 0 to 1, where 0 indicates that
         all bonds connected to the node are in the elastic range, and 1
         indicates that all bonds connected to the node have failed
 
-    W : ndarray (float)
+    W : ndarray(float, shape=(n_nodes,))
         Strain energy density (J/m^3) at every node
 
     Methods
