@@ -25,35 +25,35 @@ def compute_nodal_forces_cpu(
 
     Parameters
     ----------
-    x : ndarray (float)
+    x : np.ndarray(float, shape=(n_nodes, n_dim))
         Material point coordinates in the reference configuration
 
-    u : ndarray (float)
+    u : np.ndarray(float, shape=(n_nodes, n_dim))
         Nodal displacement
 
     cell_volume : float
 
-    bondlist : ndarray (int)
+    bondlist : np.ndarray(int, shape=(n_bonds, 2))
         Array of pairwise interactions (bond list)
 
-    d : ndarray (float)
+    d : np.ndarray(float, shape=(n_bonds,))
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
 
-    c : float
+    c : np.ndarray(float, shape=(n_bonds,))
         Bond stiffness
 
     material_law : function
 
-    surface_correction_factors : ndarray (float)
+    surface_correction_factors : np.ndarray(float, shape=(n_bonds,))
     
     Returns
     -------
-    node_force : ndarray (float)
+    node_force : np.ndarray(float, shape=(n_nodes, n_dimensions))
         Nodal force array
 
-    d : ndarray (float)
+    d : np.ndarray(float, shape=(n_bonds,))
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
