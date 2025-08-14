@@ -13,38 +13,37 @@ class Bonds:
 
     Attributes
     ----------
-    bondlist : ndarray (int)
-        Array of pairwise interactions (bond list)
+    bondlist : ndarray(int, shape=(n_bonds, 2))
+        Array of pairwise interactions (bond list) of size (n_bonds, 2)
 
-    nlist : ndarray (int)
-        TODO: define a new name and description
-        TODO: ndarray or list of numpy arrays?
+    n_bonds : int
+        Number of bonds
 
-    xi : ndarray (float)
+    xi : ndarray(float, shape=(n_bonds,))
         Reference bond length
 
-    material: ndarray (int)
-        Array defining the material type of every bond
-        TODO: name - bonds.material or bonds.type?
+    influence : InfluenceFunction
+        Influence function
 
-    c : ndarray (float)
+    c : ndarray(float, shape=(n_bonds,))
         Bond stiffness
 
-    d : ndarray (float)
+    d : ndarray(float, shape=(n_bonds,))
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
 
-    volume_correction_factors : ndarray (float)
-        Array of volume correction factors (to improve spatial integration
-        accuracy)
+    f_x : ndarray(float, shape=(n_bonds,))
+        Bond force in the x-direction
 
-    lambda : ndarray (float)
+    f_y : ndarray(float, shape=(n_bonds,))
+        Bond force in the y-direction
+
+    surface_correction_factors : ndarray(float, shape=(n_bonds,))
         Array of surface correction factors (to correct the peridynamic
         surface effect). Also known as stiffness correction factors.
 
-    stretch : ndarray (float)
-        Bond stretch (dimensionless)
+    constitutive_law : ConstitutiveLaw
 
     Methods
     -------
@@ -68,19 +67,33 @@ class Bonds:
         damage_on=True,
     ):
         """
-        BondSet class constructor
+        Bonds class constructor
 
         Parameters
         ----------
-        particles : Particle class
+        particles : Particles
 
-        constitutive_law : ConstitutiveLaw class
+        constitutive_law : ConstitutiveLaw
 
-        influence_function : InfluenceFunction class
+        constitutive_law_params : dict, optional
+            Parameters for the constitutive law. If not provided, default 
+            parameters will be used.
+
+        influence : InfluenceFunction
+
+        bondlist : ndarray(int, shape=(n_bonds, 2)), optional
+            Array of pairwise interactions (bond list) of size (n_bonds, 2).
+            If not provided, it will be built using the neighbour list.
+
+        surface_correction : bool, optional
+            Flag indicating if surface correction factors should be applied.
+            Default is False.
 
         notch : tuple of points defining the notch (optional)
             A tuple containing two points (P1, P2) that define the line of the notch
 
+        damage_on : bool, optional
+            Flag indicating if damage should be considered. Default is True.
         """
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
 
@@ -125,10 +138,12 @@ class Bonds:
 
         Parameters
         ----------
+        nlist : ndarray(int, shape=(n_particles, n_neighbours))
+            Neighbour list
 
         Returns
         -------
-        bondlist : ndarray (int)
+        bondlist : ndarray(int, shape=(n_bonds, 2))
             Array of pairwise interactions (bond list)
         """
         return build_bond_list(nlist)
@@ -137,9 +152,14 @@ class Bonds:
         """
         Compute the length of all bonds in the reference configuration
 
+        Parameters
+        ----------
+        x : ndarray(float, shape=(n_particles, n_dim))
+            Particle positions in the reference configuration
+
         Returns
         -------
-        xi : ndarray (float)
+        xi : ndarray(float, shape=(n_bonds,))
             Reference bond length
         """
         return build_bond_length(x, self.bondlist)
@@ -150,7 +170,7 @@ class Bonds:
 
         Returns
         -------
-        c : ndarray (float)
+        c : ndarray(float, shape=(n_bonds,))
             Bond stiffness
         """
         return self.influence()

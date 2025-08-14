@@ -5,10 +5,44 @@ import matplotlib.pyplot as plt
 from .tools import smooth_step_data
 from .kernels.penetrator import calculate_contact_force
 
-# TODO: should Penetrator be a base class? Create a subclass for supports
-
 
 class Penetrator:
+    """
+    Represents a rigid penetrator that interacts with deformable bodies.
+
+    Attributes
+    ----------
+    ID : int
+        Unique identifier
+
+    centre : ndarray(float, shape=(n_dim,))
+        Centre position of the penetrator
+
+    unit_vector : ndarray(float, shape=(n_dim,))
+        Direction of movement
+
+    magnitude : float
+        Magnitude of the penetrator displacement
+
+    radius : float
+        Radius of the penetrator
+
+    search_radius : float
+        Radius within which to search for interacting particles
+
+    family : ndarray(int, shape=(n_family_members,))
+        Indices of particles that are within the search radius
+
+    name : str
+        Name of the penetrator
+
+    penetrator_force_history : list
+        History of forces applied by the penetrator
+
+    Notes
+    -----
+    TODO: should Penetrator be a base class? Create a subclass for supports
+    """
     ID_iter = itertools.count()
     _registry = []
 
@@ -62,17 +96,17 @@ class Penetrator:
 
         Parameters
         ----------
-        particles : ParticleSet
+        particles : Particles
 
         Returns
         -------
-        u : ndarray
+        u : ndarray(float, shape=(n_nodes, n_dim))
             Updated displacement array
 
-        v : ndarray
+        v : ndarray(float, shape=(n_nodes, n_dim))
             Updated velocity array
 
-        contact_force : ndarray
+        contact_force : ndarray(float, shape=(n_dim,))
             Resultant force components
 
         Notes

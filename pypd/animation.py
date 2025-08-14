@@ -28,6 +28,9 @@ class Animation:
 
         show_title : bool, optional
             If True, displays the title with the frame number. Default is True.
+
+        data : str, optional
+            Visualise 'damage' or 'strain energy density'. Default is 'damage'.
         """
         self.frequency = frequency
         self.name = name or self._generate_animation_name()

@@ -15,7 +15,7 @@ class ConstitutiveLaw:
     material : Material
         An instance of the Material class representing the material properties
 
-    c : ndarray (float)
+    c : ndarray(float, shape=(n_bonds,))
         Bond stiffness (micromodulus)
 
     influence : InfluenceFunction
@@ -73,10 +73,10 @@ class Linear(ConstitutiveLaw):
 
         Returns
         -------
-        c : float
+        c : ndarray(float, shape=(n_bonds,))
             Bond stiffness
 
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
             Critical stretch
 
         Notes
@@ -122,7 +122,10 @@ class Linear(ConstitutiveLaw):
 
         Parameters
         ----------
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
+            Critical stretch
+    
+        damage_on : bool
 
         Returns
         -------
@@ -143,10 +146,10 @@ class Linear(ConstitutiveLaw):
 
                 Parameters
                 ----------
-                stretch : float
+                stretch : ndarray(float, shape=(n_bonds,))
                     Bond stretch
 
-                d : float
+                d : ndarray(float, shape=(n_bonds,))
                     Bond damage (softening parameter) at time t. The value of d
                     will range from 0 to 1, where 0 indicates that the bond is
                     still in the elastic range, and 1 represents a bond that has
@@ -154,7 +157,7 @@ class Linear(ConstitutiveLaw):
 
                 Returns
                 -------
-                d : float
+                d : ndarray(float, shape=(n_bonds,))
                     Bond damage (softening parameter) at time t+1. The value of d
                     will range from 0 to 1, where 0 indicates that the bond is
                     still in the elastic range, and 1 represents a bond that has
@@ -173,7 +176,7 @@ class Linear(ConstitutiveLaw):
                 """
                 Returns
                 -------
-                d: float
+                d: ndarray(float, shape=(n_bonds,))
                     An array of zeros with the same size as the input array `d`,
                     indicating no bond damage.
                 """
@@ -197,19 +200,19 @@ class Trilinear(ConstitutiveLaw):
         particles: ParticleSet class
 
         thickness : float
-            Discretisation dx...
-
+            For 2D problems, the thickness is equivalent to dx
+        
         Returns
         -------
-        c : float
+        c : ndarray(float, shape=(n_bonds,))
             Bond stiffness
 
-        s0 : float
+        s0 : ndarray(float, shape=(n_bonds,))
             Linear elastic limit
 
-        s1 : float
+        s1 : ndarray(float, shape=(n_bonds,))
 
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
             Critical stretch
 
         beta : float
@@ -265,11 +268,11 @@ class Trilinear(ConstitutiveLaw):
 
         Parameters
         ----------
-        s0 : float
+        s0 : ndarray(float, shape=(n_bonds,))
 
-        s1 : float
+        s1 : ndarray(float, shape=(n_bonds,))
 
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
 
         beta : float
             Kink point in the trilinear model (default = 0.25)
@@ -292,10 +295,10 @@ class Trilinear(ConstitutiveLaw):
 
             Parameters
             ----------
-            stretch : float
+            stretch : ndarray(float, shape=(n_bonds,))
                 Bond stretch
 
-            d : float
+            d : ndarray(float, shape=(n_bonds,))
                 Bond damage (softening parameter) at time t. The value of d
                 will range from 0 to 1, where 0 indicates that the bond is
                 still in the elastic range, and 1 represents a bond that has
@@ -303,7 +306,7 @@ class Trilinear(ConstitutiveLaw):
 
             Returns
             -------
-            d : float
+            d : ndarray(float, shape=(n_bonds,))
                 Bond damage (softening parameter) at time t+1. The value of d
                 will range from 0 to 1, where 0 indicates that the bond is
                 still in the elastic range, and 1 represents a bond that has
@@ -338,17 +341,16 @@ class NonLinear(ConstitutiveLaw):
         particles: ParticleSet class
 
         thickness : float
-            Discretisation dx...
 
         Returns
         -------
-        c : float
+        c : ndarray(float, shape=(n_bonds,))
             Bond stiffness
 
-        s0 : float
+        s0 : ndarray(float, shape=(n_bonds,))
             Linear elastic limit
 
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
             Critical stretch
 
         alpha : float
@@ -416,9 +418,9 @@ class NonLinear(ConstitutiveLaw):
 
         Parameters
         ----------
-        s0 : float
+        s0 : ndarray(float, shape=(n_bonds,))
 
-        sc : float
+        sc : ndarray(float, shape=(n_bonds,))
 
         alpha : float
             alpha controls the position of the transition from exponential to
@@ -445,10 +447,10 @@ class NonLinear(ConstitutiveLaw):
 
             Parameters
             ----------
-            stretch : float
+            stretch : ndarray(float, shape=(n_bonds,))
                 Bond stretch
 
-            d : float
+            d : ndarray(float, shape=(n_bonds,))
                 Bond damage (softening parameter) at time t. The value of d
                 will range from 0 to 1, where 0 indicates that the bond is
                 still in the elastic range, and 1 represents a bond that has
@@ -456,7 +458,7 @@ class NonLinear(ConstitutiveLaw):
 
             Returns
             -------
-            d : float
+            d : ndarray(float, shape=(n_bonds,))
                 Bond damage (softening parameter) at time t+1. The value of d
                 will range from 0 to 1, where 0 indicates that the bond is
                 still in the elastic range, and 1 represents a bond that has

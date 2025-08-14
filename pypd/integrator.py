@@ -57,7 +57,7 @@ class EulerCromer:
                 particles.u,
                 particles.v,
                 particles.a,
-                particles.node_density,
+                particles.material.density,
                 particles.bc.flag,
                 particles.bc.i_magnitude,
                 particles.bc.unit_vector,

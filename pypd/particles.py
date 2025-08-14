@@ -13,13 +13,12 @@ from .kernels.particles import (
 
 class Particles:
     """
-    The main class for storing particles (nodes).
+    The main class for storing and managing particles (nodes).
 
     Attributes
     ----------
-    mesh_file : str
-        Name of the mesh file defining the system of particles
-        (TODO: attribute or parameter for __init__?)
+    x : ndarray(float, shape=(n_nodes, n_dim))
+        Material point coordinates in the reference configuration
 
     n_nodes : int
         Number of particles
@@ -27,43 +26,51 @@ class Particles:
     n_dim : int
         Number of dimensions (2 or 3-dimensional system)
 
-    nlist : ndarray (int)
-        Neighbour list for each particle, where each entry stores the indices
-        of particles interacting with the corresponding particle
+    bc : BoundaryConditions
+        Boundary conditions
 
-    n_family_members: ndarray (int)
+    dx : float
+        Mesh resolution (only valid for regular meshes)
+
+    cell_area : float
+        Cell area. If a regular mesh is employed, this value will be a
+        constant for all nodes
+
+    cell_volume : float
+        Cell volume. If a regular mesh is employed, this value will be a
+        constant for all nodes
+
+    horizon : float
+        Horizon radius
+
+    material : Material
+        Material properties
+
+    nlist : ndarray(int, shape=(n_nodes, n_family_members))
+        Neighbour list for each particle, where each entry stores the indices
+        of particles interacting with the corresponding particle (n_nodes, n_family_members)
+
+    n_family_members: ndarray(int, shape=(n_nodes,))
         Array specifying the number of family members for each particle
 
-    x : ndarray (float)
-        Material point coordinates in the reference configuration
+    f : ndarray(float, shape=(n_nodes, n_dim))
+        Force array
 
-    u : ndarray (float)
+    u : ndarray(float, shape=(n_nodes, n_dim))
         Displacement array
 
-    v : ndarray (float)
+    v : ndarray(float, shape=(n_nodes, n_dim))
         Velocity array
 
-    a : ndarray (float)
+    a : ndarray(float, shape=(n_nodes, n_dim))
         Acceleration array
 
-    damage : ndarray (float)
+    damage : ndarray(float, shape=(n_nodes,))
         The value of damage will range from 0 to 1, where 0 indicates that
         all bonds connected to the node are in the elastic range, and 1
         indicates that all bonds connected to the node have failed
 
-    material_flag : ndarray (int)
-        Flag to identify the material type. The flag is set by the user.
-
-    cell_volume: ndarray (float)
-        Cell area / volume. If a regular mesh is employed, this value will be
-        a constant for all nodes.
-
-    boundary_condition_flag : ndarray (int)
-        Flag to... 1 if a boundary condition is applied, 0 if no...
-
-    boundary_condition_value : ndarray (float)
-
-    W : ndarray (float)
+    W : ndarray(float, shape=(n_nodes,))
         Strain energy density (J/m^3) at every node
 
     Methods
@@ -83,19 +90,24 @@ class Particles:
 
         Parameters
         ----------
-        x : ndarray (float)
+        x : ndarray(float, shape=(n_nodes, n_dim))
             Material point coordinates in the reference configuration
 
         dx : float
             Mesh resolution (only valid for regular meshes)
+        
+        bc : BoundaryConditions
+
+        material : Material
 
         m : float
             Ratio between the horizon radius and grid resolution (default
             value is pi)
 
-        bc : BoundaryConditions class
-
-        material : Material class
+        nlist : ndarray(int, shape=(n_nodes, n_family_members)), optional
+            Neighbour list for each particle, where each entry stores the
+            indices of particles interacting with the corresponding particle 
+            (n_nodes, n_family_members)
 
         Returns
         -------
@@ -117,7 +129,6 @@ class Particles:
         self.horizon = m * dx
 
         self.material = material
-        self.node_density = self.material.density
 
         self.nlist = nlist
         if self.nlist is None:
@@ -136,16 +147,13 @@ class Particles:
         """
         Build particle families
 
-        Parameters
-        ----------
-
         Returns
         -------
-        nlist : ndarray (int)
+        nlist : ndarray(int, shape=(n_nodes, n_family_members))
             Neighbour list for each particle, where each entry stores the
             indices of particles interacting with the corresponding particle
 
-        n_family_members: ndarray (int)
+        n_family_members: ndarray(int, shape=(n_nodes,))
             Array specifying the number of family members for each particle
 
         Notes
@@ -161,13 +169,14 @@ class Particles:
         ----------
         bonds : Bonds
 
+        cuda_available : bool
+            Flag indicating if CUDA is available
+
         Returns
         -------
         particles.f: ndarray (float)
             Particle forces
 
-        Notes
-        -----
         """
         if cuda_available:
             compute_nodal_forces_gpu()
@@ -195,13 +204,10 @@ class Particles:
 
         Returns
         -------
-        damage : ndarray (float)
+        damage : ndarray(float, shape=(n_nodes,))
             The value of damage will range from 0 to 1, where 0 indicates that
             all bonds connected to the node are in the elastic range, and 1
             indicates that all bonds connected to the node have failed
-
-        Notes
-        -----
         """
         self.damage = compute_node_damage(
             self.x, bonds.bondlist, bonds.d, self.n_family_members
@@ -239,9 +245,13 @@ class Particles:
         """
         Compute the strain energy density (J/m^3) at every node
 
+        Parameters
+        ----------
+        bonds : Bonds
+
         Returns
         -------
-        W : ndarray (float)
+        W : ndarray(float, shape=(n_nodes,))
             Strain energy density
         """
         self.W = compute_strain_energy_density(
