@@ -13,33 +13,33 @@ class Bonds:
 
     Attributes
     ----------
-    bondlist : ndarray (int)
+    bondlist : ndarray(int, shape=(n_bonds, 2))
         Array of pairwise interactions (bond list) of size (n_bonds, 2)
 
     n_bonds : int
         Number of bonds
 
-    xi : ndarray (float)
+    xi : ndarray(float, shape=(n_bonds,))
         Reference bond length
 
     influence : InfluenceFunction
         Influence function
 
-    c : ndarray (float)
+    c : ndarray(float, shape=(n_bonds,))
         Bond stiffness
 
-    d : ndarray (float)
+    d : ndarray(float, shape=(n_bonds,))
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
 
-    f_x : ndarray (float)
+    f_x : ndarray(float, shape=(n_bonds,))
         Bond force in the x-direction
 
-    f_y : ndarray (float)
+    f_y : ndarray(float, shape=(n_bonds,))
         Bond force in the y-direction
 
-    surface_correction_factors : ndarray (float)
+    surface_correction_factors : ndarray(float, shape=(n_bonds,))
         Array of surface correction factors (to correct the peridynamic
         surface effect). Also known as stiffness correction factors.
 
