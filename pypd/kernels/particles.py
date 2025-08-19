@@ -66,13 +66,8 @@ def compute_nodal_forces_cpu(
     -----
     * node_force and d are modified in place and returned for clarity
     """
-
-    n_nodes = np.shape(x)[0]
     n_bonds = np.shape(bondlist)[0]
-
-    for i in prange(n_nodes):
-        node_force[i, 0] = 0.0
-        node_force[i, 1] = 0.0
+    node_force[:] = 0.0
 
     for k_bond in prange(n_bonds):
         node_i = bondlist[k_bond, 0]
