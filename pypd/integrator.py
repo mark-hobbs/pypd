@@ -48,13 +48,12 @@ class EulerCromer:
 
         Notes
         -----
-        * self.dt or simulation.dt?
-
+        * particles.u and particles.v are modified in place
         """
         if simulation.cuda_available:
             print("CUDA is available")
         else:
-            return euler_cromer_cpu(
+            euler_cromer_cpu(
                 particles.f,
                 particles.u,
                 particles.v,
