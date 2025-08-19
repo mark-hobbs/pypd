@@ -9,6 +9,7 @@ from numba import njit, prange, cuda
 
 @njit(parallel=True, fastmath=True)
 def compute_nodal_forces_cpu(
+    node_force,
     x,
     u,
     cell_volume,
@@ -25,6 +26,9 @@ def compute_nodal_forces_cpu(
 
     Parameters
     ----------
+    node_force : np.ndarray(float, shape=(n_nodes, n_dim))
+        Nodal force array
+
     x : np.ndarray(float, shape=(n_nodes, n_dim))
         Material point coordinates in the reference configuration
 
@@ -57,12 +61,18 @@ def compute_nodal_forces_cpu(
         Bond damage (softening parameter). The value of d will range from 0
         to 1, where 0 indicates that the bond is still in the elastic range,
         and 1 represents a bond that has failed
+
+    Notes
+    -----
+    * node_force and d are modified in place and returned for clarity
     """
 
     n_nodes = np.shape(x)[0]
-    n_dimensions = np.shape(x)[1]
     n_bonds = np.shape(bondlist)[0]
-    node_force = np.zeros((n_nodes, n_dimensions))
+
+    for i in prange(n_nodes):
+        node_force[i, 0] = 0.0
+        node_force[i, 1] = 0.0
 
     for k_bond in prange(n_bonds):
         node_i = bondlist[k_bond, 0]

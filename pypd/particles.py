@@ -177,11 +177,16 @@ class Particles:
         particles.f: ndarray (float)
             Particle forces
 
+        Notes
+        -----
+        * Particle forces are modified in place
+
         """
         if cuda_available:
             compute_nodal_forces_gpu()
         else:
-            self.f, _ = compute_nodal_forces_cpu(
+            compute_nodal_forces_cpu(
+                self.f,
                 self.x,
                 self.u,
                 self.cell_volume,
