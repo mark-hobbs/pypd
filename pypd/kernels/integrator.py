@@ -3,11 +3,11 @@ Small, highly optimised computational units written using Numba
 """
 
 import numpy as np
-from numba import njit, prange
+from numba import njit, prange, cuda
 
 
 @njit(parallel=True)
-def euler_cromer(
+def euler_cromer_cpu(
     f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
 ):
     """
@@ -15,26 +15,49 @@ def euler_cromer(
 
     Parameters
     ----------
-    u : ndarray (float)
+    f : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Particle forces
+
+    u : np.ndarray(float, shape=(n_nodes, n_dimensions))
         Particle displacement
 
-    v : ndarray (float)
+    v : np.ndarray(float, shape=(n_nodes, n_dimensions))
         Particle velocity
 
-    a : ndarray (float)
+    a : np.ndarray(float, shape=(n_nodes, n_dimensions))
         Particle acceleration
+
+    density : float
+        Material density
+
+    bc_flag : np.ndarray(int, shape=(n_nodes, n_dimensions))
+        0 - no boundary condition
+        1 - the node is subject to a boundary condition
+
+    bc_magnitude : float
+        Magnitude of the applied force/displacement
+
+    bc_unit_vector : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Unit vector defining the direction of the boundary condition
+
+    damping : float
+        Damping coefficient
+
+    dt : float
+        Time step size
 
     Returns
     -------
+    u : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Updated particle displacement
+
+    v : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Updated particle velocity
 
     Notes
     -----
     * add random noise to particle displacement
         -  * np.random.uniform(0.98, 1.0)
-    * We need a generic method for employing different time integration schemes
-        - Euler
-        - Euler-Cromer
-        - Velocity-Verlet
     """
 
     n_nodes = np.shape(f)[0]
@@ -50,3 +73,17 @@ def euler_cromer(
                 u[node_i, dof] = bc_magnitude * bc_unit_vector[node_i, dof]
 
     return u, v
+
+
+def euler_cromer_gpu(
+    f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
+):
+    euler_cromer_kernel[grid_size, block_size]()
+
+
+@cuda.jit
+def euler_cromer_kernel():
+    """
+    CUDA kernel for Euler-Cromer time integration scheme
+    """
+    pass

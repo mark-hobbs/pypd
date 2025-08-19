@@ -1,11 +1,10 @@
-
-from .kernels.integrator import euler_cromer
+from .kernels.integrator import euler_cromer_cpu
 
 
 class Integrator:
     """
     Base class for time integrator
-    
+
     Notes
     -----
     * See - pysph/sph/integrator.py
@@ -40,6 +39,9 @@ class EulerCromer:
 
         Parameters
         ----------
+        particles : Particles
+
+        simulation : Simulation
 
         Returns
         -------
@@ -52,7 +54,7 @@ class EulerCromer:
         if simulation.cuda_available:
             print("CUDA is available")
         else:
-            return euler_cromer(
+            return euler_cromer_cpu(
                 particles.f,
                 particles.u,
                 particles.v,
