@@ -56,7 +56,7 @@ def euler_cromer_cpu(
 
     Notes
     -----
-    - u and v are modified in place and returned for clarity
+    * u and v are modified in place and returned for clarity
     """
 
     n_nodes = np.shape(f)[0]
