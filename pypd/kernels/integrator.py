@@ -51,6 +51,9 @@ def euler_cromer_cpu(
     u : np.ndarray(float, shape=(n_nodes, n_dimensions))
         Updated particle displacement
 
+    v : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Updated particle velocity
+
     Notes
     -----
     - u is modified in place and returned for clarity
@@ -68,7 +71,7 @@ def euler_cromer_cpu(
             if bc_flag[node_i, dof] != 0:
                 u[node_i, dof] = bc_magnitude * bc_unit_vector[node_i, dof]
 
-    return u
+    return u, v
 
 
 def euler_cromer_gpu(
