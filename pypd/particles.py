@@ -183,7 +183,7 @@ class Particles:
 
         """
         if cuda_available:
-            compute_nodal_forces_cpu()
+            compute_nodal_forces_gpu()
         else:
             compute_nodal_forces_cpu(
                 self.f,
