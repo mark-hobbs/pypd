@@ -82,8 +82,9 @@ def euler_cromer_gpu(
 
     This function is a wrapper for the CUDA kernel `euler_cromer_kernel`
     """
+    BLOCKS_PER_GRID = f.shape[0]
     THREADS_PER_BLOCK = 256
-    euler_cromer_kernel[f.shape[0], THREADS_PER_BLOCK](
+    euler_cromer_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
         f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
     )
 
