@@ -77,12 +77,38 @@ def euler_cromer_cpu(
 def euler_cromer_gpu(
     f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
 ):
-    euler_cromer_kernel[grid_size, block_size]()
+    """
+    Update particle positions using an Euler-Cromer time integration scheme 
+    on GPU
+
+    This function is a wrapper for the CUDA kernel `euler_cromer_kernel`
+    """
+    THREADS_PER_BLOCK = 256
+    euler_cromer_kernel[f.shape[0], THREADS_PER_BLOCK](
+        f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
+    )
 
 
 @cuda.jit
-def euler_cromer_kernel():
+def euler_cromer_kernel(
+    f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
+):
     """
     CUDA kernel for Euler-Cromer time integration scheme
     """
-    pass
+    n_nodes = f.shape[0]
+    n_dimensions = f.shape[1]
+
+    idx = cuda.grid(1)
+    total = n_nodes * n_dimensions
+
+    if idx < total:
+        node_i = idx // n_dimensions
+        dof = idx % n_dimensions
+
+        a[node_i, dof] = (f[node_i, dof] - damping * v[node_i, dof]) / density
+        v[node_i, dof] += a[node_i, dof] * dt
+        u[node_i, dof] += v[node_i, dof] * dt
+
+        if bc_flag[node_i, dof] != 0:
+            u[node_i, dof] = bc_magnitude * bc_unit_vector[node_i, dof]
