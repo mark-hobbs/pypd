@@ -78,8 +78,7 @@ def euler_cromer_gpu(
     f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
 ):
     """
-    Update particle positions using an Euler-Cromer time integration scheme 
-    on GPU
+    Update particle positions using an Euler-Cromer time integration scheme
 
     This function is a wrapper for the CUDA kernel `euler_cromer_kernel`
     """
