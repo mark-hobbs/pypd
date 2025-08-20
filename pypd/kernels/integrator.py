@@ -65,8 +65,8 @@ def euler_cromer_cpu(
     for node_i in prange(n_nodes):
         for dof in range(n_dimensions):
             a[node_i, dof] = (f[node_i, dof] - damping * v[node_i, dof]) / density
-            v[node_i, dof] = v[node_i, dof] + (a[node_i, dof] * dt)
-            u[node_i, dof] = u[node_i, dof] + (v[node_i, dof] * dt)
+            v[node_i, dof] += (a[node_i, dof] * dt)
+            u[node_i, dof] += (v[node_i, dof] * dt)
 
             if bc_flag[node_i, dof] != 0:
                 u[node_i, dof] = bc_magnitude * bc_unit_vector[node_i, dof]
