@@ -99,10 +99,17 @@ python -m examples.2D_B4_HN.py
 - [ ] Write unit tests
 - [ ] Write documentation
 - [ ] Publish on PyPI
+- [ ] Add support for different compute backends:
+  - `numba-cuda`
+  - `jax`
+  - `warp`
 - [ ] `feature/space-filling-curve` - sort particles spatially to improve memory access (see this [notebook](https://github.com/pdebuyl/compute/blob/master/hilbert_curve/hilbert_curve.ipynb) on understanding the Hilbert curve)
-- [x] `feature/animation` - add native capabilities to generate animations
 - [ ] GPU acceleration (see this [notebook](https://github.com/lukepolson/youtube_channel/blob/main/Python%20GPU/multibody_boltzmann.ipynb) where `pytorch` is used to speed up particle simulations)
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
+
+### Completed tasks
+
+- [x] `feature/animation` - add native capabilities to generate animations
 - [x] Implement a surface correction scheme to correct the peridynamic surface effect
 - [x] Implement different influence functions (constant/triangular/quartic)
 - [x] Separate model and simulation logic: `simulation.run(model)`
