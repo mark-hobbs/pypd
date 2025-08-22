@@ -76,7 +76,7 @@ class Simulation:
 
         if model.penetrators:
             for penetrator in model.penetrators:
-                penetrator.calculate_penetrator_force(model.particles, self)
+                penetrator.calculate_force(model.particles, self)
 
         if self.animation and self.i_time_step % self.animation.frequency == 0:
             self.animation.save_frame(model.particles, model.bonds)
