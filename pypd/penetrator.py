@@ -3,7 +3,7 @@ import itertools
 import matplotlib.pyplot as plt
 
 from .tools import smooth_step_data
-from .kernels.penetrator import calculate_contact_force
+from .kernels.penetrator import compute_contact_force
 
 
 class Penetrator:
@@ -89,9 +89,9 @@ class Penetrator:
             )
         )
 
-    def calculate_force(self, particles, simulation):
+    def compute_force(self, particles, simulation):
         """
-        Calculate the contact force between a rigid penetrator and deformable
+        Compute the contact force between a rigid penetrator and deformable
         peridynamic body
 
         Parameters
@@ -117,7 +117,7 @@ class Penetrator:
         position = self.update_position(
             simulation.i_time_step, simulation.n_time_steps
         )
-        force = calculate_contact_force(
+        force = compute_contact_force(
             self.family,
             self.radius,
             position,
