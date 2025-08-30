@@ -50,15 +50,11 @@ $ pipenv shell
 - Ruff
 - Jupyter
 
-## Code structure
-
 ## Examples
 
 <details>
 
 <summary>Expand for a summary of the examples provided</summary>
-
-There are multiple examples provided:
 
 - [Crack branching in notched Homalite sheets](/examples/crack_branching.py)
 - [Plate with a hole in tension](/examples/plate_with_hole.py)
@@ -69,12 +65,16 @@ There are multiple examples provided:
 ### Crack branching
 
 ```
-python -m examples.2D_notch.py
+python -m examples.crack_branching
 ```
 
 ![](figures/crack_branching.png)
 
 ### Mixed-mode fracture
+
+```
+python -m examples.mixed_mode_fracture
+```
 
 Example with validation using experimental data. 
 
@@ -87,12 +87,14 @@ Example with validation using experimental data.
 ### Flexural three-point bending test - half-notched beam
 
 ```
-python -m examples.2D_B4_HN.py
+python -m examples.half_notched_beam
 ```
 
 ![](figures/TPB_HN.png)
 
 </details>
+
+## Minimal example
 
 ## :white_check_mark: TODO
 
