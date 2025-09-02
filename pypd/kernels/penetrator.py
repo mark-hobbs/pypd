@@ -7,7 +7,7 @@ from numba import njit
 
 
 @njit
-def calculate_contact_force(
+def compute_contact_force(
     penetrator_family,
     penetrator_radius,
     penetrator_position,
@@ -19,7 +19,7 @@ def calculate_contact_force(
     dt,
 ):
     """
-    Calculate contact force - calculate the contact force between a rigid
+    Compute contact force - calculate the contact force between a rigid
     penetrator and a deformable peridynamic body.
 
     Parameters
@@ -77,7 +77,7 @@ def calculate_contact_force(
     return contact_force
 
 
-def calculate_contact_force_vectorised(
+def compute_contact_force_vectorised(
     penetrator_family,
     penetrator_radius,
     penetrator_position,

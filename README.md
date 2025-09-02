@@ -50,15 +50,11 @@ $ pipenv shell
 - Ruff
 - Jupyter
 
-## Code structure
-
 ## Examples
 
 <details>
 
 <summary>Expand for a summary of the examples provided</summary>
-
-There are multiple examples provided:
 
 - [Crack branching in notched Homalite sheets](/examples/crack_branching.py)
 - [Plate with a hole in tension](/examples/plate_with_hole.py)
@@ -69,12 +65,16 @@ There are multiple examples provided:
 ### Crack branching
 
 ```
-python -m examples.2D_notch.py
+python -m examples.crack_branching
 ```
 
 ![](figures/crack_branching.png)
 
 ### Mixed-mode fracture
+
+```
+python -m examples.mixed_mode_fracture
+```
 
 Example with validation using experimental data. 
 
@@ -87,22 +87,31 @@ Example with validation using experimental data.
 ### Flexural three-point bending test - half-notched beam
 
 ```
-python -m examples.2D_B4_HN.py
+python -m examples.half_notched_beam
 ```
 
 ![](figures/TPB_HN.png)
 
 </details>
 
+## Minimal example
+
 ## :white_check_mark: TODO
 
 - [ ] Write unit tests
 - [ ] Write documentation
 - [ ] Publish on PyPI
+- [ ] Add support for different compute backends:
+  - `numba-cuda`
+  - `jax`
+  - `warp`
 - [ ] `feature/space-filling-curve` - sort particles spatially to improve memory access (see this [notebook](https://github.com/pdebuyl/compute/blob/master/hilbert_curve/hilbert_curve.ipynb) on understanding the Hilbert curve)
-- [x] `feature/animation` - add native capabilities to generate animations
 - [ ] GPU acceleration (see this [notebook](https://github.com/lukepolson/youtube_channel/blob/main/Python%20GPU/multibody_boltzmann.ipynb) where `pytorch` is used to speed up particle simulations)
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
+
+### Completed tasks
+
+- [x] `feature/animation` - add native capabilities to generate animations
 - [x] Implement a surface correction scheme to correct the peridynamic surface effect
 - [x] Implement different influence functions (constant/triangular/quartic)
 - [x] Separate model and simulation logic: `simulation.run(model)`
