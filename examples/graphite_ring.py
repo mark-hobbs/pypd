@@ -141,7 +141,7 @@ def main():
 
     simulation = pypd.Simulation(n_time_steps=50000, damping=0)
     simulation.run(model)
-    model.save_final_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
+    model.save_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
 
 
 main()

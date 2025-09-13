@@ -107,7 +107,7 @@ def main():
 
     simulation = pypd.Simulation(n_time_steps=20000, damping=0)
     simulation.run(model)
-    model.save_final_state_fig(sz=0.75, fig_title="plate-with-a-hole")
+    model.save_state_fig(sz=0.75, fig_title="plate-with-a-hole")
 
 
 main()

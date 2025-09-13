@@ -51,9 +51,9 @@ class Model:
         self.penetrators = penetrators
         self.observations = observations
 
-    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
+    def save_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
         """
-        Save a figure of the final state of the simulation
+        Save a figure of the current state of the simulation
 
         Parameters
         ----------

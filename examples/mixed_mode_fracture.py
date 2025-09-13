@@ -222,7 +222,7 @@ def main():
     simulation = pypd.Simulation(n_time_steps=100000, damping=0)
     simulation.run(nonlinear_model)
 
-    nonlinear_model.save_final_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
+    nonlinear_model.save_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")
     plot_load_cmod(nonlinear_model, n_div_z, fig_title="load-cmod-nonlinear")
 
 

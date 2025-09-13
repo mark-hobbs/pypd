@@ -85,7 +85,7 @@ def main():
     )
     simulation = pypd.Simulation(n_time_steps=5000, damping=0, animation=animation)
     simulation.run(model)
-    model.save_final_state_fig(fig_title="crack-branching")
+    model.save_state_fig(fig_title="crack-branching")
 
 
 main()
