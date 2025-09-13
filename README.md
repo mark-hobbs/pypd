@@ -108,6 +108,7 @@ python -m examples.half_notched_beam
 - [ ] `feature/space-filling-curve` - sort particles spatially to improve memory access (see this [notebook](https://github.com/pdebuyl/compute/blob/master/hilbert_curve/hilbert_curve.ipynb) on understanding the Hilbert curve)
 - [ ] GPU acceleration (see this [notebook](https://github.com/lukepolson/youtube_channel/blob/main/Python%20GPU/multibody_boltzmann.ipynb) where `pytorch` is used to speed up particle simulations)
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
+- [ ] `Bonds` are always derivable from `Particles`. Let `Model` manage `Bonds` internally.
 
 ### Completed tasks
 
