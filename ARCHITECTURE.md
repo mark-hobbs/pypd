@@ -33,7 +33,7 @@ for model in models:
 
 ### `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`
 
-There is a strong argument for keeping methods in data classes as each class should be responsible for operations that are intimately tied to its data. However, a problem with the existing design (`particles.compute_forces(bonds)`) is that `Particles` need to know about `Bonds` which breaks encapsulation.
+There is a strong argument for keeping methods in data classes as each class should be responsible for operations that are intimately tied to its data. However, a problem with the existing design - `particles.compute_forces(bonds)` - is that `Particles` need to know about `Bonds` which breaks encapsulation.
 
 ### Let `Model` manage `Bonds` internally
 
