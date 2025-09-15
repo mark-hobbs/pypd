@@ -52,7 +52,19 @@ simulation.run(model)
 
 ### Switching material laws
 
-The call interface of the `material_law(i, stretch, d)` must remain consistent for all constitutive models.
+Material models (e.g. linear, bilinear, trilinear, non-linear) have different parameter requirements. If these parameter differences are exposed directly, every place where `material_law()` is used must be updated whenever the model changes. This leads to rigid and error-prone code.
+
+The call interface of the material law must remain consistent for all constitutive models. A function factory solves this problem by decoupling the model configuration from its usage. The factory embeds the model parameters when the function is created, and the returned function always has the same interface: `material_law(i, stretch, d)`
+
+```python
+def make_material_law(s0, s1, sc, beta):
+    
+    @njit
+    def material_law(i, stretch, d):
+        return trilinear(i, stretch, d, s0, s1, sc, beta)
+
+    return material_law
+```
 
 ### Material law integration strategy
 
