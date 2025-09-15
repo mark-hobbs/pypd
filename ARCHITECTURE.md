@@ -20,10 +20,22 @@ simulation.run(model)
 
 ## Open design questions
 
-- `model.run()` vs `simulation.run(model)`?
-- `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`?
-- Let `Model` manage `Bonds` internally?
-- How do we manage the backend logic (CPU/GPU). Factory function?
+### `model.run()` vs `simulation.run(model)`
+
+**Data vs execution split:** using `simulation.run(model)` provides clear separation of concerns between the `Model` which describes the physical system and `Simulation` which manages the execution.
+
+This also makes it natural to reuse the same simulation parameters across multiple models:
+
+```python
+for model in models:
+    simulation.run(model)
+```
+
+### `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`?
+
+### Let `Model` manage `Bonds` internally?
+
+### Backend logic (CPU/GPU)
 
 ## Design notes
 
