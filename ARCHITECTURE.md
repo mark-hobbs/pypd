@@ -44,3 +44,4 @@ There is a strong argument for keeping methods in data classes as each class sho
 -  `Bonds` are always derivable from `Particles`. 
 - Both `Particles` and `Bonds` should primarily be data containers (with light validation), leaving numerical methods and orchestration to `Model` and `Simulation`.
 - Are shallow or deep classes preferable?
+- Avoid "parameter drilling" where a parameter is passed down through multiple layers of function/method calls, even when the intermediate layers do not use the parameter - they just pass it along.
