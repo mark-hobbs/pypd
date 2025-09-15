@@ -2,7 +2,7 @@
 
 This document outlines the current thinking on the architecture and design of `pypd`. The existing API is provisional and may change in future iterations as the architecture matures.
 
-### Minimal example
+## Minimal example
 
 ```python
 x = build_particle_coordinates(dx, n_div_x, n_div_y)
@@ -18,13 +18,14 @@ simulation = pypd.Simulation(n_time_steps=5000, damping=0)
 simulation.run(model)
 ```
 
-### Open design questions
+## Open design questions
 
 - `model.run()` vs `simulation.run(model)`?
 - `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`?
 - Let `Model` manage `Bonds` internally?
+- How do we manage the backend logic (CPU/GPU). Factory function?
 
-### Design notes
+## Design notes
 
 -  `Bonds` are always derivable from `Particles`. 
 - Both `Particles` and `Bonds` should primarily be data containers (with light validation), leaving numerical methods and orchestration to `Model` and `Simulation`.
