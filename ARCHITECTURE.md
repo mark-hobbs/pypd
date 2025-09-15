@@ -50,6 +50,72 @@ simulation = pypd.Simulation(n_time_steps=5000, damping=0)
 simulation.run(model)
 ```
 
+### Material law integration strategy
+
+Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
+
+```python
+def make_compute_nodal_forces(material_law):
+    """
+    Returns a specialised JIT-compiled compute_nodal_forces() function with the given material law baked in.
+    """
+    @njit(parallel=True, fastmath=True)
+    def compute_nodal_forces_cpu(
+        node_force,
+        x,
+        u,
+        cell_volume,
+        bondlist,
+        d,
+        c,
+        f_x,
+        f_y,
+        surface_correction_factors,
+    ):
+        n_bonds = bondlist.shape[0]
+        node_force[:] = 0.0
+
+        for k_bond in prange(n_bonds):
+            node_i = bondlist[k_bond, 0]
+            node_j = bondlist[k_bond, 1]
+
+            xi_x = x[node_j, 0] - x[node_i, 0]
+            xi_y = x[node_j, 1] - x[node_i, 1]
+
+            xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+            xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+
+            xi = np.sqrt(xi_x**2 + xi_y**2)
+            y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
+            stretch = (y - xi) / xi
+
+            d[k_bond] = material_law(k_bond, stretch, d[k_bond])
+
+            f = (
+                stretch
+                * c[k_bond]
+                * (1 - d[k_bond])
+                * cell_volume
+                * surface_correction_factors[k_bond]
+            )
+            f_x[k_bond] = f * xi_eta_x / y
+            f_y[k_bond] = f * xi_eta_y / y
+
+        # Reduce bond forces to nodal forces
+        for k_bond in range(n_bonds):
+            node_i = bondlist[k_bond, 0]
+            node_j = bondlist[k_bond, 1]
+
+            node_force[node_i, 0] += f_x[k_bond]
+            node_force[node_j, 0] -= f_x[k_bond]
+            node_force[node_i, 1] += f_y[k_bond]
+            node_force[node_j, 1] -= f_y[k_bond]
+
+        return node_force, d
+
+    return compute_nodal_forces_cpu
+```
+
 ### Backend logic (CPU/GPU)
 
 ## Design notes
