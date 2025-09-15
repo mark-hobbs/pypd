@@ -20,7 +20,7 @@ simulation.run(model)
 
 ## Open design questions
 
-### `model.run()` vs `simulation.run(model)`
+### `model.run(simulation)` vs `simulation.run(model)`
 
 **Data vs execution split:** using `simulation.run(model)` provides clear separation of concerns between the `Model` which describes the physical system and `Simulation` which manages the execution.
 
@@ -31,9 +31,11 @@ for model in models:
     simulation.run(model)
 ```
 
-### `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`?
+### `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`
 
-### Let `Model` manage `Bonds` internally?
+There is a strong argument for keeping methods in data classes as each class should be responsible for operations that are intimately tied to its data. However, a problem with the existing design (`particles.compute_forces(bonds)`) is that `Particles` need to know about `Bonds` which breaks encapsulation.
+
+### Let `Model` manage `Bonds` internally
 
 ### Backend logic (CPU/GPU)
 
