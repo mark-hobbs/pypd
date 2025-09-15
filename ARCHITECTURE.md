@@ -37,6 +37,19 @@ There is a strong argument for keeping methods in data classes as each class sho
 
 ### Let `Model` manage `Bonds` internally
 
+```python
+x = build_particle_coordinates(dx, n_div_x, n_div_y)
+flag, unit_vector = build_boundary_conditions(x, dx)
+
+material = pypd.Material(name="homalite", E=4.55e9, Gf=38.46, density=1230, ft=2.5)
+bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=1e-4)
+particles = pypd.Particles(x, dx, bc, material)
+model = pypd.Model(particles, influence=pypd.Constant, notch=notch)
+
+simulation = pypd.Simulation(n_time_steps=5000, damping=0)
+simulation.run(model)
+```
+
 ### Backend logic (CPU/GPU)
 
 ## Design notes
