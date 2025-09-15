@@ -14,16 +14,18 @@ particles = pypd.Particles(x, dx, bc, material)
 bonds = pypd.Bonds(particles, influence=pypd.Constant, notch=notch)
 model = pypd.Model(particles, bonds)
 
-animation = pypd.Animation(
-    frequency=100, sz=0.25, show_title=False, data="strain energy density"
-)
-simulation = pypd.Simulation(n_time_steps=5000, damping=0, animation=animation)
+simulation = pypd.Simulation(n_time_steps=5000, damping=0)
 simulation.run(model)
-model.save_state_fig(fig_title="crack-branching")
 ```
+
+### Open design questions
+
+- `model.run()` vs `simulation.run(model)`?
+- `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`?
+- Let `Model` manage `Bonds` internally?
 
 ### Design notes
 
--  `Bonds` are always derivable from `Particles`. Let `Model` manage `Bonds` internally.
+-  `Bonds` are always derivable from `Particles`. 
 - Both `Particles` and `Bonds` should primarily be data containers (with light validation), leaving numerical methods and orchestration to `Model` and `Simulation`.
 - Are shallow or deep classes preferable?
