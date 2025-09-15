@@ -50,6 +50,10 @@ simulation = pypd.Simulation(n_time_steps=5000, damping=0)
 simulation.run(model)
 ```
 
+### Switching material laws
+
+The call interface of the `material_law(i, stretch, d)` must remain consistent for all constitutive models.
+
 ### Material law integration strategy
 
 Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
