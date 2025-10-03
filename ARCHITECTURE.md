@@ -20,7 +20,7 @@ simulation.run(model)
 
 ## Open design questions
 
-### `model.run(simulation)` vs `simulation.run(model)`
+### 1. `model.run(simulation)` vs `simulation.run(model)`
 
 **Data vs execution split:** using `simulation.run(model)` provides clear separation of concerns between the `Model` which describes the physical system and `Simulation` which manages the execution.
 
@@ -31,11 +31,11 @@ for model in models:
     simulation.run(model)
 ```
 
-### `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`
+### 2. `particles.compute_forces(bonds)` vs `model.compute_particle_forces()`
 
 There is a strong argument for keeping methods in data classes as each class should be responsible for operations that are intimately tied to its data. However, a problem with the existing design - `particles.compute_forces(bonds)` - is that `Particles` need to know about `Bonds` which breaks encapsulation.
 
-### Let `Model` manage `Bonds` internally
+### 3. Let `Model` manage `Bonds` internally
 
 ```python
 x = build_particle_coordinates(dx, n_div_x, n_div_y)
@@ -50,7 +50,7 @@ simulation = pypd.Simulation(n_time_steps=5000, damping=0)
 simulation.run(model)
 ```
 
-### Switching material laws
+### 4. Switching material laws
 
 Material models (e.g. linear, bilinear, trilinear, non-linear) have different parameter requirements. If these parameter differences are exposed directly, every place where `material_law()` is used must be updated whenever the model changes. This leads to rigid and error-prone code.
 
@@ -66,7 +66,7 @@ def make_material_law(s0, s1, sc, beta):
     return material_law
 ```
 
-### Material law integration strategy
+### 5. Material law integration strategy
 
 Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
 
@@ -132,7 +132,7 @@ def make_compute_nodal_forces(material_law):
     return compute_nodal_forces_cpu
 ```
 
-### Backend logic (CPU/GPU)
+### 6. Backend logic (CPU/GPU)
 
 ## Design notes
 
