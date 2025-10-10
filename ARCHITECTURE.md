@@ -71,7 +71,7 @@ def make_material_law(s0, s1, sc, beta):
 Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
 
 ```python
-# baked in
+# Bake in at compile time
 def make_compute_nodal_forces(material_law):
     """
     Returns a specialised JIT-compiled compute_nodal_forces() function with the given material law baked in.
@@ -134,7 +134,7 @@ def make_compute_nodal_forces(material_law):
 ```
 
 ```python
-# Compile time
+# Inject at runtime
 @njit(parallel=True, fastmath=True)
 def compute_nodal_forces_cpu(
     node_force,
