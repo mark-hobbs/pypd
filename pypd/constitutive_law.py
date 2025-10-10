@@ -36,7 +36,8 @@ class ConstitutiveLaw:
         """
         raise NotImplementedError("This method must be implemented!")
 
-    def _calculate_bond_damage():
+    @staticmethod
+    def _make_material_law():
         """
         Calculate bond damage (softening parameter). The value of d will range
         from 0 to 1, where 0 indicates that the bond is still in the elastic
