@@ -71,6 +71,7 @@ def make_material_law(s0, s1, sc, beta):
 Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
 
 ```python
+# baked in
 def make_compute_nodal_forces(material_law):
     """
     Returns a specialised JIT-compiled compute_nodal_forces() function with the given material law baked in.
@@ -130,6 +131,109 @@ def make_compute_nodal_forces(material_law):
         return node_force, d
 
     return compute_nodal_forces_cpu
+```
+
+```python
+# Compile time
+@njit(parallel=True, fastmath=True)
+def compute_nodal_forces_cpu(
+    node_force,
+    x,
+    u,
+    cell_volume,
+    bondlist,
+    d,
+    c,
+    f_x,
+    f_y,
+    material_law,
+    surface_correction_factors,
+):
+    """
+    Compute particle forces - employs bondlist (cpu optimised)
+
+    Parameters
+    ----------
+    node_force : np.ndarray(float, shape=(n_nodes, n_dim))
+        Nodal force array
+
+    x : np.ndarray(float, shape=(n_nodes, n_dim))
+        Material point coordinates in the reference configuration
+
+    u : np.ndarray(float, shape=(n_nodes, n_dim))
+        Nodal displacement
+
+    cell_volume : float
+
+    bondlist : np.ndarray(int, shape=(n_bonds, 2))
+        Array of pairwise interactions (bond list)
+
+    d : np.ndarray(float, shape=(n_bonds,))
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
+
+    c : np.ndarray(float, shape=(n_bonds,))
+        Bond stiffness
+
+    material_law : function
+
+    surface_correction_factors : np.ndarray(float, shape=(n_bonds,))
+    
+    Returns
+    -------
+    node_force : np.ndarray(float, shape=(n_nodes, n_dimensions))
+        Nodal force array
+
+    d : np.ndarray(float, shape=(n_bonds,))
+        Bond damage (softening parameter). The value of d will range from 0
+        to 1, where 0 indicates that the bond is still in the elastic range,
+        and 1 represents a bond that has failed
+
+    Notes
+    -----
+    * node_force and d are modified in place and returned for clarity
+    """
+    n_bonds = np.shape(bondlist)[0]
+    node_force[:] = 0.0
+
+    for k_bond in prange(n_bonds):
+        node_i = bondlist[k_bond, 0]
+        node_j = bondlist[k_bond, 1]
+
+        xi_x = x[node_j, 0] - x[node_i, 0]
+        xi_y = x[node_j, 1] - x[node_i, 1]
+
+        xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+        xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+
+        xi = np.sqrt(xi_x**2 + xi_y**2)
+        y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
+        stretch = (y - xi) / xi
+
+        d[k_bond] = material_law(k_bond, stretch, d[k_bond])
+
+        f = (
+            stretch
+            * c[k_bond]
+            * (1 - d[k_bond])
+            * cell_volume
+            * surface_correction_factors[k_bond]
+        )
+        f_x[k_bond] = f * xi_eta_x / y
+        f_y[k_bond] = f * xi_eta_y / y
+
+    # Reduce bond forces to particle forces
+    for k_bond in range(n_bonds):
+        node_i = bondlist[k_bond, 0]
+        node_j = bondlist[k_bond, 1]
+
+        node_force[node_i, 0] += f_x[k_bond]
+        node_force[node_j, 0] -= f_x[k_bond]
+        node_force[node_i, 1] += f_y[k_bond]
+        node_force[node_j, 1] -= f_y[k_bond]
+
+    return node_force, d
 ```
 
 ### 6. Backend logic (CPU/GPU)
