@@ -68,7 +68,7 @@ def make_material_law(s0, s1, sc, beta):
 
 ### 5. Material law integration strategy
 
-Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time?
+Is it better to pass the material law as a variable to `compute_nodal_forces()` (i.e. inject it at runtime) or bake in at compile time? It is expected that optimal performance will be achieved when the material law is baked in at compile time, as `Numba` can inline `material_law()` and optimise it aggressively.
 
 ```python
 # Bake in at compile time
