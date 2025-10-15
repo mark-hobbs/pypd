@@ -238,6 +238,11 @@ def compute_nodal_forces_cpu(
 
 ### 6. Backend logic (CPU/GPU)
 
+
+### 7. `particles.compute_forces()` vs `model.compute_particle_forces()`?
+
+`model.compute_particle_forces()` is preferred since force computation is a system-level operation linking particles and bonds.
+
 ## Design notes
 
 -  `Bonds` are always derivable from `Particles`. 
