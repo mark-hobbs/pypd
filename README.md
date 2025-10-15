@@ -36,6 +36,20 @@ $ pipenv install --dev
 $ pipenv shell
 ```
 
+## Usage with `uv`
+
+Build and install `pypd`:
+
+```bash
+uv pip install -e .
+```
+
+Run examples:
+
+```bash
+uv run -m examples.crack_branching
+```
+
 ## Dependencies
 
 - NumPy
