@@ -71,7 +71,7 @@ class Simulation:
         """
         Single time step
         """
-        model.particles.compute_forces(model.bonds, self.cuda_available)
+        model.compute_particle_forces(self.cuda_available)
         model.particles.update_positions(self)
 
         if model.penetrators:
