@@ -159,10 +159,12 @@ def compute_nodal_forces_kernel(
     n_dimensions = node_force.shape[1]
 
     idx = cuda.grid(1)
-    node_i = idx // n_dimensions
-    dof = idx % n_dimensions
+    total = n_nodes * n_dimensions
 
-    node_force[node_i, dof] = 1.0
+    if idx < total:
+        node_i = idx // n_dimensions
+        dof = idx % n_dimensions
+        node_force[node_i, dof] = 1.0
 
 
 @njit
