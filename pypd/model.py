@@ -1,7 +1,6 @@
-
 import matplotlib.pyplot as plt
 
-from .kernels.particles import make_compute_nodal_forces
+from .kernels.particles import make_compute_nodal_forces, compute_nodal_forces_gpu
 
 
 class Model:
@@ -53,15 +52,27 @@ class Model:
         self.penetrators = penetrators
         self.observations = observations
 
-        self.compute_particle_forces_cpu = make_compute_nodal_forces(bonds.constitutive_law.calculate_bond_damage)
+        self.compute_particle_forces_cpu = make_compute_nodal_forces(
+            bonds.constitutive_law.calculate_bond_damage
+        )
 
     def compute_particle_forces(self, cuda_available):
         """
         TODO: write docstring
         """
         if cuda_available:
-            # compute_particle_forces_gpu()
-            print("I am here")
+            compute_nodal_forces_gpu(
+                self.particles.f,
+                self.particles.x,
+                self.particles.u,
+                self.particles.cell_volume,
+                self.bonds.bondlist,
+                self.bonds.d,
+                self.bonds.c,
+                self.bonds.f_x,
+                self.bonds.f_y,
+                self.bonds.surface_correction_factors,
+            )
         else:
             self.compute_particle_forces_cpu(
                 self.particles.f,

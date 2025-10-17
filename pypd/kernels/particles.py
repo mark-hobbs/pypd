@@ -9,7 +9,7 @@ from numba import njit, prange, cuda
 
 def make_compute_nodal_forces(material_law):
     """
-    Factory function that returns a JIT compiled compute_nodal_forces() 
+    Factory function that returns a JIT compiled compute_nodal_forces()
     with the given material law baked in
 
     Parameters
@@ -67,7 +67,7 @@ def make_compute_nodal_forces(material_law):
             Bond stiffness
 
         surface_correction_factors : np.ndarray(float, shape=(n_bonds,))
-        
+
         Returns
         -------
         node_force : np.ndarray(float, shape=(n_nodes, n_dimensions))
@@ -126,19 +126,43 @@ def make_compute_nodal_forces(material_law):
     return compute_nodal_forces_cpu
 
 
-def compute_nodal_forces_gpu():
+def compute_nodal_forces_gpu(
+    node_force, x, u, cell_volume, bondlist, d, c, f_x, f_y, surface_correction_factors
+):
     """
     Compute particle forces (gpu optimised)
     """
-    compute_nodal_forces_kernel[grid_size, block_size]()
+    BLOCKS_PER_GRID = node_force.shape[0]
+    THREADS_PER_BLOCK = 256
+    compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
+        node_force,
+        x,
+        u,
+        cell_volume,
+        bondlist,
+        d,
+        c,
+        f_x,
+        f_y,
+        surface_correction_factors,
+    )
 
 
 @cuda.jit
-def compute_nodal_forces_kernel():
+def compute_nodal_forces_kernel(
+    node_force, x, u, cell_volume, bondlist, d, c, f_x, f_y, surface_correction_factors
+):
     """
     CUDA kernel
     """
-    pass
+    n_nodes = node_force.shape[0]
+    n_dimensions = node_force.shape[1]
+
+    idx = cuda.grid(1)
+    node_i = idx // n_dimensions
+    dof = idx % n_dimensions
+
+    node_force[node_i, dof] = 1.0
 
 
 @njit
