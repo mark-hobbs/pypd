@@ -1,7 +1,7 @@
 """
 Example: 2D mixed-mode fracture [1]
 
-[1] García-Álvarez, V. O., Gettu, R., and Carol, I. (2012). Analysis of 
+[1] García-Álvarez, V. O., Gettu, R., and Carol, I. (2012). Analysis of
 mixed-mode fracture in concrete using interface elements and a cohesive crack
 model. Sadhana, 37(1):187–205.
 
@@ -211,13 +211,7 @@ def main():
         )
     )
 
-    nonlinear_model = pypd.Model(
-        particles,
-        bonds,
-        penetrators,
-        observations
-    )
-
+    nonlinear_model = pypd.Model(particles, bonds, penetrators, observations)
 
     simulation = pypd.Simulation(n_time_steps=100000, damping=0)
     simulation.run(nonlinear_model)

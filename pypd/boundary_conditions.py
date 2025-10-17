@@ -1,5 +1,3 @@
-
-
 class BoundaryConditions:
     """
     The main class for defining the boundary conditions
@@ -11,7 +9,7 @@ class BoundaryConditions:
         1 - the node is subject to a boundary condition
 
     unit_vector : ndarray(float, shape=(n_particles, n_dim))
-        Unit vector defining the direction of the boundary 
+        Unit vector defining the direction of the boundary
         condition
 
     magnitude : float

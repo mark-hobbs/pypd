@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from .kernels.bonds import build_bond_list, build_bond_length
@@ -76,7 +75,7 @@ class Bonds:
         constitutive_law : ConstitutiveLaw
 
         constitutive_law_params : dict, optional
-            Parameters for the constitutive law. If not provided, default 
+            Parameters for the constitutive law. If not provided, default
             parameters will be used.
 
         influence : InfluenceFunction

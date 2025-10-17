@@ -1,4 +1,3 @@
-
 import numpy as np
 from numba import njit
 
@@ -118,15 +117,15 @@ class Linear(ConstitutiveLaw):
     def _make_material_law(sc, damage_on):
         """
         Make material law
-        
-        Factory function that encapsulates model parameters and provides a 
+
+        Factory function that encapsulates model parameters and provides a
         consistent call interface for computing bond damage
 
         Parameters
         ----------
         sc : ndarray(float, shape=(n_bonds,))
             Critical stretch
-    
+
         damage_on : bool
 
         Returns
@@ -202,7 +201,7 @@ class Trilinear(ConstitutiveLaw):
 
         thickness : float
             For 2D problems, the thickness is equivalent to dx
-        
+
         Returns
         -------
         c : ndarray(float, shape=(n_bonds,))
@@ -266,8 +265,8 @@ class Trilinear(ConstitutiveLaw):
     def _make_material_law(s0, s1, sc, beta):
         """
         Make material law
-        
-        Factory function that encapsulates model parameters and provides a 
+
+        Factory function that encapsulates model parameters and provides a
         consistent call interface for computing bond damage
 
         Parameters
@@ -418,8 +417,8 @@ class NonLinear(ConstitutiveLaw):
     def _make_material_law(s0, sc, alpha, k):
         """
         Make material law
-        
-        Factory function that encapsulates model parameters and provides a 
+
+        Factory function that encapsulates model parameters and provides a
         consistent call interface for computing bond damage
 
         Parameters

@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from .tools import smooth_step_data
@@ -95,7 +94,7 @@ class Particles:
 
         dx : float
             Mesh resolution (only valid for regular meshes)
-        
+
         bc : BoundaryConditions
 
         material : Material
@@ -106,7 +105,7 @@ class Particles:
 
         nlist : ndarray(int, shape=(n_nodes, n_family_members)), optional
             Neighbour list for each particle, where each entry stores the
-            indices of particles interacting with the corresponding particle 
+            indices of particles interacting with the corresponding particle
             (n_nodes, n_family_members)
 
         Returns

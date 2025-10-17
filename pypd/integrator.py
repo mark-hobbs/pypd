@@ -62,7 +62,7 @@ class EulerCromer:
                 particles.bc.unit_vector,
                 simulation.damping,
                 simulation.dt,
-            ) 
+            )
         else:
             euler_cromer_cpu(
                 particles.f,

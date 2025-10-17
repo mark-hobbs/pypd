@@ -1,7 +1,7 @@
 """
 Example: 2D graphite ring under compression
 
-Zhang, X, et al. "Measurement of tensile strength of nuclear graphite based on 
+Zhang, X, et al. "Measurement of tensile strength of nuclear graphite based on
 ring compression test." Journal of Nuclear Materials 511 (2018): 134-140.
 -------------------------------------------
 

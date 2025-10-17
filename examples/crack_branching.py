@@ -4,7 +4,7 @@ Example: 2D plate with a notch (crack branching)
 
 See Section 5.2 Crack Branching in Homalite in [1]
 
-[1] Bobaru, F., & Zhang, G. (2015). Why do cracks branch? A peridynamic 
+[1] Bobaru, F., & Zhang, G. (2015). Why do cracks branch? A peridynamic
 investigation of dynamic brittle fracture. International Journal of Fracture,
 196, 59-98.
 
@@ -64,6 +64,7 @@ def build_boundary_conditions(particles, dx):
             bc_unit_vector[i, 1] = 1
 
     return bc_flag, bc_unit_vector
+
 
 def main():
     dx = 1e-3
