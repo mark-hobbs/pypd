@@ -132,10 +132,12 @@ class Bonds:
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
         
+        self.d_bondlist = None
         self.d_c = None
         self.d_d = None
         self.d_f_x = None
-        self.d_f_y = None 
+        self.d_f_y = None
+        self.d_surface_correction_factors = None
 
     def _build_bond_list(self, nlist):
         """
@@ -230,10 +232,12 @@ class Bonds:
         """
         Move arrays from host to device (GPU)
         """
+        self.d_bondlist = cuda.to_device(self.bondlist)
         self.d_c = cuda.to_device(self.c)
         self.d_d = cuda.to_device(self.d)
         self.d_f_x = cuda.to_device(self.f_x)
         self.d_f_y = cuda.to_device(self.f_y)
+        self.d_surface_correction_factors = cuda.to_device(self.surface_correction_factors)
 
     def _device_to_host(self):
         """
