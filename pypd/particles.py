@@ -161,44 +161,6 @@ class Particles:
         """
         return build_particle_families(self.x, self.horizon)
 
-    def compute_forces(self, bonds, cuda_available):
-        """
-        Compute particle forces
-
-        Parameters
-        ----------
-        bonds : Bonds
-
-        cuda_available : bool
-            Flag indicating if CUDA is available
-
-        Returns
-        -------
-        particles.f: ndarray (float)
-            Particle forces
-
-        Notes
-        -----
-        * Particle forces are modified in place
-
-        """
-        if cuda_available:
-            compute_nodal_forces_gpu()
-        else:
-            compute_nodal_forces_cpu(
-                self.f,
-                self.x,
-                self.u,
-                self.cell_volume,
-                bonds.bondlist,
-                bonds.d,
-                bonds.c,
-                bonds.f_x,
-                bonds.f_y,
-                bonds.constitutive_law.calculate_bond_damage,
-                bonds.surface_correction_factors,
-            )
-
     def compute_damage(self, bonds):
         """
         Compute particle damage

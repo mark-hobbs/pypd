@@ -58,20 +58,34 @@ class Model:
 
     def compute_particle_forces(self, cuda_available):
         """
-        TODO: write docstring
+        Compute particle forces
+
+        Parameters
+        ----------
+        cuda_available : bool
+            Flag indicating if CUDA is available
+
+        Returns
+        -------
+        particles.f: ndarray (float)
+            Particle forces
+
+        Notes
+        -----
+        * Particle forces are modified in place
         """
         if cuda_available:
             compute_nodal_forces_gpu(
-                self.particles.f,
-                self.particles.x,
-                self.particles.u,
+                self.particles.d_f,
+                self.particles.d_x,
+                self.particles.d_u,
                 self.particles.cell_volume,
-                self.bonds.bondlist,
-                self.bonds.d,
-                self.bonds.c,
-                self.bonds.f_x,
-                self.bonds.f_y,
-                self.bonds.surface_correction_factors,
+                self.bonds.d_bondlist,
+                self.bonds.d_d,
+                self.bonds.d_c,
+                self.bonds.d_f_x,
+                self.bonds.d_f_y,
+                self.bonds.d_surface_correction_factors,
             )
         else:
             self.compute_particle_forces_cpu(
