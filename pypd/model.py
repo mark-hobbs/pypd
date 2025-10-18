@@ -147,5 +147,5 @@ class Model:
         """
         from numba import cuda
 
-        cuda.to_host(self.particles.x)
-        cuda.to_host(self.particles.u)
+        cuda.copy_to_host(self.particles.x)
+        cuda.copy_to_host(self.particles.u)
