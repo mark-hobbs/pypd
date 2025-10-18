@@ -1,4 +1,5 @@
 import numpy as np
+from numba import cuda
 
 from .kernels.bonds import build_bond_list, build_bond_length
 from .influence import Constant
@@ -130,6 +131,11 @@ class Bonds:
             self.constitutive_law = constitutive_law(
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
+        
+        self.d_c = None
+        self.d_d = None
+        self.d_f_x = None
+        self.d_f_y = None 
 
     def _build_bond_list(self, nlist):
         """
@@ -219,3 +225,18 @@ class Bonds:
         n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
 
         return reduced_bondlist, n_family_members
+    
+    def _host_to_device(self):
+        """
+        Move arrays from host to device (GPU)
+        """
+        self.d_c = cuda.to_device(self.c)
+        self.d_d = cuda.to_device(self.d)
+        self.d_f_x = cuda.to_device(self.f_x)
+        self.d_f_y = cuda.to_device(self.f_y)
+
+    def _device_to_host(self):
+        """
+        Move arrays from device (GPU) to host
+        """
+        self.d_d.copy_to_host(self.d)

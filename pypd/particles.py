@@ -1,4 +1,5 @@
 import numpy as np
+from numba import cuda
 
 from .tools import smooth_step_data
 from .kernels.particles import (
@@ -143,6 +144,14 @@ class Particles:
         self.damage = np.zeros(self.n_nodes)
         self.W = np.zeros(self.n_nodes)
 
+        self.d_x = None
+        self.d_u = None
+        self.d_v = None
+        self.d_a = None
+        self.d_f = None
+        self.d_bc_flag = None
+        self.d_bc_unit_vector = None
+
     def _build_particle_families(self):
         """
         Build particle families
@@ -160,6 +169,24 @@ class Particles:
         -----
         """
         return build_particle_families(self.x, self.horizon)
+    
+    def _host_to_device(self):
+        """
+        Move arrays from host to device (GPU)
+        """
+        self.d_x = cuda.to_device(self.x)
+        self.d_u = cuda.to_device(self.u)
+        self.d_v = cuda.to_device(self.v)
+        self.d_a = cuda.to_device(self.a)
+        self.d_f = cuda.to_device(self.f)
+        self.d_bc_flag = cuda.to_device(self.bc.flag)
+        self.d_bc_unit_vector = cuda.to_device(self.bc.unit_vector)
+
+    def _device_to_host(self):
+        """
+        Move arrays from device (GPU) to host
+        """
+        self.d_u.copy_to_host(self.u)
 
     def compute_damage(self, bonds):
         """

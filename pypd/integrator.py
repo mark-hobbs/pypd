@@ -52,14 +52,14 @@ class EulerCromer:
         """
         if simulation.cuda_available:
             euler_cromer_gpu(
-                particles.f,
-                particles.u,
-                particles.v,
-                particles.a,
+                particles.d_f,
+                particles.d_u,
+                particles.d_v,
+                particles.d_a,
                 particles.material.density,
-                particles.bc.flag,
+                particles.d_bc_flag,
                 particles.bc.i_magnitude,
-                particles.bc.unit_vector,
+                particles.d_bc_unit_vector,
                 simulation.damping,
                 simulation.dt,
             )
