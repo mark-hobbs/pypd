@@ -1,6 +1,7 @@
 """
 Small, highly optimised computational units written using Numba
 """
+import math
 
 import numpy as np
 import sklearn.neighbors as neighbors
@@ -132,7 +133,7 @@ def compute_nodal_forces_gpu(
     """
     Compute particle forces (gpu optimised)
     """
-    BLOCKS_PER_GRID = node_force.shape[0]
+    BLOCKS_PER_GRID = bondlist.shape[0]
     THREADS_PER_BLOCK = 256
     compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
         node_force,
@@ -150,11 +151,15 @@ def compute_nodal_forces_gpu(
 
 @cuda.jit
 def compute_nodal_forces_kernel(
-    node_force, x, u, cell_volume, bondlist, d, c, f_x, f_y, surface_correction_factors
+    node_force, x, u, cell_volume, nlist, d, c, f_x, f_y, surface_correction_factors
 ):
     """
-    CUDA kernel
-    """
+    TODO: 
+     - How do I reset node_forces to 0 after every time step?
+     - bondlist data structure is not suitable for GPU
+
+    PLACEHOLDER
+    ------------
     n_nodes = node_force.shape[0]
     n_dimensions = node_force.shape[1]
 
@@ -165,6 +170,61 @@ def compute_nodal_forces_kernel(
         node_i = idx // n_dimensions
         dof = idx % n_dimensions
         node_force[node_i, dof] = 1.0
+    """
+
+    shared_x = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+    shared_y = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+
+    node_i = cuda.blockIdx.x
+    thread_id = cuda.threadIdx.x
+    n_family = nlist.shape[1]
+
+    val_x = 0.0
+    val_y = 0.0
+
+    if thread_id < n_family:
+        node_j = nlist[node_i, thread_id]
+
+        xi_x = x[node_j, 0] - x[node_i, 0]
+        xi_y = x[node_j, 1] - x[node_i, 1]
+
+        xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+        xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+
+        xi = math.sqrt(xi_x**2 + xi_y**2)
+        y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
+        stretch = (y - xi) / xi
+
+        d[node_i, thread_id] = 1.0  # placeholder
+
+        f = (
+            stretch
+            * c[node_i, thread_id]
+            * (1 - d[node_i, thread_id])
+            * cell_volume
+            * surface_correction_factors[node_i, thread_id]
+        )
+
+        val_x = f * xi_eta_x / y
+        val_y = f * xi_eta_y / y
+
+    shared_x[thread_id] = val_x
+    shared_y[thread_id] = val_y
+
+    cuda.syncthreads()
+
+    # Reduction
+    stride = THREADS_PER_BLOCK // 2
+    while stride > 0:
+        if thread_id < stride:
+            shared_x[thread_id] += shared_x[thread_id + stride]
+            shared_y[thread_id] += shared_y[thread_id + stride]
+        cuda.syncthreads()
+        stride //= 2
+
+    if thread_id == 0:
+        node_force[node_i, 0] = shared_x[0]
+        node_force[node_i, 1] = shared_y[0]
 
 
 @njit

@@ -231,6 +231,9 @@ class Bonds:
     def _host_to_device(self):
         """
         Move arrays from host to device (GPU)
+
+        TODO:
+         - bondlist type data structure not suitable for GPU acceleration 
         """
         self.d_bondlist = cuda.to_device(self.bondlist)
         self.d_c = cuda.to_device(self.c)
