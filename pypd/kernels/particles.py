@@ -25,7 +25,7 @@ def make_compute_nodal_forces(material_law):
         A function that computes nodal forces
 
     TODO: while the cuda_available flag could be injected into this function,
-    hardware controls belongs to Simulation not Model
+    hardware control belongs to Simulation not Model
     """
 
     @njit(parallel=True, fastmath=True)
@@ -153,22 +153,7 @@ def compute_nodal_forces_kernel(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
 ):
     """
-    TODO:
-     - How do I reset node_forces to 0 after every time step?
-     - bondlist data structure is not suitable for GPU
-
-    PLACEHOLDER
-    ------------
-    n_nodes = node_force.shape[0]
-    n_dimensions = node_force.shape[1]
-
-    idx = cuda.grid(1)
-    total = n_nodes * n_dimensions
-
-    if idx < total:
-        node_i = idx // n_dimensions
-        dof = idx % n_dimensions
-        node_force[node_i, dof] = 1.0
+    One block per node approach
     """
 
     shared_x = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
