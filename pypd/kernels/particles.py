@@ -1,6 +1,7 @@
 """
 Small, highly optimised computational units written using Numba
 """
+
 import math
 
 import numpy as np
@@ -128,33 +129,31 @@ def make_compute_nodal_forces(material_law):
 
 
 def compute_nodal_forces_gpu(
-    node_force, x, u, cell_volume, bondlist, d, c, f_x, f_y, surface_correction_factors
+    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
 ):
     """
     Compute particle forces (gpu optimised)
     """
-    BLOCKS_PER_GRID = bondlist.shape[0]
+    BLOCKS_PER_GRID = nlist.shape[0]
     THREADS_PER_BLOCK = 256
     compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
         node_force,
         x,
         u,
         cell_volume,
-        bondlist,
+        nlist,
         d,
         c,
-        f_x,
-        f_y,
         surface_correction_factors,
     )
 
 
 @cuda.jit
 def compute_nodal_forces_kernel(
-    node_force, x, u, cell_volume, nlist, d, c, f_x, f_y, surface_correction_factors
+    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
 ):
     """
-    TODO: 
+    TODO:
      - How do I reset node_forces to 0 after every time step?
      - bondlist data structure is not suitable for GPU
 

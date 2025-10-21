@@ -169,7 +169,7 @@ class Particles:
         -----
         """
         return build_particle_families(self.x, self.horizon)
-    
+
     def _host_to_device(self):
         """
         Move arrays from host to device (GPU)

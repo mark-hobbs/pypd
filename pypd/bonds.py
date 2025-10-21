@@ -131,7 +131,7 @@ class Bonds:
             self.constitutive_law = constitutive_law(
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
-        
+
         self.d_bondlist = None
         self.d_c = None
         self.d_d = None
@@ -227,20 +227,22 @@ class Bonds:
         n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
 
         return reduced_bondlist, n_family_members
-    
+
     def _host_to_device(self):
         """
         Move arrays from host to device (GPU)
 
         TODO:
-         - bondlist type data structure not suitable for GPU acceleration 
+         - bondlist type data structure not suitable for GPU acceleration
         """
         self.d_bondlist = cuda.to_device(self.bondlist)
         self.d_c = cuda.to_device(self.c)
         self.d_d = cuda.to_device(self.d)
         self.d_f_x = cuda.to_device(self.f_x)
         self.d_f_y = cuda.to_device(self.f_y)
-        self.d_surface_correction_factors = cuda.to_device(self.surface_correction_factors)
+        self.d_surface_correction_factors = cuda.to_device(
+            self.surface_correction_factors
+        )
 
     def _device_to_host(self):
         """
