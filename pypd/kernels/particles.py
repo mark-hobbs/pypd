@@ -127,6 +127,7 @@ def make_compute_nodal_forces(material_law):
 
     return compute_nodal_forces_cpu
 
+THREADS_PER_BLOCK = 256
 
 def compute_nodal_forces_gpu(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
@@ -135,9 +136,7 @@ def compute_nodal_forces_gpu(
     Compute particle forces (gpu optimised)
     """
     BLOCKS_PER_GRID = nlist.shape[0]
-    THREADS_PER_BLOCK = 256
     compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
-        THREADS_PER_BLOCK,
         node_force,
         x,
         u,
@@ -151,7 +150,7 @@ def compute_nodal_forces_gpu(
 
 @cuda.jit
 def compute_nodal_forces_kernel(
-    THREADS_PER_BLOCK, node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
 ):
     """
     One block per node approach
