@@ -137,6 +137,7 @@ def compute_nodal_forces_gpu(
     BLOCKS_PER_GRID = nlist.shape[0]
     THREADS_PER_BLOCK = 256
     compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
+        THREADS_PER_BLOCK,
         node_force,
         x,
         u,
@@ -150,7 +151,7 @@ def compute_nodal_forces_gpu(
 
 @cuda.jit
 def compute_nodal_forces_kernel(
-    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+    THREADS_PER_BLOCK, node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
 ):
     """
     One block per node approach
