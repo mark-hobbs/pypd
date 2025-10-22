@@ -127,7 +127,7 @@ def make_compute_nodal_forces(material_law):
 
     return compute_nodal_forces_cpu
 
-THREADS_PER_BLOCK = 256
+THREADS_PER_BLOCK = 256     # Clean this up
 
 def compute_nodal_forces_gpu(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
@@ -179,7 +179,7 @@ def compute_nodal_forces_kernel(
         y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
         stretch = (y - xi) / xi
 
-        d[node_i, thread_id] = 1.0  # placeholder
+        d[node_i, thread_id] = 0.0  # placeholder
 
         f = (
             stretch

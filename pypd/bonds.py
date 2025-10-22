@@ -252,4 +252,5 @@ class Bonds:
         """
         Move arrays from device (GPU) to host
         """
-        self.d_d.copy_to_host(self.d)
+        # self.d_d.copy_to_host(self.d)
+        return 0
