@@ -80,11 +80,9 @@ class Model:
                 self.particles.d_x,
                 self.particles.d_u,
                 self.particles.cell_volume,
-                self.bonds.d_bondlist,
+                self.bonds.d_bondlist,  # TODO: particles.nlist
                 self.bonds.d_d,
                 self.bonds.d_c,
-                self.bonds.d_f_x,
-                self.bonds.d_f_y,
                 self.bonds.d_surface_correction_factors,
             )
         else:

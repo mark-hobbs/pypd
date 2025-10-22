@@ -1,10 +1,10 @@
 import numpy as np
 from numba import cuda
 
-from .kernels.bonds import build_bond_list, build_bond_length
+from .kernels.bonds import build_bond_list, build_bond_length, map_to_neighbour_list
 from .influence import Constant
 from .constitutive_law import Linear
-from .tools import determine_intersection, rebuild_node_families
+from .tools import determine_intersection, rebuild_neighbour_list
 
 
 class Bonds:
@@ -98,8 +98,8 @@ class Bonds:
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
 
         if notch is not None:
-            self.bondlist, particles.n_family_members = self._build_notch(
-                particles, notch
+            self.bondlist, particles.nlist, particles.n_family_members = (
+                self._build_notch(particles, notch)
             )
 
         self.n_bonds = len(self.bondlist)
@@ -132,11 +132,8 @@ class Bonds:
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
 
-        self.d_bondlist = None
         self.d_c = None
         self.d_d = None
-        self.d_f_x = None
-        self.d_f_y = None
         self.d_surface_correction_factors = None
 
     def _build_bond_list(self, nlist):
@@ -223,26 +220,33 @@ class Bonds:
             if intersect:
                 mask.append(k_bond)
 
-        reduced_bondlist = np.delete(self.bondlist, mask, axis=0)
-        n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
+        filtered_bondlist = np.delete(self.bondlist, mask, axis=0)
+        filtered_nlist, filtered_n_family_members = rebuild_neighbour_list(
+            n_nodes, filtered_bondlist
+        )
 
-        return reduced_bondlist, n_family_members
+        return filtered_bondlist, filtered_nlist, filtered_n_family_members
+
+    def _map_to_neighbour_list(self, property):
+        """
+        Map a per-bond property (n_bonds,) to neighbour arrays
+        (n_nodes, max_n_neighbours)
+        """
+        return map_to_neighbour_list(self.bondlist, property)
 
     def _host_to_device(self):
         """
         Move arrays from host to device (GPU)
-
-        TODO:
-         - bondlist type data structure not suitable for GPU acceleration
         """
-        self.d_bondlist = cuda.to_device(self.bondlist)
-        self.d_c = cuda.to_device(self.c)
-        self.d_d = cuda.to_device(self.d)
-        self.d_f_x = cuda.to_device(self.f_x)
-        self.d_f_y = cuda.to_device(self.f_y)
-        self.d_surface_correction_factors = cuda.to_device(
+        c = self._map_to_neighbour_list(self.c)
+        d = self._map_to_neighbour_list(self.d)
+        surface_correction_factors = self._map_to_neighbour_list(
             self.surface_correction_factors
         )
+
+        self.d_c = cuda.to_device(c)
+        self.d_d = cuda.to_device(d)
+        self.d_surface_correction_factors = cuda.to_device(surface_correction_factors)
 
     def _device_to_host(self):
         """

@@ -18,9 +18,33 @@ def build_bond_list(nlist):
     return bondlist
 
 
+def map_to_neighbour_list(bondlist, property):
+    """
+    Map a per-bond property (n_bonds,) to neighbour arrays 
+    (n_nodes, max_n_neighbours)
+    """
+    n_nodes = bondlist.max() + 1
+    property_lists = [[] for _ in range(n_nodes)]
+
+    for k, (i, j) in enumerate(bondlist):
+        p = property[k]
+        property_lists[i].append(p)
+        property_lists[j].append(p)
+
+    max_n_neighbours = max(len(lst) for lst in property_lists)
+    property_array = np.zeros((n_nodes, max_n_neighbours), dtype=np.float32)
+
+    for i, lst in enumerate(property_lists):
+        property_array[i, :len(lst)] = lst
+
+    return property_array
+
+
 @njit(parallel=True)
 def build_bond_length(x, bondlist):
-    """Build the bond length array"""
+    """
+    Build the bond length array
+    """
     n_bonds = np.shape(bondlist)[0]
     xi = np.zeros(n_bonds)
 

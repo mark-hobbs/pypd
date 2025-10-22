@@ -152,6 +152,22 @@ class Particles:
         self.d_bc_flag = None
         self.d_bc_unit_vector = None
 
+    @property
+    def nlist(self):
+        return self._nlist
+
+    @nlist.setter
+    def nlist(self, value):
+        self._nlist = value
+
+    @property
+    def n_family_members(self):
+        return self._n_family_members
+
+    @n_family_members.setter
+    def n_family_members(self, value):
+        self._n_family_members = value
+
     def _build_particle_families(self):
         """
         Build particle families
@@ -174,6 +190,7 @@ class Particles:
         """
         Move arrays from host to device (GPU)
         """
+        self.d_nlist = cuda.to_device(self.nlist)
         self.d_x = cuda.to_device(self.x)
         self.d_u = cuda.to_device(self.u)
         self.d_v = cuda.to_device(self.v)
