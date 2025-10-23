@@ -1,6 +1,7 @@
 """
 Small, highly optimised computational units written using Numba
 """
+import math
 
 import numpy as np
 import sklearn.neighbors as neighbors
@@ -173,8 +174,8 @@ def compute_nodal_forces_kernel(
         xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
         xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
 
-        xi = (xi_x**2 + xi_y**2)**0.5
-        y = (xi_eta_x**2 + xi_eta_y**2)**0.5
+        xi = math.sqrt(xi_x**2 + xi_y**2)
+        y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
         stretch = (y - xi) / xi
 
         d[node_i, thread_id] = 0.0  # placeholder
