@@ -2,8 +2,6 @@
 Small, highly optimised computational units written using Numba
 """
 
-import math
-
 import numpy as np
 import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
@@ -135,7 +133,7 @@ def compute_nodal_forces_gpu(
     """
     Compute particle forces (gpu optimised)
     """
-    BLOCKS_PER_GRID = nlist.shape[0]
+    BLOCKS_PER_GRID = x.shape[0]
     compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
         node_force,
         x,
@@ -175,8 +173,8 @@ def compute_nodal_forces_kernel(
         xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
         xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
 
-        xi = math.sqrt(xi_x**2 + xi_y**2)
-        y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
+        xi = (xi_x**2 + xi_y**2)**0.5
+        y = (xi_eta_x**2 + xi_eta_y**2)**0.5
         stretch = (y - xi) / xi
 
         d[node_i, thread_id] = 0.0  # placeholder
