@@ -4,8 +4,6 @@ from numba import cuda
 from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
-    make_compute_nodal_forces,
-    compute_nodal_forces_gpu,
     compute_node_damage,
     compute_strain_energy_density,
 )
