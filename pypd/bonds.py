@@ -251,6 +251,10 @@ class Bonds:
     def _device_to_host(self):
         """
         Move arrays from device (GPU) to host
+
+        TODO:
+        - Map device arrays to bondlist-shaped host arrays 
+        - TypeError: incompatible dtype: float32 vs. float64
         """
         # self.d_d.copy_to_host(self.d)
         return 0
