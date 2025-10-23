@@ -84,7 +84,6 @@ def main():
     bonds = pypd.Bonds(particles, influence=pypd.Constant, notch=notch)
     model = pypd.Model(particles, bonds)
 
-
     simulation = pypd.Simulation(n_time_steps=5000, damping=0)
     simulation.run(model)
     model.save_state_fig(fig_title="crack-branching", dsf=100)

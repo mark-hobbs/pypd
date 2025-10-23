@@ -115,6 +115,7 @@ def rebuild_node_families(n_nodes, bondlist):
 
     return n_family_members
 
+
 def rebuild_neighbour_list(n_nodes, bondlist):
 
     nlist = [[] for _ in range(n_nodes)]
@@ -127,7 +128,7 @@ def rebuild_neighbour_list(n_nodes, bondlist):
 
     nlist_array = -np.ones((n_nodes, max_n_family_members), dtype=int)
     for i, neighs in enumerate(nlist):
-        nlist_array[i, :len(neighs)] = neighs
+        nlist_array[i, : len(neighs)] = neighs
 
     return nlist_array, n_family_members
 

@@ -1,6 +1,7 @@
 """
 Small, highly optimised computational units written using Numba
 """
+
 import math
 
 import numpy as np
@@ -126,7 +127,9 @@ def make_compute_nodal_forces(material_law):
 
     return compute_nodal_forces_cpu
 
-THREADS_PER_BLOCK = 256     # Clean this up
+
+THREADS_PER_BLOCK = 256  # Clean this up
+
 
 def compute_nodal_forces_gpu(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors

@@ -20,7 +20,7 @@ def build_bond_list(nlist):
 
 def map_to_neighbour_list(bondlist, property):
     """
-    Map a per-bond property (n_bonds,) to neighbour arrays 
+    Map a per-bond property (n_bonds,) to neighbour arrays
     (n_nodes, max_n_neighbours)
     """
     n_nodes = bondlist.max() + 1
@@ -35,7 +35,7 @@ def map_to_neighbour_list(bondlist, property):
     property_array = np.zeros((n_nodes, max_n_neighbours), dtype=np.float32)
 
     for i, lst in enumerate(property_lists):
-        property_array[i, :len(lst)] = lst
+        property_array[i, : len(lst)] = lst
 
     return property_array
 

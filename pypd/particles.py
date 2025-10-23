@@ -48,7 +48,7 @@ class Particles:
 
     nlist : ndarray(int, shape=(n_nodes, max_n_family_members))
         Neighbour list for each particle, where each entry stores the indices
-        of particles interacting with the corresponding particle. Padding 
+        of particles interacting with the corresponding particle. Padding
         entries are indicated by -1.
 
     n_family_members: ndarray(int, shape=(n_nodes,))
