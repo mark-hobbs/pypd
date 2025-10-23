@@ -160,36 +160,40 @@ def compute_nodal_forces_kernel(
 
     node_i = cuda.blockIdx.x
     thread_id = cuda.threadIdx.x
-    n_family = nlist.shape[1]
+    max_n_family_members = nlist.shape[1]
 
     val_x = 0.0
     val_y = 0.0
 
-    if thread_id < n_family:
+    if thread_id < max_n_family_members:
         node_j = nlist[node_i, thread_id]
 
-        xi_x = x[node_j, 0] - x[node_i, 0]
-        xi_y = x[node_j, 1] - x[node_i, 1]
+        if node_j == -1 or node_j == node_i:
+            val_x = 0.0
+            val_y = 0.0
+        else:
+            xi_x = x[node_j, 0] - x[node_i, 0]
+            xi_y = x[node_j, 1] - x[node_i, 1]
 
-        xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
-        xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+            xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+            xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
 
-        xi = math.sqrt(xi_x**2 + xi_y**2)
-        y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
-        stretch = (y - xi) / xi
+            xi = math.sqrt(xi_x**2 + xi_y**2)
+            y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
+            stretch = (y - xi) / xi
 
-        d[node_i, thread_id] = 0.0  # placeholder
+            d[node_i, thread_id] = 0.0  # placeholder
 
-        f = (
-            stretch
-            * c[node_i, thread_id]
-            * (1 - d[node_i, thread_id])
-            * cell_volume
-            * surface_correction_factors[node_i, thread_id]
-        )
+            f = (
+                stretch
+                * c[node_i, thread_id]
+                * (1 - d[node_i, thread_id])
+                * cell_volume
+                * surface_correction_factors[node_i, thread_id]
+            )
 
-        val_x = f * xi_eta_x / y
-        val_y = f * xi_eta_y / y
+            val_x = f * xi_eta_x / y
+            val_y = f * xi_eta_y / y
 
     shared_x[thread_id] = val_x
     shared_y[thread_id] = val_y
