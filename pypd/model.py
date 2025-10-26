@@ -56,6 +56,14 @@ class Model:
             bonds.constitutive_law.calculate_bond_damage
         )
 
+    def _host_to_device(self):
+        self.particles._host_to_device()
+        self.bonds._host_to_device()
+
+    def _device_to_host(self):
+        self.particles._device_to_host()
+        self.bonds._device_to_host()
+    
     def compute_particle_forces(self, cuda_available):
         """
         Compute particle forces

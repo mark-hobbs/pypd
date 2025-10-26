@@ -47,8 +47,7 @@ class Simulation:
         Run the simulation
         """
         if self.cuda_available:
-            model.particles._host_to_device()
-            model.bonds._host_to_device()
+            model._host_to_device()
 
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
@@ -63,8 +62,7 @@ class Simulation:
                     observation.record_history(self.i_time_step, model.particles.u)
 
         if self.cuda_available:
-            model.particles._device_to_host()
-            model.bonds._device_to_host()
+            model._device_to_host()
 
         if self.animation:
             self.animation.generate_animation()
