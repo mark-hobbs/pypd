@@ -9,6 +9,9 @@ import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
 
 
+THREADS_PER_BLOCK = 256  # This should not be hardcoded
+
+
 def make_compute_nodal_forces(material_law):
     """
     Factory function that returns a JIT compiled compute_nodal_forces()
@@ -126,9 +129,6 @@ def make_compute_nodal_forces(material_law):
         return node_force, d
 
     return compute_nodal_forces_cpu
-
-
-THREADS_PER_BLOCK = 256  # Clean this up
 
 
 def compute_nodal_forces_gpu(
