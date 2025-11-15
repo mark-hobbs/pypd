@@ -185,7 +185,7 @@ def compute_nodal_forces_kernel(
             y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
             stretch = (y - xi) / xi
 
-            d[node_i, thread_id] = 0.0  # placeholder
+            d[node_i, thread_id] = 0.0  # placeholder: material_law(s, d[node_i, thread_id])
 
             f = (
                 stretch
