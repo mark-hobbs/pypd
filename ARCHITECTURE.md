@@ -236,16 +236,26 @@ def compute_nodal_forces_cpu(
     return node_force, d
 ```
 
-### 6. Backend logic (CPU/GPU)
-
-
-### 7. `particles.compute_forces()` vs `model.compute_particle_forces()`?
+### 6. `particles.compute_forces()` vs `model.compute_particle_forces()`?
 
 `model.compute_particle_forces()` is preferred since force computation is a system-level operation linking particles and bonds.
 
+### 7. Backend logic (CPU/GPU)
+
+- The `Model` must be agnostic to the execution environment (CPU vs GPU).
+- All device-specific behaviour (CUDA kernels, memory transfers, hardware checks) is encapsulated by the `Backend`.
+- The `Simulation` interacts with the backend through a clean interface, e.g. `simulation.backend.compute_forces(model)`
+
+| Concept | Current | Refactored |
+| ------- | ------- | ---------- |
+| GPU logic | Split across `Model` and `Simulation` | Fully contained in `Backend` |
+| `Model` responsibilities | Mixes data, physics and execution details | Only contains data and visualisation |
+| `Simulation` responsibilities | Handles both time-stepping and GPU/device logic | Focuses purely on time-stepping; delegates all device concerns to `Backend` |
+| Extensibility | Difficult to add new backends (JAX, Warp etc.) | Straightforward to implement new `Backend` classes without modifying `Model` or `Simulation` |
+
 ## Design notes
 
--  `Bonds` are always derivable from `Particles`. 
+- `Bonds` are always derivable from `Particles`. 
 - Both `Particles` and `Bonds` should primarily be data containers (with light validation), leaving numerical methods and orchestration to `Model` and `Simulation`.
 - Are shallow or deep classes preferable?
 - Avoid "parameter drilling" where a parameter is passed down through multiple layers of function/method calls, even when the intermediate layers do not use the parameter - they just pass it along.
