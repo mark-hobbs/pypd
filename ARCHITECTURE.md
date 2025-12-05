@@ -253,6 +253,15 @@ def compute_nodal_forces_cpu(
 | `Simulation` responsibilities | Handles both time-stepping and GPU/device logic | Focuses purely on time-stepping; delegates all device concerns to `Backend` |
 | Extensibility | Difficult to add new backends (JAX, Warp etc.) | Straightforward to implement new `Backend` classes without modifying `Model` or `Simulation` |
 
+### 8. Kernel *specialisation* via function factories
+
+Avoid `if/else` branching inside the GPU code and instead generate a branch-free specialised kernel
+
+```python
+material_law = make_material_law(sc)
+compute_nodal_forces_kernel = make_compute_nodal_forces_kernel(material_law)
+```
+
 ## Design notes
 
 - `Bonds` are always derivable from `Particles`. 
