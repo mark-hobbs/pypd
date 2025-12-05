@@ -1,10 +1,10 @@
-
 import numpy as np
+from numba import cuda
 
-from .kernels.bonds import build_bond_list, build_bond_length
+from .kernels.bonds import build_bond_list, build_bond_length, map_to_neighbour_list
 from .influence import Constant
 from .constitutive_law import Linear
-from .tools import determine_intersection, rebuild_node_families
+from .tools import determine_intersection, rebuild_neighbour_list
 
 
 class Bonds:
@@ -76,7 +76,7 @@ class Bonds:
         constitutive_law : ConstitutiveLaw
 
         constitutive_law_params : dict, optional
-            Parameters for the constitutive law. If not provided, default 
+            Parameters for the constitutive law. If not provided, default
             parameters will be used.
 
         influence : InfluenceFunction
@@ -98,8 +98,8 @@ class Bonds:
         self.bondlist = bondlist or self._build_bond_list(particles.nlist)
 
         if notch is not None:
-            self.bondlist, particles.n_family_members = self._build_notch(
-                particles, notch
+            self.bondlist, particles.nlist, particles.n_family_members = (
+                self._build_notch(particles, notch)
             )
 
         self.n_bonds = len(self.bondlist)
@@ -131,6 +131,10 @@ class Bonds:
             self.constitutive_law = constitutive_law(
                 particles, c=self.c, t=particles.dx, **constitutive_law_params
             )
+
+        self.d_c = None
+        self.d_d = None
+        self.d_surface_correction_factors = None
 
     def _build_bond_list(self, nlist):
         """
@@ -216,7 +220,41 @@ class Bonds:
             if intersect:
                 mask.append(k_bond)
 
-        reduced_bondlist = np.delete(self.bondlist, mask, axis=0)
-        n_family_members = rebuild_node_families(n_nodes, reduced_bondlist)
+        filtered_bondlist = np.delete(self.bondlist, mask, axis=0)
+        filtered_nlist, filtered_n_family_members = rebuild_neighbour_list(
+            n_nodes, filtered_bondlist
+        )
 
-        return reduced_bondlist, n_family_members
+        return filtered_bondlist, filtered_nlist, filtered_n_family_members
+
+    def _map_to_neighbour_list(self, property):
+        """
+        Map a per-bond property (n_bonds,) to neighbour arrays
+        (n_nodes, max_n_neighbours)
+        """
+        return map_to_neighbour_list(self.bondlist, property)
+
+    def _host_to_device(self):
+        """
+        Move arrays from host to device (GPU)
+        """
+        c = self._map_to_neighbour_list(self.c)
+        d = self._map_to_neighbour_list(self.d)
+        surface_correction_factors = self._map_to_neighbour_list(
+            self.surface_correction_factors
+        )
+
+        self.d_c = cuda.to_device(c)
+        self.d_d = cuda.to_device(d)
+        self.d_surface_correction_factors = cuda.to_device(surface_correction_factors)
+
+    def _device_to_host(self):
+        """
+        Move arrays from device (GPU) to host
+
+        TODO:
+        - Map device arrays to bondlist-shaped host arrays
+        - TypeError: incompatible dtype: float32 vs. float64
+        """
+        # self.d_d.copy_to_host(self.d)
+        return 0

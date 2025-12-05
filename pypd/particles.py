@@ -1,11 +1,9 @@
-
 import numpy as np
+from numba import cuda
 
 from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
-    compute_nodal_forces_cpu,
-    compute_nodal_forces_gpu,
     compute_node_damage,
     compute_strain_energy_density,
 )
@@ -46,9 +44,10 @@ class Particles:
     material : Material
         Material properties
 
-    nlist : ndarray(int, shape=(n_nodes, n_family_members))
+    nlist : ndarray(int, shape=(n_nodes, max_n_family_members))
         Neighbour list for each particle, where each entry stores the indices
-        of particles interacting with the corresponding particle (n_nodes, n_family_members)
+        of particles interacting with the corresponding particle. Padding
+        entries are indicated by -1.
 
     n_family_members: ndarray(int, shape=(n_nodes,))
         Array specifying the number of family members for each particle
@@ -95,7 +94,7 @@ class Particles:
 
         dx : float
             Mesh resolution (only valid for regular meshes)
-        
+
         bc : BoundaryConditions
 
         material : Material
@@ -106,7 +105,7 @@ class Particles:
 
         nlist : ndarray(int, shape=(n_nodes, n_family_members)), optional
             Neighbour list for each particle, where each entry stores the
-            indices of particles interacting with the corresponding particle 
+            indices of particles interacting with the corresponding particle
             (n_nodes, n_family_members)
 
         Returns
@@ -129,6 +128,7 @@ class Particles:
         self.horizon = m * dx
 
         self.material = material
+        # compute_nodal_forces_cpu = make_compute_nodal_forces()
 
         self.nlist = nlist
         if self.nlist is None:
@@ -142,6 +142,30 @@ class Particles:
 
         self.damage = np.zeros(self.n_nodes)
         self.W = np.zeros(self.n_nodes)
+
+        self.d_x = None
+        self.d_u = None
+        self.d_v = None
+        self.d_a = None
+        self.d_f = None
+        self.d_bc_flag = None
+        self.d_bc_unit_vector = None
+
+    @property
+    def nlist(self):
+        return self._nlist
+
+    @nlist.setter
+    def nlist(self, value):
+        self._nlist = value
+
+    @property
+    def n_family_members(self):
+        return self._n_family_members
+
+    @n_family_members.setter
+    def n_family_members(self, value):
+        self._n_family_members = value
 
     def _build_particle_families(self):
         """
@@ -161,43 +185,24 @@ class Particles:
         """
         return build_particle_families(self.x, self.horizon)
 
-    def compute_forces(self, bonds, cuda_available):
+    def _host_to_device(self):
         """
-        Compute particle forces
-
-        Parameters
-        ----------
-        bonds : Bonds
-
-        cuda_available : bool
-            Flag indicating if CUDA is available
-
-        Returns
-        -------
-        particles.f: ndarray (float)
-            Particle forces
-
-        Notes
-        -----
-        * Particle forces are modified in place
-
+        Move arrays from host to device (GPU)
         """
-        if cuda_available:
-            compute_nodal_forces_gpu()
-        else:
-            compute_nodal_forces_cpu(
-                self.f,
-                self.x,
-                self.u,
-                self.cell_volume,
-                bonds.bondlist,
-                bonds.d,
-                bonds.c,
-                bonds.f_x,
-                bonds.f_y,
-                bonds.constitutive_law.calculate_bond_damage,
-                bonds.surface_correction_factors,
-            )
+        self.d_nlist = cuda.to_device(self.nlist)
+        self.d_x = cuda.to_device(self.x)
+        self.d_u = cuda.to_device(self.u)
+        self.d_v = cuda.to_device(self.v)
+        self.d_a = cuda.to_device(self.a)
+        self.d_f = cuda.to_device(self.f)
+        self.d_bc_flag = cuda.to_device(self.bc.flag)
+        self.d_bc_unit_vector = cuda.to_device(self.bc.unit_vector)
+
+    def _device_to_host(self):
+        """
+        Move arrays from device (GPU) to host
+        """
+        self.d_u.copy_to_host(self.u)
 
     def compute_damage(self, bonds):
         """

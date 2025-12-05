@@ -1,4 +1,3 @@
-
 import numpy as np
 from numba import njit
 
@@ -36,7 +35,8 @@ class ConstitutiveLaw:
         """
         raise NotImplementedError("This method must be implemented!")
 
-    def _calculate_bond_damage():
+    @staticmethod
+    def _make_material_law():
         """
         Calculate bond damage (softening parameter). The value of d will range
         from 0 to 1, where 0 indicates that the bond is still in the elastic
@@ -88,9 +88,7 @@ class Linear(ConstitutiveLaw):
         self.t = t
         self.sc = self._calculate_sc(particles)
         self.damage_on = damage_on
-        self.calculate_bond_damage = self._calculate_bond_damage(
-            self.sc, self.damage_on
-        )
+        self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
 
     def _calculate_sc(self, particles):
         """
@@ -116,23 +114,25 @@ class Linear(ConstitutiveLaw):
         )
 
     @staticmethod
-    def _calculate_bond_damage(sc, damage_on):
+    def _make_material_law(sc, damage_on):
         """
-        Calculate bond damage
+        Make material law
+
+        Factory function that encapsulates model parameters and provides a
+        consistent call interface for computing bond damage
 
         Parameters
         ----------
         sc : ndarray(float, shape=(n_bonds,))
             Critical stretch
-    
+
         damage_on : bool
 
         Returns
         -------
-        wrapper : function
+        material_law : function
             Return a function with the call statement:
-                - calculate_bond_damage(stretch, d)
-            The parameters specific to the material model are wrapped...
+                - material_law(stretch, d)
 
         Notes
         -----
@@ -140,9 +140,9 @@ class Linear(ConstitutiveLaw):
         if damage_on:
 
             @njit
-            def wrapper(i, stretch, d):
+            def material_law(i, stretch, d):
                 """
-                Calculate bond damage
+                Material law (calculate bond damage)
 
                 Parameters
                 ----------
@@ -172,7 +172,7 @@ class Linear(ConstitutiveLaw):
         else:
 
             @njit
-            def wrapper(i, stretch, d):
+            def material_law(i, stretch, d):
                 """
                 Returns
                 -------
@@ -182,7 +182,7 @@ class Linear(ConstitutiveLaw):
                 """
                 return 0
 
-        return wrapper
+        return material_law
 
 
 class Bilinear(ConstitutiveLaw):
@@ -201,7 +201,7 @@ class Trilinear(ConstitutiveLaw):
 
         thickness : float
             For 2D problems, the thickness is equivalent to dx
-        
+
         Returns
         -------
         c : ndarray(float, shape=(n_bonds,))
@@ -228,7 +228,7 @@ class Trilinear(ConstitutiveLaw):
         self.s0 = s0 or self._calculate_s0(particles)
         self.sc = sc or self._calculate_sc(particles)
         self.s1 = self._calculate_s1()
-        self.calculate_bond_damage = self._calculate_bond_damage(
+        self.calculate_bond_damage = self._make_material_law(
             self.s0, self.s1, self.sc, self.beta
         )
 
@@ -262,9 +262,12 @@ class Trilinear(ConstitutiveLaw):
         return self.s0 + ((self.sc - self.s0) / self.gamma)
 
     @staticmethod
-    def _calculate_bond_damage(s0, s1, sc, beta):
+    def _make_material_law(s0, s1, sc, beta):
         """
-        Calculate bond damage
+        Make material law
+
+        Factory function that encapsulates model parameters and provides a
+        consistent call interface for computing bond damage
 
         Parameters
         ----------
@@ -279,17 +282,16 @@ class Trilinear(ConstitutiveLaw):
 
         Returns
         -------
-        wrapper : function
+        material_law : function
             Return a function with the call statement:
-                - calculate_bond_damage(stretch, d)
-            The parameters specific to the material model are wrapped...
+                - material_law(stretch, d)
 
         Notes
         -----
         """
 
         @njit
-        def wrapper(i, stretch, d):
+        def material_law(i, stretch, d):
             """
             Calculate bond damage
 
@@ -318,7 +320,7 @@ class Trilinear(ConstitutiveLaw):
             """
             return trilinear(i, stretch, d, s0, s1, sc, beta)
 
-        return wrapper
+        return material_law
 
     def print_parameters(self):
         """
@@ -369,7 +371,7 @@ class NonLinear(ConstitutiveLaw):
         self.k = k
         self.s0 = s0 or self._calculate_s0(particles)
         self.sc = sc or self._calculate_sc(particles)
-        self.calculate_bond_damage = self._calculate_bond_damage(
+        self.calculate_bond_damage = self._make_material_law(
             self.s0, self.sc, self.alpha, self.k
         )
 
@@ -412,9 +414,12 @@ class NonLinear(ConstitutiveLaw):
         return numerator / denominator
 
     @staticmethod
-    def _calculate_bond_damage(s0, sc, alpha, k):
+    def _make_material_law(s0, sc, alpha, k):
         """
-        Calculate bond damage
+        Make material law
+
+        Factory function that encapsulates model parameters and provides a
+        consistent call interface for computing bond damage
 
         Parameters
         ----------
@@ -431,17 +436,16 @@ class NonLinear(ConstitutiveLaw):
 
         Returns
         -------
-        wrapper : function
+        material_law : function
             Return a function with the call statement:
-                - calculate_bond_damage(stretch, d)
-            The parameters specific to the material model are wrapped...
+                - material_law(stretch, d)
 
         Notes
         -----
         """
 
         @njit
-        def wrapper(i, stretch, d):
+        def material_law(i, stretch, d):
             """
             Calculate bond damage
 
@@ -470,7 +474,7 @@ class NonLinear(ConstitutiveLaw):
             """
             return nonlinear(i, stretch, d, s0, sc, alpha, k)
 
-        return wrapper
+        return material_law
 
     def print_parameters(self):
         """

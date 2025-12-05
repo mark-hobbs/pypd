@@ -1,7 +1,7 @@
 """
 Example: 2D graphite ring under compression
 
-Zhang, X, et al. "Measurement of tensile strength of nuclear graphite based on 
+Zhang, X, et al. "Measurement of tensile strength of nuclear graphite based on
 ring compression test." Journal of Nuclear Materials 511 (2018): 134-140.
 -------------------------------------------
 
@@ -141,7 +141,7 @@ def main():
 
     simulation = pypd.Simulation(n_time_steps=50000, damping=0)
     simulation.run(model)
-    model.save_final_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
+    model.save_state_fig(sz=0.5, dsf=0, fig_title="graphite-ring")
 
 
 main()

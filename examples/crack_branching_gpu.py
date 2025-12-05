@@ -67,6 +67,9 @@ def build_boundary_conditions(particles, dx):
 
 
 def main():
+    """
+    GPU specific example: animations are not yet supported in the GPU optimised code
+    """
     dx = 1e-3
     n_div_x = np.rint(0.4 / dx).astype(int)
     n_div_y = np.rint(0.2 / dx).astype(int)
@@ -81,12 +84,9 @@ def main():
     bonds = pypd.Bonds(particles, influence=pypd.Constant, notch=notch)
     model = pypd.Model(particles, bonds)
 
-    animation = pypd.Animation(
-        frequency=100, sz=0.25, show_title=False, data="strain energy density"
-    )
-    simulation = pypd.Simulation(n_time_steps=5000, damping=0, animation=animation)
+    simulation = pypd.Simulation(n_time_steps=5000, damping=0)
     simulation.run(model)
-    model.save_state_fig(fig_title="crack-branching")
+    model.save_state_fig(fig_title="crack-branching", dsf=100)
 
 
 main()

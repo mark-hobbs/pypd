@@ -116,6 +116,23 @@ def rebuild_node_families(n_nodes, bondlist):
     return n_family_members
 
 
+def rebuild_neighbour_list(n_nodes, bondlist):
+
+    nlist = [[] for _ in range(n_nodes)]
+    for i, j in bondlist:
+        nlist[i].append(j)
+        nlist[j].append(i)
+
+    n_family_members = np.array([len(f) for f in nlist], dtype=int)
+    max_n_family_members = np.max(n_family_members) if n_family_members.size > 0 else 0
+
+    nlist_array = -np.ones((n_nodes, max_n_family_members), dtype=int)
+    for i, neighs in enumerate(nlist):
+        nlist_array[i, : len(neighs)] = neighs
+
+    return nlist_array, n_family_members
+
+
 def get_cuda_device_info(verbose=True):
     """
     Retrieve comprehensive information about the current CUDA device.

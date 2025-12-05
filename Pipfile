@@ -13,7 +13,7 @@ pypd = {file = "."}
 
 [dev-packages]
 jupyter = "*"
-black = {extras = ["jupyter"], version = "*"}
+black = "*"
 ruff = "*"
 
 [requires]

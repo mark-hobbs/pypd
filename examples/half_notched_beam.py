@@ -231,7 +231,7 @@ def main():
     simulation.run(trilinear_model)
     simulation.run(nonlinear_model)
 
-    nonlinear_model.save_final_state_fig(sz=25, dsf=10, fig_title="half-notched-beam")
+    nonlinear_model.save_state_fig(sz=25, dsf=10, fig_title="half-notched-beam")
 
     plot_load_cmod(linear_model, n_div_z, fig_title="load-cmod-linear")
     plot_load_cmod(trilinear_model, n_div_z, fig_title="load-cmod-trilinear")

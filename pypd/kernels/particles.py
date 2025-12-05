@@ -2,125 +2,219 @@
 Small, highly optimised computational units written using Numba
 """
 
+import math
+
 import numpy as np
 import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
 
 
-@njit(parallel=True, fastmath=True)
-def compute_nodal_forces_cpu(
-    node_force,
-    x,
-    u,
-    cell_volume,
-    bondlist,
-    d,
-    c,
-    f_x,
-    f_y,
-    material_law,
-    surface_correction_factors,
-):
+THREADS_PER_BLOCK = 256  # This should not be hardcoded
+
+
+def make_compute_nodal_forces(material_law):
     """
-    Compute particle forces - employs bondlist (cpu optimised)
+    Factory function that returns a JIT compiled compute_nodal_forces()
+    with the given material law baked in
 
     Parameters
     ----------
-    node_force : np.ndarray(float, shape=(n_nodes, n_dim))
-        Nodal force array
-
-    x : np.ndarray(float, shape=(n_nodes, n_dim))
-        Material point coordinates in the reference configuration
-
-    u : np.ndarray(float, shape=(n_nodes, n_dim))
-        Nodal displacement
-
-    cell_volume : float
-
-    bondlist : np.ndarray(int, shape=(n_bonds, 2))
-        Array of pairwise interactions (bond list)
-
-    d : np.ndarray(float, shape=(n_bonds,))
-        Bond damage (softening parameter). The value of d will range from 0
-        to 1, where 0 indicates that the bond is still in the elastic range,
-        and 1 represents a bond that has failed
-
-    c : np.ndarray(float, shape=(n_bonds,))
-        Bond stiffness
-
     material_law : function
+        A function that defines the material behaviour
 
-    surface_correction_factors : np.ndarray(float, shape=(n_bonds,))
-    
     Returns
     -------
-    node_force : np.ndarray(float, shape=(n_nodes, n_dimensions))
-        Nodal force array
+    compute_nodal_forces : function
+        A function that computes nodal forces
 
-    d : np.ndarray(float, shape=(n_bonds,))
-        Bond damage (softening parameter). The value of d will range from 0
-        to 1, where 0 indicates that the bond is still in the elastic range,
-        and 1 represents a bond that has failed
-
-    Notes
-    -----
-    * node_force and d are modified in place and returned for clarity
+    TODO: while the cuda_available flag could be injected into this function,
+    hardware control belongs to Simulation not Model
     """
-    n_bonds = np.shape(bondlist)[0]
-    node_force[:] = 0.0
 
-    for k_bond in prange(n_bonds):
-        node_i = bondlist[k_bond, 0]
-        node_j = bondlist[k_bond, 1]
+    @njit(parallel=True, fastmath=True)
+    def compute_nodal_forces_cpu(
+        node_force,
+        x,
+        u,
+        cell_volume,
+        bondlist,
+        d,
+        c,
+        f_x,
+        f_y,
+        surface_correction_factors,
+    ):
+        """
+        Compute particle forces - employs bondlist (cpu optimised)
 
-        xi_x = x[node_j, 0] - x[node_i, 0]
-        xi_y = x[node_j, 1] - x[node_i, 1]
+        Parameters
+        ----------
+        node_force : np.ndarray(float, shape=(n_nodes, n_dim))
+            Nodal force array
 
-        xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
-        xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+        x : np.ndarray(float, shape=(n_nodes, n_dim))
+            Material point coordinates in the reference configuration
 
-        xi = np.sqrt(xi_x**2 + xi_y**2)
-        y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
-        stretch = (y - xi) / xi
+        u : np.ndarray(float, shape=(n_nodes, n_dim))
+            Nodal displacement
 
-        d[k_bond] = material_law(k_bond, stretch, d[k_bond])
+        cell_volume : float
 
-        f = (
-            stretch
-            * c[k_bond]
-            * (1 - d[k_bond])
-            * cell_volume
-            * surface_correction_factors[k_bond]
-        )
-        f_x[k_bond] = f * xi_eta_x / y
-        f_y[k_bond] = f * xi_eta_y / y
+        bondlist : np.ndarray(int, shape=(n_bonds, 2))
+            Array of pairwise interactions (bond list)
 
-    # Reduce bond forces to particle forces
-    for k_bond in range(n_bonds):
-        node_i = bondlist[k_bond, 0]
-        node_j = bondlist[k_bond, 1]
+        d : np.ndarray(float, shape=(n_bonds,))
+            Bond damage (softening parameter). The value of d will range from 0
+            to 1, where 0 indicates that the bond is still in the elastic range,
+            and 1 represents a bond that has failed
 
-        node_force[node_i, 0] += f_x[k_bond]
-        node_force[node_j, 0] -= f_x[k_bond]
-        node_force[node_i, 1] += f_y[k_bond]
-        node_force[node_j, 1] -= f_y[k_bond]
+        c : np.ndarray(float, shape=(n_bonds,))
+            Bond stiffness
 
-    return node_force, d
+        surface_correction_factors : np.ndarray(float, shape=(n_bonds,))
+
+        Returns
+        -------
+        node_force : np.ndarray(float, shape=(n_nodes, n_dimensions))
+            Nodal force array
+
+        d : np.ndarray(float, shape=(n_bonds,))
+            Bond damage (softening parameter). The value of d will range from 0
+            to 1, where 0 indicates that the bond is still in the elastic range,
+            and 1 represents a bond that has failed
+
+        Notes
+        -----
+        * node_force and d are modified in place and returned for clarity
+        """
+        n_bonds = np.shape(bondlist)[0]
+        node_force[:] = 0.0
+
+        for k_bond in prange(n_bonds):
+            node_i = bondlist[k_bond, 0]
+            node_j = bondlist[k_bond, 1]
+
+            xi_x = x[node_j, 0] - x[node_i, 0]
+            xi_y = x[node_j, 1] - x[node_i, 1]
+
+            xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+            xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+
+            xi = np.sqrt(xi_x**2 + xi_y**2)
+            y = np.sqrt(xi_eta_x**2 + xi_eta_y**2)
+            stretch = (y - xi) / xi
+
+            d[k_bond] = material_law(k_bond, stretch, d[k_bond])
+
+            f = (
+                stretch
+                * c[k_bond]
+                * (1 - d[k_bond])
+                * cell_volume
+                * surface_correction_factors[k_bond]
+            )
+            f_x[k_bond] = f * xi_eta_x / y
+            f_y[k_bond] = f * xi_eta_y / y
+
+        # Reduce bond forces to particle forces
+        for k_bond in range(n_bonds):
+            node_i = bondlist[k_bond, 0]
+            node_j = bondlist[k_bond, 1]
+
+            node_force[node_i, 0] += f_x[k_bond]
+            node_force[node_j, 0] -= f_x[k_bond]
+            node_force[node_i, 1] += f_y[k_bond]
+            node_force[node_j, 1] -= f_y[k_bond]
+
+        return node_force, d
+
+    return compute_nodal_forces_cpu
 
 
-def compute_nodal_forces_gpu():
+def compute_nodal_forces_gpu(
+    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+):
     """
     Compute particle forces (gpu optimised)
     """
-    compute_nodal_forces_kernel[grid_size, block_size]()
+    BLOCKS_PER_GRID = x.shape[0]
+    compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
+        node_force,
+        x,
+        u,
+        cell_volume,
+        nlist,
+        d,
+        c,
+        surface_correction_factors,
+    )
 
 
 @cuda.jit
-def compute_nodal_forces_kernel():
+def compute_nodal_forces_kernel(
+    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+):
     """
-    CUDA kernel
+    One block per node approach
     """
-    pass
+
+    shared_x = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+    shared_y = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+
+    node_i = cuda.blockIdx.x
+    thread_id = cuda.threadIdx.x
+    max_n_family_members = nlist.shape[1]
+
+    val_x = 0.0
+    val_y = 0.0
+
+    if thread_id < max_n_family_members:
+        node_j = nlist[node_i, thread_id]
+
+        if node_j == -1 or node_j == node_i:
+            val_x = 0.0
+            val_y = 0.0
+        else:
+            xi_x = x[node_j, 0] - x[node_i, 0]
+            xi_y = x[node_j, 1] - x[node_i, 1]
+
+            xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+            xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+
+            xi = math.sqrt(xi_x**2 + xi_y**2)
+            y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
+            stretch = (y - xi) / xi
+
+            d[node_i, thread_id] = 0.0  # placeholder: material_law(s, d[node_i, thread_id])
+
+            f = (
+                stretch
+                * c[node_i, thread_id]
+                * (1 - d[node_i, thread_id])
+                * cell_volume
+                * surface_correction_factors[node_i, thread_id]
+            )
+
+            val_x = f * xi_eta_x / y
+            val_y = f * xi_eta_y / y
+
+    shared_x[thread_id] = val_x
+    shared_y[thread_id] = val_y
+
+    cuda.syncthreads()
+
+    # Reduction
+    stride = THREADS_PER_BLOCK // 2
+    while stride > 0:
+        if thread_id < stride:
+            shared_x[thread_id] += shared_x[thread_id + stride]
+            shared_y[thread_id] += shared_y[thread_id + stride]
+        cuda.syncthreads()
+        stride //= 2
+
+    if thread_id == 0:
+        node_force[node_i, 0] = shared_x[0]
+        node_force[node_i, 1] = shared_y[0]
 
 
 @njit

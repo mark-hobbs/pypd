@@ -1,4 +1,4 @@
-from .kernels.integrator import euler_cromer_cpu
+from .kernels.integrator import euler_cromer_cpu, euler_cromer_gpu
 
 
 class Integrator:
@@ -51,7 +51,18 @@ class EulerCromer:
         * particles.u and particles.v are modified in place
         """
         if simulation.cuda_available:
-            print("CUDA is available")
+            euler_cromer_gpu(
+                particles.d_f,
+                particles.d_u,
+                particles.d_v,
+                particles.d_a,
+                particles.material.density,
+                particles.d_bc_flag,
+                particles.bc.i_magnitude,
+                particles.d_bc_unit_vector,
+                simulation.damping,
+                simulation.dt,
+            )
         else:
             euler_cromer_cpu(
                 particles.f,

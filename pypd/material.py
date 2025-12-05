@@ -1,5 +1,3 @@
-
-
 class Material:
     """
     The main class for defining material properties

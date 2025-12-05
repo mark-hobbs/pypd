@@ -1,5 +1,6 @@
-
 import matplotlib.pyplot as plt
+
+from .kernels.particles import make_compute_nodal_forces, compute_nodal_forces_gpu
 
 
 class Model:
@@ -51,9 +52,64 @@ class Model:
         self.penetrators = penetrators
         self.observations = observations
 
-    def save_final_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
+        self.compute_particle_forces_cpu = make_compute_nodal_forces(
+            bonds.constitutive_law.calculate_bond_damage
+        )
+
+    def _host_to_device(self):
+        self.particles._host_to_device()
+        self.bonds._host_to_device()
+
+    def _device_to_host(self):
+        self.particles._device_to_host()
+        self.bonds._device_to_host()
+    
+    def compute_particle_forces(self, cuda_available):
         """
-        Save a figure of the final state of the simulation
+        Compute particle forces
+
+        Parameters
+        ----------
+        cuda_available : bool
+            Flag indicating if CUDA is available
+
+        Returns
+        -------
+        particles.f: ndarray (float)
+            Particle forces
+
+        Notes
+        -----
+        * Particle forces are modified in place
+        """
+        if cuda_available:
+            compute_nodal_forces_gpu(
+                self.particles.d_f,
+                self.particles.d_x,
+                self.particles.d_u,
+                self.particles.cell_volume,
+                self.particles.d_nlist,
+                self.bonds.d_d,
+                self.bonds.d_c,
+                self.bonds.d_surface_correction_factors,
+            )
+        else:
+            self.compute_particle_forces_cpu(
+                self.particles.f,
+                self.particles.x,
+                self.particles.u,
+                self.particles.cell_volume,
+                self.bonds.bondlist,
+                self.bonds.d,
+                self.bonds.c,
+                self.bonds.f_x,
+                self.bonds.f_y,
+                self.bonds.surface_correction_factors,
+            )
+
+    def save_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
+        """
+        Save a figure of the current state of the simulation
 
         Parameters
         ----------
@@ -86,30 +142,3 @@ class Model:
 
         fig.tight_layout()
         fig.savefig(fig_title, dpi=300)
-
-    def _host_to_device(self):
-        """
-        Move arrays from host to device (GPU)
-        """
-        from numba import cuda
-
-        cuda.to_device(self.particles.x)
-        cuda.to_device(self.particles.u)
-        cuda.to_device(self.particles.v)
-        cuda.to_device(self.particles.a)
-        cuda.to_device(self.particles.f)
-        cuda.to_device(self.particles.bc.flag)
-        cuda.to_device(self.particles.bc.unit_vector)
-        cuda.to_device(self.bonds.c)
-        cuda.to_device(self.bonds.d)
-        cuda.to_device(self.bonds.f_x)
-        cuda.to_device(self.bonds.f_y)
-
-    def _device_to_host(self):
-        """
-        Move arrays from device (GPU) to host
-        """
-        from numba import cuda
-
-        cuda.to_host(self.particles.x)
-        cuda.to_host(self.particles.u)
