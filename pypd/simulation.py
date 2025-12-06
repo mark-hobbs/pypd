@@ -4,6 +4,8 @@ from tqdm import trange
 
 from .integrator import EulerCromer
 from .tools import calculate_stable_time_step, get_cuda_device_info
+from .backend import Backend
+from .tools import smooth_step_data
 
 
 class Simulation:
@@ -36,18 +38,14 @@ class Simulation:
         self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
-
-        self.cuda_available = self._is_cuda_available()
-        print(f"Is CUDA available: {self.cuda_available}")
-        if self.cuda_available:
-            get_cuda_device_info()
+        self.backend = None
 
     def run(self, model):
         """
         Run the simulation
         """
-        if self.cuda_available:
-            model._host_to_device()
+        self._initialise_backend(model)
+        self.backend.host_to_device()
 
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
@@ -61,8 +59,7 @@ class Simulation:
                 for observation in model.observations:
                     observation.record_history(self.i_time_step, model.particles.u)
 
-        if self.cuda_available:
-            model._device_to_host()
+        self.backend.device_to_host()
 
         if self.animation:
             self.animation.generate_animation()
@@ -71,8 +68,11 @@ class Simulation:
         """
         Single time step
         """
-        model.compute_particle_forces(self.cuda_available)
-        model.particles.update_positions(self)
+        model.particles.bc.i_magnitude = smooth_step_data(
+            self.i_time_step, 0, self.n_time_steps, 0, model.particles.bc.magnitude
+        )
+        self.backend.compute_forces()
+        self.integrator(self, model.particles)
 
         if model.penetrators:
             for penetrator in model.penetrators:
@@ -100,8 +100,7 @@ class Simulation:
             particles.material.density, particles.dx, particles.horizon, c
         )
 
-    def _is_cuda_available(self):
-        """
-        Check if CUDA is available
-        """
-        return cuda.is_available()
+    def _initialise_backend(self, model):
+        self.backend = Backend(model)
+        if self.backend.cuda_available:
+            get_cuda_device_info()

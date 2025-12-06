@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 
-from .kernels.particles import make_compute_nodal_forces, compute_nodal_forces_gpu
-
 
 class Model:
     """
@@ -51,61 +49,6 @@ class Model:
 
         self.penetrators = penetrators
         self.observations = observations
-
-        self.compute_particle_forces_cpu = make_compute_nodal_forces(
-            bonds.constitutive_law.calculate_bond_damage
-        )
-
-    def _host_to_device(self):
-        self.particles._host_to_device()
-        self.bonds._host_to_device()
-
-    def _device_to_host(self):
-        self.particles._device_to_host()
-        self.bonds._device_to_host()
-    
-    def compute_particle_forces(self, cuda_available):
-        """
-        Compute particle forces
-
-        Parameters
-        ----------
-        cuda_available : bool
-            Flag indicating if CUDA is available
-
-        Returns
-        -------
-        particles.f: ndarray (float)
-            Particle forces
-
-        Notes
-        -----
-        * Particle forces are modified in place
-        """
-        if cuda_available:
-            compute_nodal_forces_gpu(
-                self.particles.d_f,
-                self.particles.d_x,
-                self.particles.d_u,
-                self.particles.cell_volume,
-                self.particles.d_nlist,
-                self.bonds.d_d,
-                self.bonds.d_c,
-                self.bonds.d_surface_correction_factors,
-            )
-        else:
-            self.compute_particle_forces_cpu(
-                self.particles.f,
-                self.particles.x,
-                self.particles.u,
-                self.particles.cell_volume,
-                self.bonds.bondlist,
-                self.bonds.d,
-                self.bonds.c,
-                self.bonds.f_x,
-                self.bonds.f_y,
-                self.bonds.surface_correction_factors,
-            )
 
     def save_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
         """

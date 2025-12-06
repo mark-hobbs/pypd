@@ -33,7 +33,7 @@ class Euler(Integrator):
 
 class EulerCromer:
 
-    def one_timestep(self, particles, simulation):
+    def __call__(self, simulation, particles):
         """
         Update particle positions using an Euler-Cromer time integration scheme
 
@@ -50,7 +50,7 @@ class EulerCromer:
         -----
         * particles.u and particles.v are modified in place
         """
-        if simulation.cuda_available:
+        if simulation.backend.cuda_available:
             euler_cromer_gpu(
                 particles.d_f,
                 particles.d_u,
