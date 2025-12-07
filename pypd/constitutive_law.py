@@ -1,7 +1,7 @@
 import numpy as np
-from numba import njit
+from numba import njit, cuda
 
-from .kernels.constitutive_law import linear, trilinear, nonlinear
+from .kernels.constitutive_law import linear, linear_gpu, trilinear, nonlinear
 
 
 class ConstitutiveLaw:
@@ -88,7 +88,13 @@ class Linear(ConstitutiveLaw):
         self.t = t
         self.sc = self._calculate_sc(particles)
         self.damage_on = damage_on
+        self.calculate_bond_damage = None
+
+    def compile_cpu(self):
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
+    
+    def compile_gpu(self):
+        self.calculate_bond_damage = self._make_material_law_gpu(self.sc, self.damage_on)
 
     def _calculate_sc(self, particles):
         """
@@ -181,6 +187,28 @@ class Linear(ConstitutiveLaw):
                     indicating no bond damage.
                 """
                 return 0
+
+        return material_law
+
+    def _make_material_law_gpu(sc):
+        """
+        Function factory: proof of concept
+        """
+        sc_d = cuda.to_device(sc)
+
+        @cuda.jit
+        def material_law_kernel(s, d, sc):
+            """
+            Material law (calculate bond damage)
+            """
+            node_i = cuda.blockIdx.x
+            thread_id = cuda.threadIdx.x
+            return linear_gpu(s, d, sc[node_i, thread_id])
+
+        def material_law(s, d):
+            THREADS_PER_BLOCK = 256
+            BLOCKS_PER_GRID = (s.size + THREADS_PER_BLOCK - 1) // THREADS_PER_BLOCK
+            material_law_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](s, d, sc_d)
 
         return material_law
 
