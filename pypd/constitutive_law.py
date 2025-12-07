@@ -92,9 +92,11 @@ class Linear(ConstitutiveLaw):
 
     def compile_cpu(self):
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
-    
+
     def compile_gpu(self):
-        self.calculate_bond_damage = self._make_material_law_gpu(self.sc, self.damage_on)
+        self.calculate_bond_damage = self._make_material_law_gpu(
+            self.sc, self.damage_on
+        )
 
     def _calculate_sc(self, particles):
         """

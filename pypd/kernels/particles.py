@@ -130,8 +130,10 @@ def make_compute_nodal_forces_cpu(material_law):
 
     return compute_nodal_forces_cpu
 
+
 def make_compute_nodal_forces_gpu():
     pass
+
 
 def compute_nodal_forces_gpu(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
