@@ -1,5 +1,5 @@
 from numba import cuda
-from .kernels.particles import make_compute_nodal_forces, compute_nodal_forces_gpu
+from .kernels.particles import make_compute_nodal_forces_cpu, make_compute_nodal_forces_gpu
 
 
 class Backend:
@@ -18,7 +18,8 @@ class Backend:
             self._build_force_function_cpu()
 
     def _build_force_function_cpu(self):
-        self.compute_particle_forces_cpu = make_compute_nodal_forces(
+        self.model.bonds.constitutive_law.compile_cpu()
+        self.compute_particle_forces_cpu = make_compute_nodal_forces_cpu(
             self.model.bonds.constitutive_law.calculate_bond_damage
         )
     
@@ -27,8 +28,11 @@ class Backend:
         material_law = make_material_law(sc)
         compute_nodal_forces_kernel = make_compute_nodal_forces_kernel(material_law)
         """
-        pass
-    
+        self.model.bonds.constitutive_law.compile_gpu()
+        self.compute_particle_forces_gpu = make_compute_nodal_forces_gpu(
+            self.model.bonds.constitutive_law.calculate_bond_damage
+        )
+
     def host_to_device(self):
         if self.cuda_available:
             self.model.particles._host_to_device()
@@ -57,7 +61,7 @@ class Backend:
         * Particle forces are modified in place
         """
         if self.cuda_available:
-            compute_nodal_forces_gpu(
+           self.compute_particle_forces_gpu(
                 self.model.particles.d_f,
                 self.model.particles.d_x,
                 self.model.particles.d_u,

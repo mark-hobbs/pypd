@@ -12,7 +12,7 @@ from numba import njit, prange, cuda
 THREADS_PER_BLOCK = 256  # This should not be hardcoded
 
 
-def make_compute_nodal_forces(material_law):
+def make_compute_nodal_forces_cpu(material_law):
     """
     Factory function that returns a JIT compiled compute_nodal_forces()
     with the given material law baked in
@@ -130,6 +130,8 @@ def make_compute_nodal_forces(material_law):
 
     return compute_nodal_forces_cpu
 
+def make_compute_nodal_forces_gpu():
+    pass
 
 def compute_nodal_forces_gpu(
     node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
