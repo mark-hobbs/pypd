@@ -5,7 +5,7 @@ Small, highly optimised computational units written using Numba
 
 """
 
-from numba import njit
+from numba import njit, cuda
 import numpy as np
 
 
@@ -21,6 +21,27 @@ def linear(i, s, d, sc):
         d_temp = 0.0
 
     elif s >= sc[i]:
+        d_temp = 1.0
+
+    # Bond softening factor can only increase (damage is irreversible)
+    if d_temp > d:
+        d = d_temp
+
+    return d
+
+
+@cuda.jit(device=True)
+def linear_gpu(s, d, sc):
+    """
+    Linear constitutive model
+    """
+
+    d_temp = 0.0
+
+    if s < sc:
+        d_temp = 0.0
+
+    elif s >= sc:
         d_temp = 1.0
 
     # Bond softening factor can only increase (damage is irreversible)
