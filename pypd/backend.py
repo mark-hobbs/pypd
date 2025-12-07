@@ -11,11 +11,24 @@ class Backend:
         self.model = model
         self.cuda_available = cuda.is_available()
         print(f"Is CUDA available: {self.cuda_available}")
+        
+        if self.cuda_available:
+            self._build_force_function_gpu()
+        else:
+            self._build_force_function_cpu()
 
+    def _build_force_function_cpu(self):
         self.compute_particle_forces_cpu = make_compute_nodal_forces(
             self.model.bonds.constitutive_law.calculate_bond_damage
         )
-
+    
+    def _build_force_function_gpu(self):
+        """
+        material_law = make_material_law(sc)
+        compute_nodal_forces_kernel = make_compute_nodal_forces_kernel(material_law)
+        """
+        pass
+    
     def host_to_device(self):
         if self.cuda_available:
             self.model.particles._host_to_device()

@@ -28,7 +28,7 @@ def make_compute_nodal_forces(material_law):
         A function that computes nodal forces
 
     TODO: while the cuda_available flag could be injected into this function,
-    hardware control belongs to Simulation not Model
+    hardware control belongs to Backend not Model
     """
 
     @njit(parallel=True, fastmath=True)

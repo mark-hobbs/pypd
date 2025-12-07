@@ -101,6 +101,9 @@ class Simulation:
         )
 
     def _initialise_backend(self, model):
+        """
+        Initialise backend to handle device logic (GPU/CPU)
+        """
         self.backend = Backend(model)
         if self.backend.cuda_available:
             get_cuda_device_info()

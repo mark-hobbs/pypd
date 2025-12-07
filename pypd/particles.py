@@ -1,7 +1,6 @@
 import numpy as np
 from numba import cuda
 
-from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
     compute_node_damage,
@@ -128,7 +127,6 @@ class Particles:
         self.horizon = m * dx
 
         self.material = material
-        # compute_nodal_forces_cpu = make_compute_nodal_forces()
 
         self.nlist = nlist
         if self.nlist is None:
