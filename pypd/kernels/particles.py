@@ -128,7 +128,7 @@ def make_compute_nodal_forces_cpu(material_law):
     return compute_nodal_forces_cpu
 
 
-def make_compute_nodal_forces_gpu(THREADS_PER_BLOCK=256):
+def make_compute_nodal_forces_gpu(material_law, THREADS_PER_BLOCK=256):
     """
     Factory function that returns a CUDA compiled compute_nodal_forces()
     with the given material law baked in

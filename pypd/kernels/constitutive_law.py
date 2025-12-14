@@ -31,7 +31,7 @@ def linear(i, s, d, sc):
 
 
 @cuda.jit(device=True)
-def linear_gpu(s, d, sc):
+def linear_gpu(s, d, s0, s1, sc):
     """
     Linear constitutive model
     """

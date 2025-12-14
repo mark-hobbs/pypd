@@ -86,13 +86,12 @@ class Linear(ConstitutiveLaw):
         """
         self.c = c
         self.t = t
-        self.sc = self._calculate_sc(particles)
         self.damage_on = damage_on
         self.calculate_bond_damage = None
 
         self.s0 = None
         self.s1 = None
-        self.sc = None
+        self.sc = self._calculate_sc(particles)
 
     def compile_cpu(self):
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
@@ -100,7 +99,7 @@ class Linear(ConstitutiveLaw):
     def compile_gpu(self):
         self.s0 = np.full_like(self.sc, np.inf)
         self.s1 = np.full_like(self.sc, np.inf)
-        self._make_material_law_gpu(self.sc)
+        self.calculate_bond_damage = self._make_material_law_gpu()
 
     def _calculate_sc(self, particles):
         """
@@ -197,7 +196,7 @@ class Linear(ConstitutiveLaw):
         return material_law
 
     @staticmethod
-    def _make_material_law_gpu(sc):
+    def _make_material_law_gpu():
         """
         Create device function and setup arrays
         """
@@ -207,6 +206,8 @@ class Linear(ConstitutiveLaw):
             Material law (calculate bond damage) device function
             """
             return linear_gpu(s, d, s0, s1, sc)
+        
+        return material_law
 
 
 class Bilinear(ConstitutiveLaw):
