@@ -90,11 +90,17 @@ class Linear(ConstitutiveLaw):
         self.damage_on = damage_on
         self.calculate_bond_damage = None
 
+        self.s0 = None
+        self.s1 = None
+        self.sc = None
+
     def compile_cpu(self):
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
 
     def compile_gpu(self):
-        self.calculate_bond_damage = self._make_material_law_gpu(self.sc)
+        self.s0 = np.full_like(self.sc, np.inf)
+        self.s1 = np.full_like(self.sc, np.inf)
+        self._make_material_law_gpu(self.sc)
 
     def _calculate_sc(self, particles):
         """
@@ -193,25 +199,14 @@ class Linear(ConstitutiveLaw):
     @staticmethod
     def _make_material_law_gpu(sc):
         """
-        Function factory: proof of concept
+        Create device function and setup arrays
         """
-        sc_d = cuda.to_device(sc)
-
-        @cuda.jit
-        def material_law_kernel(s, d, sc):
+        @cuda.jit(device=True)
+        def material_law(s, d, s0, s1, sc):
             """
-            Material law (calculate bond damage)
+            Material law (calculate bond damage) device function
             """
-            node_i = cuda.blockIdx.x
-            thread_id = cuda.threadIdx.x
-            return linear_gpu(s, d, sc[node_i, thread_id])
-
-        def material_law(s, d):
-            THREADS_PER_BLOCK = 256
-            BLOCKS_PER_GRID = (s.size + THREADS_PER_BLOCK - 1) // THREADS_PER_BLOCK
-            material_law_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](s, d, sc_d)
-
-        return material_law
+            return linear_gpu(s, d, s0, s1, sc)
 
 
 class Bilinear(ConstitutiveLaw):

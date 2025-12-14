@@ -73,6 +73,9 @@ class Backend:
                 self.model.bonds.d_d,
                 self.model.bonds.d_c,
                 self.model.bonds.d_surface_correction_factors,
+                self.model.bonds.d_s0,
+                self.model.bonds.d_s1,
+                self.model.bonds.d_sc,
             )
         else:
             self.compute_particle_forces_cpu(

@@ -9,9 +9,6 @@ import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
 
 
-THREADS_PER_BLOCK = 256  # This should not be hardcoded
-
-
 def make_compute_nodal_forces_cpu(material_law):
     """
     Factory function that returns a JIT compiled compute_nodal_forces()
@@ -131,7 +128,7 @@ def make_compute_nodal_forces_cpu(material_law):
     return compute_nodal_forces_cpu
 
 
-def make_compute_nodal_forces_gpu(material_law):
+def make_compute_nodal_forces_gpu(THREADS_PER_BLOCK=256):
     """
     Factory function that returns a CUDA compiled compute_nodal_forces()
     with the given material law baked in
@@ -139,7 +136,17 @@ def make_compute_nodal_forces_gpu(material_law):
 
     @cuda.jit
     def compute_nodal_forces_kernel(
-        node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+        node_force,
+        x,
+        u,
+        cell_volume,
+        nlist,
+        d,
+        c,
+        surface_correction_factors,
+        s0,
+        s1,
+        sc,
     ):
         """
         One block per node approach
@@ -172,7 +179,13 @@ def make_compute_nodal_forces_gpu(material_law):
                 y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
                 stretch = (y - xi) / xi
 
-                d[node_i, thread_id] = 0.0 # placeholder: material_law(stretch, d[node_i, thread_id]) 
+                d[node_i, thread_id] = material_law(
+                    stretch,
+                    d[node_i, thread_id],
+                    s0[node_i, thread_id],
+                    s1[node_i, thread_id],
+                    sc[node_i, thread_id],
+                )
 
                 f = (
                     stretch
@@ -204,14 +217,34 @@ def make_compute_nodal_forces_gpu(material_law):
             node_force[node_i, 1] = shared_y[0]
 
     def compute_nodal_forces_gpu(
-        node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+        node_force,
+        x,
+        u,
+        cell_volume,
+        nlist,
+        d,
+        c,
+        surface_correction_factors,
+        s0,
+        s1,
+        sc,
     ):
         """
         Compute particle forces (gpu optimised)
         """
         BLOCKS_PER_GRID = x.shape[0]
         compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
-            node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
+            node_force,
+            x,
+            u,
+            cell_volume,
+            nlist,
+            d,
+            c,
+            surface_correction_factors,
+            s0,
+            s1,
+            sc,
         )
 
     return compute_nodal_forces_gpu

@@ -135,6 +135,9 @@ class Bonds:
         self.d_c = None
         self.d_d = None
         self.d_surface_correction_factors = None
+        self.d_s0 = None
+        self.d_s1 = None
+        self.d_sc = None
 
     def _build_bond_list(self, nlist):
         """
@@ -243,10 +246,16 @@ class Bonds:
         surface_correction_factors = self._map_to_neighbour_list(
             self.surface_correction_factors
         )
+        s0 = self._map_to_neighbour_list(self.constitutive_law.s0)
+        s1 = self._map_to_neighbour_list(self.constitutive_law.s1)
+        sc = self._map_to_neighbour_list(self.constitutive_law.sc)
 
         self.d_c = cuda.to_device(c)
         self.d_d = cuda.to_device(d)
         self.d_surface_correction_factors = cuda.to_device(surface_correction_factors)
+        self.d_s0 = cuda.to_device(s0)
+        self.d_s1 = cuda.to_device(s1)
+        self.d_sc = cuda.to_device(sc)
 
     def _device_to_host(self):
         """
