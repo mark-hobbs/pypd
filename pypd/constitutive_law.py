@@ -99,7 +99,7 @@ class Linear(ConstitutiveLaw):
     def compile_gpu(self):
         self.s0 = np.full_like(self.sc, np.inf)
         self.s1 = np.full_like(self.sc, np.inf)
-        self.calculate_bond_damage = self._make_material_law_gpu()
+        self.calculate_bond_damage = linear_gpu
 
     def _calculate_sc(self, particles):
         """
@@ -193,20 +193,6 @@ class Linear(ConstitutiveLaw):
                 """
                 return 0
 
-        return material_law
-
-    @staticmethod
-    def _make_material_law_gpu():
-        """
-        Create device function and setup arrays
-        """
-        @cuda.jit(device=True)
-        def material_law(s, d, s0, s1, sc):
-            """
-            Material law (calculate bond damage) device function
-            """
-            return linear_gpu(s, d, s0, s1, sc)
-        
         return material_law
 
 
@@ -344,6 +330,21 @@ class Trilinear(ConstitutiveLaw):
             * Examine closures and factory functions
             """
             return trilinear(i, stretch, d, s0, s1, sc, beta)
+
+        return material_law
+
+    @staticmethod
+    def _make_material_law_gpu(beta):
+        """
+        Create device function and setup arrays
+        """
+
+        @cuda.jit(device=True)
+        def material_law(s, d, s0, s1, sc):
+            """
+            Material law (calculate bond damage) device function
+            """
+            return trilinear_gpu(s, d, s0, s1, sc, beta)
 
         return material_law
 
