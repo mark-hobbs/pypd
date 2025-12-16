@@ -9,10 +9,7 @@ import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
 
 
-THREADS_PER_BLOCK = 256  # This should not be hardcoded
-
-
-def make_compute_nodal_forces(material_law):
+def make_compute_nodal_forces_cpu(material_law):
     """
     Factory function that returns a JIT compiled compute_nodal_forces()
     with the given material law baked in
@@ -28,7 +25,7 @@ def make_compute_nodal_forces(material_law):
         A function that computes nodal forces
 
     TODO: while the cuda_available flag could be injected into this function,
-    hardware control belongs to Simulation not Model
+    hardware control belongs to Backend not Model
     """
 
     @njit(parallel=True, fastmath=True)
@@ -131,14 +128,14 @@ def make_compute_nodal_forces(material_law):
     return compute_nodal_forces_cpu
 
 
-def compute_nodal_forces_gpu(
-    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
-):
+def make_compute_nodal_forces_gpu(material_law, THREADS_PER_BLOCK=256):
     """
-    Compute particle forces (gpu optimised)
+    Factory function that returns a CUDA compiled compute_nodal_forces()
+    with the given material law baked in
     """
-    BLOCKS_PER_GRID = x.shape[0]
-    compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
+
+    @cuda.jit
+    def compute_nodal_forces_kernel(
         node_force,
         x,
         u,
@@ -147,74 +144,110 @@ def compute_nodal_forces_gpu(
         d,
         c,
         surface_correction_factors,
-    )
+        s0,
+        s1,
+        sc,
+    ):
+        """
+        One block per node approach
+        """
 
+        shared_x = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+        shared_y = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
 
-@cuda.jit
-def compute_nodal_forces_kernel(
-    node_force, x, u, cell_volume, nlist, d, c, surface_correction_factors
-):
-    """
-    One block per node approach
-    """
+        node_i = cuda.blockIdx.x
+        thread_id = cuda.threadIdx.x
+        max_n_family_members = nlist.shape[1]
 
-    shared_x = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
-    shared_y = cuda.shared.array(THREADS_PER_BLOCK, dtype=node_force.dtype)
+        val_x = 0.0
+        val_y = 0.0
 
-    node_i = cuda.blockIdx.x
-    thread_id = cuda.threadIdx.x
-    max_n_family_members = nlist.shape[1]
+        if thread_id < max_n_family_members:
+            node_j = nlist[node_i, thread_id]
 
-    val_x = 0.0
-    val_y = 0.0
+            if node_j == -1 or node_j == node_i:
+                val_x = 0.0
+                val_y = 0.0
+            else:
+                xi_x = x[node_j, 0] - x[node_i, 0]
+                xi_y = x[node_j, 1] - x[node_i, 1]
 
-    if thread_id < max_n_family_members:
-        node_j = nlist[node_i, thread_id]
+                xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
+                xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
 
-        if node_j == -1 or node_j == node_i:
-            val_x = 0.0
-            val_y = 0.0
-        else:
-            xi_x = x[node_j, 0] - x[node_i, 0]
-            xi_y = x[node_j, 1] - x[node_i, 1]
+                xi = math.sqrt(xi_x**2 + xi_y**2)
+                y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
+                stretch = (y - xi) / xi
 
-            xi_eta_x = xi_x + (u[node_j, 0] - u[node_i, 0])
-            xi_eta_y = xi_y + (u[node_j, 1] - u[node_i, 1])
+                d[node_i, thread_id] = material_law(
+                    stretch,
+                    d[node_i, thread_id],
+                    s0[node_i, thread_id],
+                    s1[node_i, thread_id],
+                    sc[node_i, thread_id],
+                )
 
-            xi = math.sqrt(xi_x**2 + xi_y**2)
-            y = math.sqrt(xi_eta_x**2 + xi_eta_y**2)
-            stretch = (y - xi) / xi
+                f = (
+                    stretch
+                    * c[node_i, thread_id]
+                    * (1 - d[node_i, thread_id])
+                    * cell_volume
+                    * surface_correction_factors[node_i, thread_id]
+                )
 
-            d[node_i, thread_id] = 0.0  # placeholder: material_law(s, d[node_i, thread_id])
+                val_x = f * xi_eta_x / y
+                val_y = f * xi_eta_y / y
 
-            f = (
-                stretch
-                * c[node_i, thread_id]
-                * (1 - d[node_i, thread_id])
-                * cell_volume
-                * surface_correction_factors[node_i, thread_id]
-            )
+        shared_x[thread_id] = val_x
+        shared_y[thread_id] = val_y
 
-            val_x = f * xi_eta_x / y
-            val_y = f * xi_eta_y / y
-
-    shared_x[thread_id] = val_x
-    shared_y[thread_id] = val_y
-
-    cuda.syncthreads()
-
-    # Reduction
-    stride = THREADS_PER_BLOCK // 2
-    while stride > 0:
-        if thread_id < stride:
-            shared_x[thread_id] += shared_x[thread_id + stride]
-            shared_y[thread_id] += shared_y[thread_id + stride]
         cuda.syncthreads()
-        stride //= 2
 
-    if thread_id == 0:
-        node_force[node_i, 0] = shared_x[0]
-        node_force[node_i, 1] = shared_y[0]
+        # Reduction
+        stride = THREADS_PER_BLOCK // 2
+        while stride > 0:
+            if thread_id < stride:
+                shared_x[thread_id] += shared_x[thread_id + stride]
+                shared_y[thread_id] += shared_y[thread_id + stride]
+            cuda.syncthreads()
+            stride //= 2
+
+        if thread_id == 0:
+            node_force[node_i, 0] = shared_x[0]
+            node_force[node_i, 1] = shared_y[0]
+
+    def compute_nodal_forces_gpu(
+        node_force,
+        x,
+        u,
+        cell_volume,
+        nlist,
+        d,
+        c,
+        surface_correction_factors,
+        s0,
+        s1,
+        sc,
+    ):
+        """
+        Compute particle forces (gpu optimised)
+        """
+        BLOCKS_PER_GRID = x.shape[0]
+        compute_nodal_forces_kernel[BLOCKS_PER_GRID, THREADS_PER_BLOCK](
+            node_force,
+            x,
+            u,
+            cell_volume,
+            nlist,
+            d,
+            c,
+            surface_correction_factors,
+            s0,
+            s1,
+            sc,
+        )
+
+    return compute_nodal_forces_gpu
 
 
 @njit

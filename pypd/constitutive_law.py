@@ -1,7 +1,7 @@
 import numpy as np
-from numba import njit
+from numba import njit, cuda
 
-from .kernels.constitutive_law import linear, trilinear, nonlinear
+from .kernels.constitutive_law import linear, linear_gpu, trilinear, nonlinear
 
 
 class ConstitutiveLaw:
@@ -86,9 +86,20 @@ class Linear(ConstitutiveLaw):
         """
         self.c = c
         self.t = t
-        self.sc = self._calculate_sc(particles)
         self.damage_on = damage_on
+        self.calculate_bond_damage = None
+
+        self.s0 = None
+        self.s1 = None
+        self.sc = self._calculate_sc(particles)
+
+    def compile_cpu(self):
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
+
+    def compile_gpu(self):
+        self.s0 = np.full_like(self.sc, np.inf)
+        self.s1 = np.full_like(self.sc, np.inf)
+        self.calculate_bond_damage = linear_gpu
 
     def _calculate_sc(self, particles):
         """
@@ -319,6 +330,21 @@ class Trilinear(ConstitutiveLaw):
             * Examine closures and factory functions
             """
             return trilinear(i, stretch, d, s0, s1, sc, beta)
+
+        return material_law
+
+    @staticmethod
+    def _make_material_law_gpu(beta):
+        """
+        Create device function and setup arrays
+        """
+
+        @cuda.jit(device=True)
+        def material_law(s, d, s0, s1, sc):
+            """
+            Material law (calculate bond damage) device function
+            """
+            return trilinear_gpu(s, d, s0, s1, sc, beta)
 
         return material_law
 

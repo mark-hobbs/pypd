@@ -1,7 +1,6 @@
 import numpy as np
 from numba import cuda
 
-from .tools import smooth_step_data
 from .kernels.particles import (
     build_particle_families,
     compute_node_damage,
@@ -128,7 +127,6 @@ class Particles:
         self.horizon = m * dx
 
         self.material = material
-        # compute_nodal_forces_cpu = make_compute_nodal_forces()
 
         self.nlist = nlist
         if self.nlist is None:
@@ -222,34 +220,6 @@ class Particles:
         self.damage = compute_node_damage(
             self.x, bonds.bondlist, bonds.d, self.n_family_members
         )
-
-    def update_positions(self, simulation):
-        """
-        Update particle positions - time integration scheme
-
-        Parameters
-        ----------
-        simulation : Simulation class
-            Defines simulation parameters
-
-        integrator : Integrator class
-            Euler / Euler-Cromer / Velocity-Verlet scheme
-
-        Returns
-        -------
-
-        Notes
-        -----
-        * TODO: should the naming be consistent?
-                update_particle_positions() / update_nodal_positions()
-        * TODO: pass bc.magnitude as a function
-        """
-
-        self.bc.i_magnitude = smooth_step_data(
-            simulation.i_time_step, 0, simulation.n_time_steps, 0, self.bc.magnitude
-        )
-
-        return simulation.integrator.one_timestep(self, simulation)
 
     def compute_strain_energy_density(self, bonds):
         """
