@@ -49,10 +49,10 @@ class Simulation:
 
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
+        
+        iterator = trange(self.n_time_steps, unit=" steps")
 
-        for self.i_time_step in trange(
-            self.n_time_steps, desc="Simulation progress", unit="steps"
-        ):
+        for self.i_time_step in iterator:
             self._single_time_step(model)
 
             if model.observations:
