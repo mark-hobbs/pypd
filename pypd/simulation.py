@@ -49,7 +49,7 @@ class Simulation:
 
         if self.dt is None:
             self.dt = self._calculate_stable_dt(model.particles, np.max(model.bonds.c))
-        
+
         iterator = trange(self.n_time_steps, unit=" steps")
 
         for self.i_time_step in iterator:
@@ -67,16 +67,22 @@ class Simulation:
     def _single_time_step(self, model):
         """
         Single time step
+
+        TODO:
+        - compute forces
+        - external contact forces
+        - time integration
         """
         model.particles.bc.i_magnitude = smooth_step_data(
             self.i_time_step, 0, self.n_time_steps, 0, model.particles.bc.magnitude
         )
         self.backend.compute_forces()
-        self.integrator(self, model.particles)
 
         if model.penetrators:
             for penetrator in model.penetrators:
                 penetrator.compute_force(model.particles, self)
+
+        self.integrator(self, model.particles)
 
         if self.animation and self.i_time_step % self.animation.frequency == 0:
             self.animation.save_frame(model.particles, model.bonds)
