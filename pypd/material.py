@@ -55,3 +55,20 @@ class Material:
         self.density = density
         self.ft = ft
         self.nu = nu
+        
+        if self.nu is not None:
+            self.k = self._compute_bulk_modulus()
+        else:
+            self.k = None
+
+    def _compute_bulk_modulus(self):
+        """
+        Compute Bulk Modulus (k): resistance to uniform compression
+        """
+        if self.nu is None:
+            raise ValueError("Poisson's ratio (nu) must be defined to calculate Bulk Modulus.")
+        
+        if self.nu >= 0.5:
+            return float('inf')
+            
+        return self.E / (3 * (1 - 2 * self.nu))
