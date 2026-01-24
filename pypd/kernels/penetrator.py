@@ -34,9 +34,9 @@ def compute_contact_force(
     for i in range(n_nodes):
         node = penetrator_family[i]
 
-        # Calculate relative distance vector
+        # Calculate the relative distance vector between the centre of the penetrator and the node
         dist_sq = 0.0
-        diff = np.zeros(2)  # Assuming up to 2D
+        diff = np.zeros(n_dimensions)
         for j in range(n_dimensions):
             diff[j] = (x[node, j] + u[node, j]) - penetrator_position[j]
             dist_sq += diff[j] ** 2
