@@ -25,6 +25,11 @@ def compute_contact_force(
     k : float
         The penalty stiffness. Usually set high (e.g., 10-100x the
         material bulk modulus).
+
+    Notes
+    -----
+    - An improved point-to-surface contact algorithm with penalty method for 
+    Peridynamics | https://doi.org/10.1016/j.ijmecsci.2026.111276
     """
     n_nodes = len(penetrator_family)
     n_dimensions = x.shape[1]
