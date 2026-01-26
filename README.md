@@ -123,6 +123,8 @@ python -m examples.half_notched_beam
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
 - [ ] `Bonds` are always derivable from `Particles`. Let `Model` manage `Bonds` internally.
 - [ ] Benchmark GPU kernel performance ([roofline model](https://en.wikipedia.org/wiki/Roofline_model))
+- [ ] Add additional examples
+  - [Past, current and future trends and challenges in non-deterministic fracture mechanics: A review](https://doi.org/10.1016/j.cma.2023.116102)
 
 ### Completed tasks
 
