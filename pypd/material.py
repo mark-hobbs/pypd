@@ -63,7 +63,7 @@ class Material:
 
     def _compute_bulk_modulus(self):
         """
-        Compute Bulk Modulus (k): resistance to uniform compression
+        Compute Bulk Modulus (K): resistance to uniform compression
         """
         if self.nu is None:
             raise ValueError("Poisson's ratio (nu) must be defined to calculate Bulk Modulus.")
