@@ -66,7 +66,7 @@ class Penetrator:
         self.radius = radius
         self.search_radius = radius * 1.25
         self.family = self._build_family(particles)
-        self.k = self._compute_k()
+        self.k = self._compute_k(particles)
         if plot:
             self.plot_penetrator(particles)
         self.penetrator_force_history = []
@@ -88,9 +88,9 @@ class Penetrator:
 
         return np.array(family)
     
-    def _compute_k(self):
+    def _compute_k(self, particles):
         """
-        Compute contact stiffness K
+        Compute contact stiffness K (N/m)
 
         Parameters
         ----------
@@ -100,7 +100,7 @@ class Penetrator:
         -----
         Section 2.2.4 | https://arxiv.org/pdf/2408.06556
         """
-        pass
+        return particles.dx * particles.material.k
 
     def update_position(self, i_time_step, n_time_steps):
         """
@@ -146,7 +146,7 @@ class Penetrator:
             particles.u,
             particles.f,
             particles.cell_volume,
-            k=2e8, # self.k
+            k=self.k,
         )
         self.penetrator_force_history.append(force)
 
