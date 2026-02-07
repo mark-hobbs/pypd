@@ -124,6 +124,8 @@ python -m examples.half_notched_beam
 - [ ] Benchmark GPU kernel performance ([roofline model](https://en.wikipedia.org/wiki/Roofline_model))
 - [ ] Add additional examples
   - [Past, current and future trends and challenges in non-deterministic fracture mechanics: A review](https://doi.org/10.1016/j.cma.2023.116102)
+  - [A review on phase-field models of brittle fracture
+and a new fast hybrid formulation](https://doi.org/10.1007/s00466-014-1109-y)
 
 ### Completed tasks
 
