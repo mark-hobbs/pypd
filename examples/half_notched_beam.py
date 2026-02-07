@@ -80,7 +80,7 @@ def build_boundary_conditions(particles):
 
 
 def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
-    load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z
+    load = np.array(model.penetrators[0].penetrator_force_history) * n_div_z
     cmod = np.array(model.observations[1].history) - np.array(
         model.observations[0].history
     )
@@ -143,7 +143,7 @@ def main():
     flag, unit_vector = build_boundary_conditions(x)  # TODO: not needed
 
     material = pypd.Material(
-        name="quasi-brittle", E=37e9, Gf=143.2, density=2346, ft=3.9e6
+        name="quasi-brittle", E=37e9, Gf=143.2, density=2346, ft=3.9e6, nu=0.15
     )
     bc = pypd.BoundaryConditions(flag, unit_vector, magnitude=0)
     particles = pypd.Particles(x, dx, bc, material)
