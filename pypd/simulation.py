@@ -52,7 +52,7 @@ class Simulation:
         self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
-        self.backend: Optional[Backend] = None
+        self.backend: Backend = None
 
     def run(self, model: Model) -> None:
         """
