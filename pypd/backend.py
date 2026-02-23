@@ -20,6 +20,13 @@ class Backend:
         else:
             self._build_force_function_cpu()
 
+        if self.model.penetrators:
+            if self.cuda_available:
+                pass
+            else:
+                # self.model.penetrators.compile_cpu()
+                pass
+
     def _build_force_function_cpu(self):
         self.model.bonds.constitutive_law.compile_cpu()
         self.compute_particle_forces_cpu = make_compute_nodal_forces_cpu(

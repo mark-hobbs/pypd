@@ -59,16 +59,25 @@ class Penetrator:
     ):
         self._registry.append(self)
         self.ID = next(Penetrator.ID_iter)
+        self.name = name
         self.centre = centre
         self.unit_vector = unit_vector
         self.magnitude = magnitude
         self.radius = radius
         self.search_radius = radius * 1.25
         self.family = self._build_family(particles)
-        self.name = name
+        self.k = self._compute_k(particles)
         if plot:
             self.plot_penetrator(particles)
         self.penetrator_force_history = []
+
+        # self.compute_force = None
+
+    def compile_cpu(self):
+        pass
+
+    def compile_gpu(self):
+        pass
 
     def _build_family(self, particles):
         family = []
@@ -78,6 +87,20 @@ class Penetrator:
                 family.append(i)
 
         return np.array(family)
+    
+    def _compute_k(self, particles):
+        """
+        Compute contact stiffness K (N/m)
+
+        Parameters
+        ----------
+        material : Material
+
+        Notes
+        -----
+        Section 2.2.4 | https://arxiv.org/pdf/2408.06556
+        """
+        return particles.dx * particles.material.k
 
     def update_position(self, i_time_step, n_time_steps):
         """
@@ -112,7 +135,6 @@ class Penetrator:
 
         Notes
         -----
-        TODO: this function does not need to return u and v
         TODO: write a decorator to save the force history
         """
         position = self.update_position(simulation.i_time_step, simulation.n_time_steps)
@@ -122,10 +144,9 @@ class Penetrator:
             position,
             particles.x,
             particles.u,
-            particles.v,
-            particles.material.density,
+            particles.f,
             particles.cell_volume,
-            simulation.dt,
+            k=self.k,
         )
         self.penetrator_force_history.append(force)
 

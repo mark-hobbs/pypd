@@ -79,7 +79,7 @@ def build_boundary_conditions(particles):
 
 
 def plot_load_cmod(model, n_div_z, fig_title="load-cmod", save_csv=False):
-    load = -np.array(model.penetrators[0].penetrator_force_history) * n_div_z
+    load = np.array(model.penetrators[0].penetrator_force_history) * n_div_z
     cmod = np.array(model.observations[1].history) - np.array(
         model.observations[0].history
     )
@@ -144,7 +144,7 @@ def main():
     flag, unit_vector = build_boundary_conditions(x)  # TODO: not needed
 
     material = pypd.Material(
-        name="quasi-brittle", E=33.8e9, Gf=125.2, density=2346, ft=3.5e6
+        name="quasi-brittle", E=33.8e9, Gf=125.2, density=2346, ft=3.5e6, nu=0.2
     )
     bc = pypd.BoundaryConditions(
         flag, unit_vector, magnitude=0
@@ -213,7 +213,7 @@ def main():
 
     nonlinear_model = pypd.Model(particles, bonds, penetrators, observations)
 
-    simulation = pypd.Simulation(n_time_steps=100000, damping=0)
+    simulation = pypd.Simulation(n_time_steps=100000, damping=2e7)
     simulation.run(nonlinear_model)
 
     nonlinear_model.save_state_fig(sz=10, dsf=10, fig_title="mixed-mode-fracture")

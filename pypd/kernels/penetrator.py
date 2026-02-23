@@ -13,6 +13,58 @@ def compute_contact_force(
     penetrator_position,
     x,
     u,
+    f,
+    cell_volume,
+    k,
+):
+    """
+    Compute Short-Range Contact Force (Penalty Method)
+
+    Parameters
+    ----------
+    k : float
+        The penalty stiffness. Usually set high (e.g., 10-100x the
+        material bulk modulus).
+
+    Notes
+    -----
+    - An improved point-to-surface contact algorithm with penalty method for 
+    Peridynamics | https://doi.org/10.1016/j.ijmecsci.2026.111276
+    - Analysis of short-range contact forces in peridynamics endowed with an 
+    improved nonlocal contact model | https://doi.org/10.1016/j.apm.2024.115804 
+    """
+    n_nodes = len(penetrator_family)
+    n_dimensions = x.shape[1]
+
+    contact_force = np.zeros(n_dimensions, np.float64)
+    distance_component = np.zeros(n_dimensions, np.float64)
+
+    for i in range(n_nodes):
+        node = penetrator_family[i]
+        
+        for j in range(n_dimensions):
+            distance_component[j] = (x[node, j] + u[node, j]) - penetrator_position[j]
+
+        distance = np.sqrt(np.sum(distance_component**2))
+
+        if distance < penetrator_radius:
+            overlap = penetrator_radius - distance
+            for j in range(n_dimensions):
+                unit_vector = distance_component[j] / distance
+                force = k * overlap * unit_vector
+                f[node, j] += force / cell_volume
+                contact_force[j] -= force
+
+    return contact_force
+
+
+@njit
+def compute_contact_force_legacy(
+    penetrator_family,
+    penetrator_radius,
+    penetrator_position,
+    x,
+    u,
     v,
     density,
     cell_volume,
@@ -20,7 +72,7 @@ def compute_contact_force(
 ):
     """
     Compute contact force - calculate the contact force between a rigid
-    penetrator and a deformable peridynamic body.
+    penetrator and a deformable peridynamic body (Kinematic Constraint Method)
 
     Parameters
     ----------
@@ -41,6 +93,8 @@ def compute_contact_force(
     - 'C style' code
     - Based on code from rigid_impactor.f90 in Chapter 10 - Peridynamic Theory
     & its Applications by Madenci & Oterkus
+    - The penalty method replaces the kinematic constraint method. This 
+    function is preserved for reference.
     """
 
     n_nodes = len(penetrator_family)
@@ -77,7 +131,7 @@ def compute_contact_force(
     return contact_force
 
 
-def compute_contact_force_vectorised(
+def compute_contact_force_vectorised_legacy(
     penetrator_family,
     penetrator_radius,
     penetrator_position,
@@ -111,6 +165,8 @@ def compute_contact_force_vectorised(
     - Vectorised code
     - Based on code from rigid_impactor.f90 in Chapter 10 - Peridynamic Theory &
     its Applications by Madenci & Oterkus
+    - The penalty method replaces the kinematic constraint method. This 
+    function is preserved for reference.
     """
 
     n_nodes = len(penetrator_family)

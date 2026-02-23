@@ -2,7 +2,8 @@
 
 A simple and performant Python implementation of the bond-based peridynamic model. `pypd` offers an intuitive class structure with fully interchangeable material models and integration schemes.
 
-### Features:
+### Features
+
 - **Pure Python:** Written entirely in Python, leveraging the power of [Numba](https://numba.pydata.org/) for optimal performance
 - **Material Models:** Seamlessly switch between various material models including linear, trilinear and nonlinear
 - **Integration schemes:** Fully interchangeable integration schemes
@@ -23,17 +24,16 @@ A simple and performant Python implementation of the bond-based peridynamic mode
 Development version from GitHub:
 
 ```shell
-$ pip install git+https://github.com/mark-hobbs/pypd.git
+pip install git+https://github.com/mark-hobbs/pypd.git
 ```
 
 or for contributors using [Pipenv](https://pipenv.pypa.io/en/latest/):
 
-
 ```shell
-$ git clone https://github.com/mark-hobbs/pypd.git
-$ cd pypd/
-$ pipenv install --dev
-$ pipenv shell
+git clone https://github.com/mark-hobbs/pypd.git
+cd pypd/
+pipenv install --dev
+pipenv shell
 ```
 
 ## Usage with `uv`
@@ -73,7 +73,7 @@ uv run -m examples.crack_branching
 - [Crack branching in notched Homalite sheets](/examples/crack_branching.py)
 - [Plate with a hole in tension](/examples/plate_with_hole.py)
 - [Three-point bending test of a half-notched concrete beam](/examples/half_notched_beam.py)
-- [Nuclear graphite ring compression test  ](/examples/graphite_ring.py)
+- [Nuclear graphite ring compression test](/examples/graphite_ring.py)
 - [Mixed-mode fracture in concrete](/examples/mixed_mode_fracture.py)
 
 ### Crack branching
@@ -90,13 +90,12 @@ python -m examples.crack_branching
 python -m examples.mixed_mode_fracture
 ```
 
-Example with validation using experimental data. 
+Example with validation using experimental data.
 
 <span style="font-family: 'Courier New', monospace;"> García-Álvarez, V. O., Gettu, R., and Carol, I. (2012). Analysis of mixed-mode fracture in concrete using interface elements and a cohesive crack model. Sadhana, 37(1):187–205.</span>
 
 ![](figures/mixed-mode-fracture.png)
 ![](figures/mixed-mode-load-cmod.png)
-
 
 ### Flexural three-point bending test - half-notched beam
 
@@ -120,9 +119,13 @@ python -m examples.half_notched_beam
   - `jax`
   - `warp`
 - [ ] `feature/space-filling-curve` - sort particles spatially to improve memory access (see this [notebook](https://github.com/pdebuyl/compute/blob/master/hilbert_curve/hilbert_curve.ipynb) on understanding the Hilbert curve)
-- [ ] GPU acceleration (see this [notebook](https://github.com/lukepolson/youtube_channel/blob/main/Python%20GPU/multibody_boltzmann.ipynb) where `pytorch` is used to speed up particle simulations)
 - [ ] Implement a volume correction scheme to improve spatial integration accuracy
 - [ ] `Bonds` are always derivable from `Particles`. Let `Model` manage `Bonds` internally.
+- [ ] Benchmark GPU kernel performance ([roofline model](https://en.wikipedia.org/wiki/Roofline_model))
+- [ ] Add additional examples
+  - [Past, current and future trends and challenges in non-deterministic fracture mechanics: A review](https://doi.org/10.1016/j.cma.2023.116102)
+  - [A review on phase-field models of brittle fracture
+and a new fast hybrid formulation](https://doi.org/10.1007/s00466-014-1109-y)
 
 ### Completed tasks
 
@@ -130,3 +133,4 @@ python -m examples.half_notched_beam
 - [x] Implement a surface correction scheme to correct the peridynamic surface effect
 - [x] Implement different influence functions (constant/triangular/quartic)
 - [x] Separate model and simulation logic: `simulation.run(model)`
+- [x] GPU acceleration using `numba cuda`

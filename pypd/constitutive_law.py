@@ -239,12 +239,15 @@ class Trilinear(ConstitutiveLaw):
         self.s0 = s0 or self._calculate_s0(particles)
         self.sc = sc or self._calculate_sc(particles)
         self.s1 = self._calculate_s1()
-        self.calculate_bond_damage = self._make_material_law(
-            self.s0, self.s1, self.sc, self.beta
-        )
+        self.calculate_bond_damage = None
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def compile_cpu(self):
+        self.calculate_bond_damage = self._make_material_law(
+            self.s0, self.s1, self.sc, self.beta
+        )
 
     def _calculate_s0(self, particles):
         """
@@ -397,12 +400,15 @@ class NonLinear(ConstitutiveLaw):
         self.k = k
         self.s0 = s0 or self._calculate_s0(particles)
         self.sc = sc or self._calculate_sc(particles)
-        self.calculate_bond_damage = self._make_material_law(
-            self.s0, self.sc, self.alpha, self.k
-        )
+        self.calculate_bond_damage = None
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def compile_cpu(self):
+        self.calculate_bond_damage = self._make_material_law(
+            self.s0, self.sc, self.alpha, self.k
+        )
 
     def _calculate_s0(self, particles):
         """
