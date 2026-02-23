@@ -1,16 +1,30 @@
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
+
 import numpy as np
-from numba import cuda
 from tqdm import trange
 
 from .integrator import EulerCromer
-from .tools import calculate_stable_time_step, get_cuda_device_info
+from .tools import calculate_stable_time_step, smooth_step_data, get_cuda_device_info
 from .backend import Backend
-from .tools import smooth_step_data
+
+if TYPE_CHECKING:
+    from .integrator import Integrator
+    from .animation import Animation
+    from .model import Model
+    from .particles import Particles
 
 
 class Simulation:
 
-    def __init__(self, n_time_steps, damping, dt=None, integrator=None, animation=None):
+    def __init__(
+        self,
+        n_time_steps: int,
+        damping: float,
+        dt: Optional[float] = None,
+        integrator: Optional[Integrator] = None,
+        animation: Optional[Animation] = None,
+    ) -> None:
         """
         Initialise the Simulation class
 
@@ -38,9 +52,9 @@ class Simulation:
         self.integrator = integrator if integrator is not None else EulerCromer()
         self.animation = animation
         self.i_time_step = 0
-        self.backend = None
+        self.backend: Optional[Backend] = None
 
-    def run(self, model):
+    def run(self, model: Model) -> None:
         """
         Run the simulation
         """
@@ -64,7 +78,7 @@ class Simulation:
         if self.animation:
             self.animation.generate_animation()
 
-    def _single_time_step(self, model):
+    def _single_time_step(self, model: Model) -> None:
         """
         Single time step
 
@@ -88,7 +102,7 @@ class Simulation:
             self.animation.save_frame(model.particles, model.bonds)
 
     @staticmethod
-    def _calculate_stable_dt(particles, c, sf=0.8):
+    def _calculate_stable_dt(particles: Particles, c: float, sf: float = 0.8) -> float:
         """
         Calculate stable time step
 
@@ -106,7 +120,7 @@ class Simulation:
             particles.material.density, particles.dx, particles.horizon, c
         )
 
-    def _initialise_backend(self, model):
+    def _initialise_backend(self, model: Model) -> None:
         """
         Initialise backend to handle device logic (GPU/CPU)
         """
