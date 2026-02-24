@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import numpy as np
 from tqdm import trange
@@ -21,9 +21,9 @@ class Simulation:
         self,
         n_time_steps: int,
         damping: float,
-        dt: Optional[float] = None,
-        integrator: Optional[Integrator] = None,
-        animation: Optional[Animation] = None,
+        dt: float | None = None,
+        integrator: Integrator | None = None,
+        animation: Animation | None = None,
     ) -> None:
         """
         Initialise the Simulation class
@@ -46,13 +46,13 @@ class Simulation:
         animation : Animation, optional
             Animation object for visualising the simulation (default is None)
         """
-        self.n_time_steps = n_time_steps
-        self.damping = damping
-        self.dt = dt
-        self.integrator = integrator if integrator is not None else EulerCromer()
-        self.animation = animation
-        self.i_time_step = 0
-        self.backend: Backend = None
+        self.n_time_steps: int = n_time_steps
+        self.damping: float = damping
+        self.dt: float = dt
+        self.integrator: Integrator = integrator if integrator is not None else EulerCromer()
+        self.animation: Animation = animation
+        self.i_time_step: int = 0
+        self.backend: Backend | None = None
 
     def run(self, model: Model) -> None:
         """
@@ -108,7 +108,7 @@ class Simulation:
 
         Parameters
         ----------
-        particles : ParticleSet
+        particles : Particles
 
         c : float
             Bond stiffness
