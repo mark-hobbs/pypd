@@ -140,9 +140,8 @@ class Particles:
 
         self.bc: BoundaryConditions = bc
 
-        self.dx: float = (
-            dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
-        )
+        # TODO: this should not be an attribute of the particle set. A Mesh class is required
+        self.dx: float = dx
         self.cell_area: float = dx**2
         self.cell_volume: float = dx**3
 
