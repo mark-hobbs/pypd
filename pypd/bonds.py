@@ -219,7 +219,7 @@ class Bonds:
     def _build_notch(
         self,
         particles: Particles,
-        notch: tuple[NDArray[np.float64], NDArray[np.float64]],
+        notch: tuple[NDArray[np.float64], NDArray[np.float64]]
     ) -> tuple[NDArray[np.int32], NDArray[np.int32], NDArray[np.int32]]:
         n_nodes = np.shape(particles.x)[0]
         n_bonds = np.shape(self.bondlist)[0]
