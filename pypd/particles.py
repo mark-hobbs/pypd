@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 import numpy as np
 from numba import cuda
 
@@ -6,6 +9,15 @@ from .kernels.particles import (
     compute_node_damage,
     compute_strain_energy_density,
 )
+
+if TYPE_CHECKING:
+    import matplotlib.figure
+    import matplotlib.collections
+    from numpy.typing import NDArray
+    from numba.cuda.cudadrv.devicearray import DeviceNDArray
+    from .boundary_conditions import BoundaryConditions
+    from .material import Material
+    from .bonds import Bonds
 
 
 class Particles:
@@ -82,7 +94,15 @@ class Particles:
         - mesh.dx
     """
 
-    def __init__(self, x, dx, bc, material, m=np.pi, nlist=None):
+    def __init__(
+        self,
+        x: NDArray[np.float64],
+        dx: float,
+        bc: BoundaryConditions,
+        material: Material,
+        m: float = np.pi,
+        nlist: NDArray[np.int32] | None = None,
+    ) -> None:
         """
         Particles class constructor
 
@@ -114,58 +134,61 @@ class Particles:
         -----
         """
 
-        self.x = x
-        self.n_nodes = np.shape(self.x)[0]
-        self.n_dim = np.shape(self.x)[1]
+        self.x: NDArray[np.float64] = x
+        self.n_nodes: int = np.shape(self.x)[0]
+        self.n_dim: int = np.shape(self.x)[1]
 
-        self.bc = bc
+        self.bc: BoundaryConditions = bc
 
-        self.dx = dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
-        self.cell_area = dx**2
-        self.cell_volume = dx**3
+        self.dx: float = (
+            dx  # TODO: this should not be an attribute of the particle set. Perhaps a Mesh class is required?
+        )
+        self.cell_area: float = dx**2
+        self.cell_volume: float = dx**3
 
-        self.horizon = m * dx
+        self.horizon: float = m * dx
 
-        self.material = material
+        self.material: Material = material
 
         self.nlist = nlist
         if self.nlist is None:
             self.nlist, self.n_family_members = self._build_particle_families()
 
         # TODO: move the following to an initialise method in Model or Simulation?
-        self.f = np.zeros((self.n_nodes, self.n_dim))
-        self.u = np.zeros((self.n_nodes, self.n_dim))
-        self.v = np.zeros((self.n_nodes, self.n_dim))
-        self.a = np.zeros((self.n_nodes, self.n_dim))
+        self.f: NDArray[np.float64] = np.zeros((self.n_nodes, self.n_dim))
+        self.u: NDArray[np.float64] = np.zeros((self.n_nodes, self.n_dim))
+        self.v: NDArray[np.float64] = np.zeros((self.n_nodes, self.n_dim))
+        self.a: NDArray[np.float64] = np.zeros((self.n_nodes, self.n_dim))
 
-        self.damage = np.zeros(self.n_nodes)
-        self.W = np.zeros(self.n_nodes)
+        self.damage: NDArray[np.float64] = np.zeros(self.n_nodes)
+        self.W: NDArray[np.float64] = np.zeros(self.n_nodes)
 
-        self.d_x = None
-        self.d_u = None
-        self.d_v = None
-        self.d_a = None
-        self.d_f = None
-        self.d_bc_flag = None
-        self.d_bc_unit_vector = None
+        self.d_x: DeviceNDArray | None = None
+        self.d_u: DeviceNDArray | None = None
+        self.d_v: DeviceNDArray | None = None
+        self.d_a: DeviceNDArray | None = None
+        self.d_f: DeviceNDArray | None = None
+        self.d_bc_flag: DeviceNDArray | None = None
+        self.d_bc_unit_vector: DeviceNDArray | None = None
+        self.d_nlist: DeviceNDArray | None = None
 
     @property
-    def nlist(self):
+    def nlist(self) -> NDArray[np.int32]:
         return self._nlist
 
     @nlist.setter
-    def nlist(self, value):
+    def nlist(self, value: NDArray[np.int32] | None) -> None:
         self._nlist = value
 
     @property
-    def n_family_members(self):
+    def n_family_members(self) -> NDArray[np.int32]:
         return self._n_family_members
 
     @n_family_members.setter
-    def n_family_members(self, value):
+    def n_family_members(self, value: NDArray[np.int32]) -> None:
         self._n_family_members = value
 
-    def _build_particle_families(self):
+    def _build_particle_families(self) -> tuple[NDArray[np.int32], NDArray[np.int32]]:
         """
         Build particle families
 
@@ -183,7 +206,7 @@ class Particles:
         """
         return build_particle_families(self.x, self.horizon)
 
-    def _host_to_device(self):
+    def _host_to_device(self) -> None:
         """
         Move arrays from host to device (GPU)
         """
@@ -196,13 +219,13 @@ class Particles:
         self.d_bc_flag = cuda.to_device(self.bc.flag)
         self.d_bc_unit_vector = cuda.to_device(self.bc.unit_vector)
 
-    def _device_to_host(self):
+    def _device_to_host(self) -> None:
         """
         Move arrays from device (GPU) to host
         """
         self.d_u.copy_to_host(self.u)
 
-    def compute_damage(self, bonds):
+    def compute_damage(self, bonds: Bonds) -> None:
         """
         Compute particle damage
 
@@ -221,7 +244,7 @@ class Particles:
             self.x, bonds.bondlist, bonds.d, self.n_family_members
         )
 
-    def compute_strain_energy_density(self, bonds):
+    def compute_strain_energy_density(self, bonds: Bonds) -> None:
         """
         Compute the strain energy density (J/m^3) at every node
 
@@ -243,7 +266,13 @@ class Particles:
             bonds.c,
         )
 
-    def plot(self, fig, sz=1, dsf=10, data=None):
+    def plot(
+        self,
+        fig: matplotlib.figure.Figure,
+        sz: int = 1,
+        dsf: int = 10,
+        data: NDArray[np.float64] | None = None,
+    ) -> matplotlib.collections.PatchCollection:
         """
         Scatter plot of displaced particle positions
 
