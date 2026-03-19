@@ -1,7 +1,15 @@
+from __future__ import annotations
+
+from typing import Any, TYPE_CHECKING
+
 import numpy as np
 from numba import njit, cuda
+from numpy.typing import NDArray
 
 from .kernels.constitutive_law import linear, linear_gpu, trilinear, nonlinear
+
+if TYPE_CHECKING:
+    from .particles import Particles
 
 
 class ConstitutiveLaw:
@@ -26,17 +34,17 @@ class ConstitutiveLaw:
     -------
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def _calculate_sc():
+    def _calculate_sc(self, *args: Any, **kwargs: Any) -> NDArray[np.float64]:
         """
         Calculate the critical stretch
         """
         raise NotImplementedError("This method must be implemented!")
 
     @staticmethod
-    def _make_material_law():
+    def _make_material_law(*args: Any, **kwargs: Any) -> Any:
         """
         Calculate bond damage (softening parameter). The value of d will range
         from 0 to 1, where 0 indicates that the bond is still in the elastic
@@ -59,7 +67,14 @@ class Linear(ConstitutiveLaw):
     -----
     """
 
-    def __init__(self, particles, c, t, sc=None, damage_on=True):
+    def __init__(
+        self,
+        particles: Particles,
+        c: NDArray[np.float64],
+        t: float,
+        sc: NDArray[np.float64] | None = None,
+        damage_on: bool = True,
+    ) -> None:
         """
         Linear constitutive model class constructor
 
@@ -84,24 +99,24 @@ class Linear(ConstitutiveLaw):
         * TODO: passing an instance of particles is probably bad design and
         should be improved
         """
-        self.c = c
-        self.t = t
-        self.damage_on = damage_on
-        self.calculate_bond_damage = None
+        self.c: NDArray[np.float64] = c
+        self.t: float = t
+        self.damage_on: bool = damage_on
+        self.calculate_bond_damage: Any = None
 
-        self.s0 = None
-        self.s1 = None
-        self.sc = self._calculate_sc(particles)
+        self.s0: NDArray[np.float64] | None = None
+        self.s1: NDArray[np.float64] | None = None
+        self.sc: NDArray[np.float64] = self._calculate_sc(particles)
 
-    def compile_cpu(self):
+    def compile_cpu(self) -> None:
         self.calculate_bond_damage = self._make_material_law(self.sc, self.damage_on)
 
-    def compile_gpu(self):
+    def compile_gpu(self) -> None:
         self.s0 = np.full_like(self.sc, np.inf)
         self.s1 = np.full_like(self.sc, np.inf)
         self.calculate_bond_damage = linear_gpu
 
-    def _calculate_sc(self, particles):
+    def _calculate_sc(self, particles: Particles) -> NDArray[np.float64]:
         """
         Calculate the critical stretch for a linear elastic material in
         two-dimensions
@@ -125,7 +140,9 @@ class Linear(ConstitutiveLaw):
         )
 
     @staticmethod
-    def _make_material_law(sc, damage_on):
+    def _make_material_law(
+        sc: NDArray[np.float64], damage_on: bool
+    ) -> Any:
         """
         Make material law
 
@@ -202,7 +219,16 @@ class Bilinear(ConstitutiveLaw):
 
 class Trilinear(ConstitutiveLaw):
 
-    def __init__(self, particles, c, t, s0=None, sc=None, beta=0.25, **kwargs):
+    def __init__(
+        self,
+        particles: Particles,
+        c: NDArray[np.float64],
+        t: float,
+        s0: NDArray[np.float64] | None = None,
+        sc: NDArray[np.float64] | None = None,
+        beta: float = 0.25,
+        **kwargs: Any,
+    ) -> None:
         """
         Trilinear constitutive model class constructor
 
@@ -232,30 +258,30 @@ class Trilinear(ConstitutiveLaw):
         Notes
         -----
         """
-        self.c = c
-        self.t = t
-        self.beta = beta
-        self.gamma = self._calculate_gamma()
-        self.s0 = s0 or self._calculate_s0(particles)
-        self.sc = sc or self._calculate_sc(particles)
-        self.s1 = self._calculate_s1()
-        self.calculate_bond_damage = None
+        self.c: NDArray[np.float64] = c
+        self.t: float = t
+        self.beta: float = beta
+        self.gamma: float = self._calculate_gamma()
+        self.s0: NDArray[np.float64] = s0 or self._calculate_s0(particles)
+        self.sc: NDArray[np.float64] = sc or self._calculate_sc(particles)
+        self.s1: NDArray[np.float64] = self._calculate_s1()
+        self.calculate_bond_damage: Any = None
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def compile_cpu(self):
+    def compile_cpu(self) -> None:
         self.calculate_bond_damage = self._make_material_law(
             self.s0, self.s1, self.sc, self.beta
         )
 
-    def _calculate_s0(self, particles):
+    def _calculate_s0(self, particles: Particles) -> NDArray[np.float64]:
         """
         Calculate the linear elastic limit
         """
         return particles.material.ft / particles.material.E
 
-    def _calculate_sc(self, particles):
+    def _calculate_sc(self, particles: Particles) -> NDArray[np.float64]:
         """
         Trilinear model (2D case) - calculate the critical stretch
         """
@@ -269,14 +295,19 @@ class Trilinear(ConstitutiveLaw):
         )
         return (numerator / denominator) + self.s0
 
-    def _calculate_gamma(self):
+    def _calculate_gamma(self) -> float:
         return (3 + (2 * self.beta)) / (2 * self.beta * (1 - self.beta))
 
-    def _calculate_s1(self):
+    def _calculate_s1(self) -> NDArray[np.float64]:
         return self.s0 + ((self.sc - self.s0) / self.gamma)
 
     @staticmethod
-    def _make_material_law(s0, s1, sc, beta):
+    def _make_material_law(
+        s0: NDArray[np.float64],
+        s1: NDArray[np.float64],
+        sc: NDArray[np.float64],
+        beta: float,
+    ) -> Any:
         """
         Make material law
 
@@ -337,7 +368,7 @@ class Trilinear(ConstitutiveLaw):
         return material_law
 
     @staticmethod
-    def _make_material_law_gpu(beta):
+    def _make_material_law_gpu(beta: float) -> Any:
         """
         Create device function and setup arrays
         """
@@ -351,7 +382,7 @@ class Trilinear(ConstitutiveLaw):
 
         return material_law
 
-    def print_parameters(self):
+    def print_parameters(self) -> None:
         """
         Print constitutive model parameters
         """
@@ -363,7 +394,17 @@ class Trilinear(ConstitutiveLaw):
 
 class NonLinear(ConstitutiveLaw):
 
-    def __init__(self, particles, c, t, s0=None, sc=None, alpha=0.25, k=25, **kwargs):
+    def __init__(
+        self,
+        particles: Particles,
+        c: NDArray[np.float64],
+        t: float,
+        s0: NDArray[np.float64] | None = None,
+        sc: NDArray[np.float64] | None = None,
+        alpha: float = 0.25,
+        k: float = 25,
+        **kwargs: Any,
+    ) -> None:
         """
         Non-linear constitutive model class constructor
 
@@ -394,29 +435,29 @@ class NonLinear(ConstitutiveLaw):
         Notes
         -----
         """
-        self.c = c
-        self.t = t
-        self.alpha = alpha
-        self.k = k
-        self.s0 = s0 or self._calculate_s0(particles)
-        self.sc = sc or self._calculate_sc(particles)
-        self.calculate_bond_damage = None
+        self.c: NDArray[np.float64] = c
+        self.t: float = t
+        self.alpha: float = alpha
+        self.k: float = k
+        self.s0: NDArray[np.float64] = s0 or self._calculate_s0(particles)
+        self.sc: NDArray[np.float64] = sc or self._calculate_sc(particles)
+        self.calculate_bond_damage: Any = None
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def compile_cpu(self):
+    def compile_cpu(self) -> None:
         self.calculate_bond_damage = self._make_material_law(
             self.s0, self.sc, self.alpha, self.k
         )
 
-    def _calculate_s0(self, particles):
+    def _calculate_s0(self, particles: Particles) -> NDArray[np.float64]:
         """
         Calculate the linear elastic limit
         """
         return particles.material.ft / particles.material.E
 
-    def _calculate_sc(self, particles):
+    def _calculate_sc(self, particles: Particles) -> NDArray[np.float64]:
         """
         Nonlinear model (2D case) - calculate the critical stretch
         """
@@ -446,7 +487,12 @@ class NonLinear(ConstitutiveLaw):
         return numerator / denominator
 
     @staticmethod
-    def _make_material_law(s0, sc, alpha, k):
+    def _make_material_law(
+        s0: NDArray[np.float64],
+        sc: NDArray[np.float64],
+        alpha: float,
+        k: float,
+    ) -> Any:
         """
         Make material law
 
@@ -508,7 +554,7 @@ class NonLinear(ConstitutiveLaw):
 
         return material_law
 
-    def print_parameters(self):
+    def print_parameters(self) -> None:
         """
         Print constitutive model parameters
         """

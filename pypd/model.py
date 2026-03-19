@@ -1,4 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
+
+if TYPE_CHECKING:
+    from .particles import Particles
+    from .bonds import Bonds
+    from .penetrator import Penetrator
+    from .simulation_data import Observation
 
 
 class Model:
@@ -17,7 +27,13 @@ class Model:
 
     """
 
-    def __init__(self, particles, bonds, penetrators=None, observations=None):
+    def __init__(
+        self,
+        particles: Particles,
+        bonds: Bonds,
+        penetrators: list[Penetrator] | None = None,
+        observations: list[Observation] | None = None,
+    ) -> None:
         """
         Model class constructor
 
@@ -44,13 +60,19 @@ class Model:
         save_final_state_fig(...)
             Save a figure representing the final state of the simulation.
         """
-        self.particles = particles
-        self.bonds = bonds
+        self.particles: Particles = particles
+        self.bonds: Bonds = bonds
 
-        self.penetrators = penetrators
-        self.observations = observations
+        self.penetrators: list[Penetrator] | None = penetrators
+        self.observations: list[Observation] | None = observations
 
-    def save_state_fig(self, sz=1, dsf=0, fig_title="damage", show_axis=True):
+    def save_state_fig(
+        self,
+        sz: int = 1,
+        dsf: int = 0,
+        fig_title: str = "damage",
+        show_axis: bool = True,
+    ) -> None:
         """
         Save a figure of the current state of the simulation
 

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class Material:
     """
     The main class for defining material properties
@@ -13,7 +16,15 @@ class Material:
 
     """
 
-    def __init__(self, name, E, Gf, density, ft, nu=None):
+    def __init__(
+        self,
+        name: str,
+        E: float,
+        Gf: float,
+        density: float,
+        ft: float,
+        nu: float | None = None,
+    ) -> None:
         """
         Material class constructor
 
@@ -49,26 +60,28 @@ class Material:
 
         """
 
-        self.name = name
-        self.E = E
-        self.Gf = Gf
-        self.density = density
-        self.ft = ft
-        self.nu = nu
-        
+        self.name: str = name
+        self.E: float = E
+        self.Gf: float = Gf
+        self.density: float = density
+        self.ft: float = ft
+        self.nu: float | None = nu
+
         if self.nu is not None:
-            self.k = self._compute_bulk_modulus()
+            self.k: float | None = self._compute_bulk_modulus()
         else:
             self.k = None
 
-    def _compute_bulk_modulus(self):
+    def _compute_bulk_modulus(self) -> float:
         """
         Compute Bulk Modulus (K): resistance to uniform compression
         """
         if self.nu is None:
-            raise ValueError("Poisson's ratio (nu) must be defined to calculate Bulk Modulus.")
-        
+            raise ValueError(
+                "Poisson's ratio (nu) must be defined to calculate Bulk Modulus."
+            )
+
         if self.nu >= 0.5:
-            return float('inf')
-            
+            return float("inf")
+
         return self.E / (3 * (1 - 2 * self.nu))

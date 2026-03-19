@@ -1,4 +1,12 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from .kernels.integrator import euler_cromer_cpu, euler_cromer_gpu
+
+if TYPE_CHECKING:
+    from .particles import Particles
+    from .simulation import Simulation
 
 
 class Integrator:
@@ -14,26 +22,31 @@ class Integrator:
                     - /pysph/sph/tests/test_acceleration_eval.py
     """
 
-    def __init__(self, dt=None):
-        self.dt = dt or self._calculate_stable_dt()
+    def __init__(self, dt: float | None = None) -> None:
+        self.dt: float | None = dt or self._calculate_stable_dt()
 
-    def _calculate_stable_dt():
+    def _calculate_stable_dt(self) -> float | None:
         """
         Calculate stable time step
         """
         pass
 
-    def _one_timestep():
+    def _one_timestep(self) -> None:
         pass
+
+    def __call__(self, simulation: Simulation, particles: Particles) -> None:
+        raise NotImplementedError
 
 
 class Euler(Integrator):
     pass
 
 
-class EulerCromer:
+class EulerCromer(Integrator):
+    def __init__(self) -> None:
+        """Use :attr:`Simulation.dt` for time step; skip base :meth:`Integrator.__init__`."""
 
-    def __call__(self, simulation, particles):
+    def __call__(self, simulation: Simulation, particles: Particles) -> None:
         """
         Update particle positions using an Euler-Cromer time integration scheme
 

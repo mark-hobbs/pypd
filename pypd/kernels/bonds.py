@@ -2,11 +2,14 @@
 Small, highly optimised computational units written using Numba
 """
 
+from __future__ import annotations
+
 import numpy as np
 from numba import njit, prange
+from numpy.typing import NDArray
 
 
-def build_bond_list(nlist):
+def build_bond_list(nlist: NDArray[np.int_]) -> NDArray[np.int_]:
     """
     Build bond list
     """
@@ -18,7 +21,9 @@ def build_bond_list(nlist):
     return bondlist
 
 
-def map_to_neighbour_list(bondlist, property):
+def map_to_neighbour_list(
+    bondlist: NDArray[np.int_], property: NDArray[np.float64]
+) -> NDArray[np.float32]:
     """
     Map a per-bond property (n_bonds,) to neighbour arrays
     (n_nodes, max_n_neighbours)

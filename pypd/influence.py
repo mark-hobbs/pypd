@@ -1,5 +1,13 @@
-import numpy as np
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+import numpy as np
+from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    from .particles import Particles
 
 
 class InfluenceFunction(ABC):
@@ -27,11 +35,11 @@ class InfluenceFunction(ABC):
         Compute the influence function (to be implemented by subclasses).
     """
 
-    def __init__(self, particles, xi) -> None:
-        self.particles = particles
-        self.xi = xi
+    def __init__(self, particles: Particles, xi: NDArray[np.float64]) -> None:
+        self.particles: Particles = particles
+        self.xi: NDArray[np.float64] = xi
 
-    def __call__(self):
+    def __call__(self) -> NDArray[np.float64]:
         """
         Returns the product of the stiffness constant and the influence function.
         """
@@ -46,7 +54,7 @@ class InfluenceFunction(ABC):
         pass
 
     @abstractmethod
-    def _omega(self) -> np.ndarray:
+    def _omega(self) -> NDArray[np.float64]:
         """
         Compute the influence function. This method must be implemented
         by the subclass.
@@ -67,7 +75,7 @@ class Constant(InfluenceFunction):
             np.pi * self.particles.dx * self.particles.horizon**3
         )
 
-    def _omega(self) -> np.ndarray:
+    def _omega(self) -> NDArray[np.float64]:
         """
         Constant influence function (omega), equal to 1 for all bonds.
         """
@@ -88,7 +96,7 @@ class Quartic(InfluenceFunction):
             8 * np.pi * self.particles.dx * self.particles.horizon**3
         )
 
-    def _omega(self) -> np.ndarray:
+    def _omega(self) -> NDArray[np.float64]:
         """
         Quartic influence function (omega) as a function of bond length xi.
         """
@@ -113,7 +121,7 @@ class Triangular(InfluenceFunction):
             np.pi * self.particles.horizon**3 * self.particles.dx
         )
 
-    def _omega(self) -> np.ndarray:
+    def _omega(self) -> NDArray[np.float64]:
         """
         Triangular (conical) influence function (omega) as a function of bond
         length xi.
@@ -122,4 +130,8 @@ class Triangular(InfluenceFunction):
 
 
 class Normal(InfluenceFunction):
-    pass
+    def _c(self) -> float:
+        raise NotImplementedError
+
+    def _omega(self) -> NDArray[np.float64]:
+        raise NotImplementedError

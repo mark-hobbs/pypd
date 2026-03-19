@@ -2,8 +2,13 @@
 Small, highly optimised computational units written using Numba
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
 from numba import njit, prange, cuda
+from numpy.typing import NDArray
 
 
 @njit(parallel=True)
@@ -75,8 +80,17 @@ def euler_cromer_cpu(
 
 
 def euler_cromer_gpu(
-    f, u, v, a, density, bc_flag, bc_magnitude, bc_unit_vector, damping, dt
-):
+    f: NDArray[np.float64],
+    u: NDArray[np.float64],
+    v: NDArray[np.float64],
+    a: NDArray[np.float64],
+    density: float,
+    bc_flag: NDArray[np.int_],
+    bc_magnitude: Any,
+    bc_unit_vector: NDArray[np.float64],
+    damping: float,
+    dt: Any,
+) -> None:
     """
     Update particle positions using an Euler-Cromer time integration scheme
 
