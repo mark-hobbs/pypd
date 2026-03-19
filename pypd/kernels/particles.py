@@ -2,14 +2,18 @@
 Small, highly optimised computational units written using Numba
 """
 
+from __future__ import annotations
+
 import math
+from typing import Any, Callable
 
 import numpy as np
+from numpy.typing import NDArray
 import sklearn.neighbors as neighbors
 from numba import njit, prange, cuda
 
 
-def make_compute_nodal_forces_cpu(material_law):
+def make_compute_nodal_forces_cpu(material_law: Any) -> Callable[..., Any]:
     """
     Factory function that returns a JIT compiled compute_nodal_forces()
     with the given material law baked in
@@ -128,7 +132,9 @@ def make_compute_nodal_forces_cpu(material_law):
     return compute_nodal_forces_cpu
 
 
-def make_compute_nodal_forces_gpu(material_law, THREADS_PER_BLOCK=256):
+def make_compute_nodal_forces_gpu(
+    material_law: Any, THREADS_PER_BLOCK: int = 256
+) -> Callable[..., None]:
     """
     Factory function that returns a CUDA compiled compute_nodal_forces()
     with the given material law baked in
@@ -360,7 +366,9 @@ def compute_strain_energy_density(x, u, cell_volume, bondlist, d, c):
     return W
 
 
-def build_particle_families(x, horizon):
+def build_particle_families(
+    x: NDArray[np.float64], horizon: float
+) -> tuple[NDArray[np.int_], NDArray[np.int_]]:
     """
     Build particle families
 

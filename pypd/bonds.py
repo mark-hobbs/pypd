@@ -277,7 +277,7 @@ class Bonds:
         self.d_s1 = cuda.to_device(s1)
         self.d_sc = cuda.to_device(sc)
 
-    def _device_to_host(self):
+    def _device_to_host(self) -> None:
         """
         Move arrays from device (GPU) to host
 

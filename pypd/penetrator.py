@@ -1,9 +1,19 @@
-import numpy as np
-import itertools
-import matplotlib.pyplot as plt
+from __future__ import annotations
 
-from .tools import smooth_step_data
+import itertools
+from typing import TYPE_CHECKING, Any, ClassVar
+
+import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+import numpy as np
+from numpy.typing import NDArray
+
 from .kernels.penetrator import compute_contact_force
+from .tools import smooth_step_data
+
+if TYPE_CHECKING:
+    from .particles import Particles
+    from .simulation import Simulation
 
 
 class Penetrator:
@@ -44,51 +54,51 @@ class Penetrator:
     TODO: should Penetrator be a base class? Create a subclass for supports
     """
 
-    ID_iter = itertools.count()
-    _registry = []
+    ID_iter: ClassVar[Any] = itertools.count()
+    _registry: ClassVar[list[Penetrator]] = []
 
     def __init__(
         self,
-        centre,
-        unit_vector,
-        magnitude,
-        radius,
-        particles,
-        name="Penetrator",
-        plot=False,
-    ):
+        centre: NDArray[np.float64],
+        unit_vector: NDArray[np.float64],
+        magnitude: float,
+        radius: float,
+        particles: Particles,
+        name: str = "Penetrator",
+        plot: bool = False,
+    ) -> None:
         self._registry.append(self)
-        self.ID = next(Penetrator.ID_iter)
-        self.name = name
-        self.centre = centre
-        self.unit_vector = unit_vector
-        self.magnitude = magnitude
-        self.radius = radius
-        self.search_radius = radius * 1.25
-        self.family = self._build_family(particles)
-        self.k = self._compute_k(particles)
+        self.ID: int = next(Penetrator.ID_iter)
+        self.name: str = name
+        self.centre: NDArray[np.float64] = centre
+        self.unit_vector: NDArray[np.float64] = unit_vector
+        self.magnitude: float = magnitude
+        self.radius: float = radius
+        self.search_radius: float = radius * 1.25
+        self.family: NDArray[np.int_] = self._build_family(particles)
+        self.k: float = self._compute_k(particles)
         if plot:
             self.plot_penetrator(particles)
-        self.penetrator_force_history = []
+        self.penetrator_force_history: list[NDArray[np.float64]] = []
 
         # self.compute_force = None
 
-    def compile_cpu(self):
+    def compile_cpu(self) -> None:
         pass
 
-    def compile_gpu(self):
+    def compile_gpu(self) -> None:
         pass
 
-    def _build_family(self, particles):
-        family = []
+    def _build_family(self, particles: Particles) -> NDArray[np.int_]:
+        family: list[int] = []
         for i in range(particles.n_nodes):
-            distance = np.sqrt(np.sum((particles.x[i] - self.centre) ** 2))
+            distance = float(np.sqrt(np.sum((particles.x[i] - self.centre) ** 2)))
             if distance <= self.search_radius:
                 family.append(i)
 
-        return np.array(family)
-    
-    def _compute_k(self, particles):
+        return np.array(family, dtype=np.int_)
+
+    def _compute_k(self, particles: Particles) -> float:
         """
         Compute contact stiffness K (N/m)
 
@@ -100,9 +110,11 @@ class Penetrator:
         -----
         Section 2.2.4 | https://arxiv.org/pdf/2408.06556
         """
-        return particles.dx * particles.material.k
+        return float(particles.dx * particles.material.k)
 
-    def update_position(self, i_time_step, n_time_steps):
+    def update_position(
+        self, i_time_step: int, n_time_steps: int
+    ) -> NDArray[np.float64]:
         """
         Update the penetrator position
         """
@@ -113,7 +125,7 @@ class Penetrator:
             )
         )
 
-    def compute_force(self, particles, simulation):
+    def compute_force(self, particles: Particles, simulation: Simulation) -> None:
         """
         Compute the contact force between a rigid penetrator and deformable
         peridynamic body
@@ -150,7 +162,7 @@ class Penetrator:
         )
         self.penetrator_force_history.append(force)
 
-    def plot(self, ax=None):
+    def plot(self, ax: Axes | None = None) -> Axes:
         """
         Plot the position of the penetrator at t=0
         """
@@ -159,3 +171,4 @@ class Penetrator:
         circle = plt.Circle(self.centre, self.radius, fill=False)
         ax.set_aspect(1)
         ax.add_patch(circle)
+        return ax

@@ -63,7 +63,7 @@ class Backend:
             self.model.particles._device_to_host()
             self.model.bonds._device_to_host()
 
-    def compute_forces(self):
+    def compute_forces(self) -> None:
         """
         Compute particle forces
 

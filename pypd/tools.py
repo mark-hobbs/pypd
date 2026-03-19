@@ -1,10 +1,19 @@
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
 from numba import njit, cuda
+from numpy.typing import NDArray
 
 
 @njit
 def smooth_step_data(
-    current_time_step, start_time_step, final_time_step, start_value, final_value
+    current_time_step,
+    start_time_step,
+    final_time_step,
+    start_value,
+    final_value,
 ):
     """
     Smooth 5th order polynomial
@@ -17,7 +26,9 @@ def smooth_step_data(
     return alpha
 
 
-def calculate_stable_time_step(rho, dx, horizon, c):
+def calculate_stable_time_step(
+    rho: float, dx: float, horizon: float, c: float
+) -> np.floating[Any]:
     """
     Calculate minimum stable time step
 
@@ -53,7 +64,12 @@ def calculate_stable_time_step(rho, dx, horizon, c):
     return np.sqrt((2 * rho * dx) / (np.pi * horizon**2 * dx * c))
 
 
-def determine_intersection(P1, P2, P3, P4):
+def determine_intersection(
+    P1: NDArray[np.float64],
+    P2: NDArray[np.float64],
+    P3: NDArray[np.float64],
+    P4: NDArray[np.float64],
+) -> bool:
     """
     Determine if a bond intersects with a notch
         - Given two line segments, find if the
@@ -116,15 +132,18 @@ def rebuild_node_families(n_nodes, bondlist):
     return n_family_members
 
 
-def rebuild_neighbour_list(n_nodes, bondlist):
-
-    nlist = [[] for _ in range(n_nodes)]
+def rebuild_neighbour_list(
+    n_nodes: int, bondlist: NDArray[np.int32]
+) -> tuple[NDArray[np.int_], NDArray[np.int_]]:
+    nlist: list[list[int]] = [[] for _ in range(n_nodes)]
     for i, j in bondlist:
         nlist[i].append(j)
         nlist[j].append(i)
 
     n_family_members = np.array([len(f) for f in nlist], dtype=int)
-    max_n_family_members = np.max(n_family_members) if n_family_members.size > 0 else 0
+    max_n_family_members = (
+        int(np.max(n_family_members)) if n_family_members.size > 0 else 0
+    )
 
     nlist_array = -np.ones((n_nodes, max_n_family_members), dtype=int)
     for i, neighs in enumerate(nlist):
@@ -133,7 +152,7 @@ def rebuild_neighbour_list(n_nodes, bondlist):
     return nlist_array, n_family_members
 
 
-def get_cuda_device_info(verbose=True):
+def get_cuda_device_info(verbose: bool = True) -> dict[str, Any] | None:
     """
     Retrieve comprehensive information about the current CUDA device.
 
@@ -151,7 +170,7 @@ def get_cuda_device_info(verbose=True):
         device = cuda.get_current_device()
         context = cuda.current_context()
 
-        device_info = {
+        device_info: dict[str, Any] = {
             "name": device.name,
             "compute_capability": device.compute_capability,
             "total_memory_gb": context.get_memory_info().total / 1e9,

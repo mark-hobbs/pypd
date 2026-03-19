@@ -22,7 +22,7 @@ class Simulation:
         n_time_steps: int,
         damping: float,
         dt: float | None = None,
-        integrator: Integrator | None = None,
+        integrator: Integrator | EulerCromer | None = None,
         animation: Animation | None = None,
     ) -> None:
         """
@@ -48,9 +48,11 @@ class Simulation:
         """
         self.n_time_steps: int = n_time_steps
         self.damping: float = damping
-        self.dt: float = dt
-        self.integrator: Integrator = integrator if integrator is not None else EulerCromer()
-        self.animation: Animation = animation
+        self.dt: float | None = dt
+        self.integrator: Integrator | EulerCromer = (
+            integrator if integrator is not None else EulerCromer()
+        )
+        self.animation: Animation | None = animation
         self.i_time_step: int = 0
         self.backend: Backend | None = None
 

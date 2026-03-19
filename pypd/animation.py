@@ -1,13 +1,32 @@
-from datetime import datetime
+from __future__ import annotations
+
 import copy
-import matplotlib.pyplot as plt
+from datetime import datetime
+from typing import TYPE_CHECKING
+
 import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.axes import Axes
+from matplotlib.collections import PathCollection
+import numpy as np
+from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    from .bonds import Bonds
+    from .particles import Particles
 
 
 class Animation:
     def __init__(
-        self, frequency=100, name=None, sz=1, dsf=0, show_title=True, data="damage"
-    ):
+        self,
+        frequency: int = 100,
+        name: str | None = None,
+        sz: float = 1,
+        dsf: float = 0,
+        show_title: bool = True,
+        data: str = "damage",
+    ) -> None:
         """
         Initialise the Animation object
 
@@ -32,26 +51,28 @@ class Animation:
         data : str, optional
             Visualise 'damage' or 'strain energy density'. Default is 'damage'.
         """
-        self.frequency = frequency
-        self.name = name or self._generate_animation_name()
-        self.sz = sz
-        self.dsf = dsf
-        self.frames = []
-        self.show_title = show_title
-        self.data = data
+        self.frequency: int = frequency
+        self.name: str = name or self._generate_animation_name()
+        self.sz: float = sz
+        self.dsf: float = dsf
+        self.frames: list[plt.Figure] = []
+        self.show_title: bool = show_title
+        self.data: str = data
+        self.fig: plt.Figure
+        self.ax: Axes
         self.fig, self.ax = plt.subplots()
 
-        if self.data not in ["damage", "strain energy density"]:
+        if self.data not in ("damage", "strain energy density"):
             raise ValueError(
                 f"Unsupported data type '{self.data}'. Use 'damage' or 'strain energy density'."
             )
 
     @staticmethod
-    def _generate_animation_name():
+    def _generate_animation_name() -> str:
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         return f"{timestamp}-animation.gif"
 
-    def save_frame(self, particles, bonds):
+    def save_frame(self, particles: Particles, bonds: Bonds) -> None:
         """
         Append a matplotlib.figure.Figure object to the self.frames list at a
         frequency defined by self.frequency
@@ -62,33 +83,38 @@ class Animation:
         )
         self.frames.append(copy.deepcopy(fig))
 
-    def _compute_data(self, particles, bonds):
+    def _compute_data(
+        self, particles: Particles, bonds: Bonds
+    ) -> NDArray[np.float64]:
         """
         Compute the damage or strain energy density for all particles
         """
         if self.data == "damage":
             particles.compute_damage(bonds)
             return particles.damage
-        elif self.data == "strain energy density":
-            particles.compute_strain_energy_density(bonds)
-            return particles.W
+        particles.compute_strain_energy_density(bonds)
+        return particles.W
 
-    def _set_axis_limits(self, i):
+    def _set_axis_limits(self, i: int) -> None:
         x_data, y_data = self._get_data_from_frame(i)
         self.ax.set_xlim(min(x_data), max(x_data))
         self.ax.set_ylim(min(y_data), max(y_data))
 
-    def _get_data_from_frame(self, i):
-        return self.frames[i].get_axes()[0].collections[0].get_offsets().T
+    def _get_data_from_frame(self, i: int) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+        offsets = self.frames[i].get_axes()[0].collections[0].get_offsets()
+        x_data, y_data = offsets.T
+        return np.asarray(x_data), np.asarray(y_data)
 
-    def _set_scatter_data(self, current_scatter):
+    def _set_scatter_data(
+        self, current_scatter: PathCollection
+    ) -> PathCollection:
         scatter = self.ax.scatter([], [], s=[], c=[], cmap="jet")
         scatter.set_offsets(current_scatter.get_offsets())
         scatter.set_sizes(current_scatter.get_sizes())
         scatter.set_array(current_scatter.get_array())
         return scatter
 
-    def _update(self, frame):
+    def _update(self, frame: int) -> PathCollection:
         """
         Update the scatter plot (self.scatter) for each frame in the animation
 
@@ -111,7 +137,7 @@ class Animation:
         self.fig.tight_layout()
         return scatter
 
-    def generate_animation(self):
+    def generate_animation(self) -> None:
         """
         Generate an animation from the saved frames (matplotlib.figure.Figure
         objects)
@@ -120,7 +146,7 @@ class Animation:
         ----------
         None
         """
-        self.ani = animation.FuncAnimation(
+        self.ani: FuncAnimation = animation.FuncAnimation(
             self.fig, self._update, frames=len(self.frames), interval=100, blit=False
         )
         self.ani.save(self.name, writer=animation.FFMpegWriter(), dpi=300)

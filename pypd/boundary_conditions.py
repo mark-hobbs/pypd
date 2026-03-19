@@ -1,3 +1,9 @@
+from __future__ import annotations
+
+import numpy as np
+from numpy.typing import NDArray
+
+
 class BoundaryConditions:
     """
     The main class for defining the boundary conditions
@@ -28,7 +34,12 @@ class BoundaryConditions:
 
     """
 
-    def __init__(self, flag, unit_vector, magnitude):
+    def __init__(
+        self,
+        flag: NDArray[np.int_],
+        unit_vector: NDArray[np.float64],
+        magnitude: float,
+    ) -> None:
         """
         BoundaryConditions class constructor
 
@@ -45,17 +56,22 @@ class BoundaryConditions:
         * TODO: implement magnitude
 
         """
-        self.flag = flag
-        self.unit_vector = unit_vector
-        self.magnitude = magnitude
-        self.i_magnitude = None
+        self.flag: NDArray[np.int_] = flag
+        self.unit_vector: NDArray[np.float64] = unit_vector
+        self.magnitude: float = magnitude
+        self.i_magnitude: float | None = None
 
 
 class DisplacementBoundaryCondition(BoundaryConditions):
-    def __init__(self, flag, unit_vector, magnitude):
+    def __init__(
+        self,
+        flag: NDArray[np.int_],
+        unit_vector: NDArray[np.float64],
+        magnitude: float,
+    ) -> None:
         super().__init__(flag, unit_vector, magnitude)
 
-    def _applied_displacement_magnitude():
+    def _applied_displacement_magnitude(self) -> None:
         """
         self.magnitude = smooth_step_data()
         """

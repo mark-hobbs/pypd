@@ -268,8 +268,8 @@ class Particles:
     def plot(
         self,
         fig: matplotlib.figure.Figure,
-        sz: int = 1,
-        dsf: int = 10,
+        sz: float | int = 1,
+        dsf: float | int = 10,
         data: NDArray[np.float64] | None = None,
     ) -> matplotlib.collections.PatchCollection:
         """
