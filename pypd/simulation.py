@@ -4,12 +4,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 from tqdm import trange
 
-from .integrator import EulerCromer
+from .integrator import EulerCromer, Integrator
 from .tools import calculate_stable_time_step, smooth_step_data, get_cuda_device_info
 from .backend import Backend
 
 if TYPE_CHECKING:
-    from .integrator import Integrator
     from .animation import Animation
     from .model import Model
     from .particles import Particles
@@ -22,7 +21,7 @@ class Simulation:
         n_time_steps: int,
         damping: float,
         dt: float | None = None,
-        integrator: Integrator | EulerCromer | None = None,
+        integrator: Integrator | None = None,
         animation: Animation | None = None,
     ) -> None:
         """
@@ -49,7 +48,7 @@ class Simulation:
         self.n_time_steps: int = n_time_steps
         self.damping: float = damping
         self.dt: float | None = dt
-        self.integrator: Integrator | EulerCromer = (
+        self.integrator: Integrator = (
             integrator if integrator is not None else EulerCromer()
         )
         self.animation: Animation | None = animation

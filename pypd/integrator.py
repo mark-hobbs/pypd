@@ -34,12 +34,18 @@ class Integrator:
     def _one_timestep(self) -> None:
         pass
 
+    def __call__(self, simulation: Simulation, particles: Particles) -> None:
+        raise NotImplementedError
+
 
 class Euler(Integrator):
     pass
 
 
-class EulerCromer:
+class EulerCromer(Integrator):
+    def __init__(self) -> None:
+        """Use :attr:`Simulation.dt` for time step; skip base :meth:`Integrator.__init__`."""
+
     def __call__(self, simulation: Simulation, particles: Particles) -> None:
         """
         Update particle positions using an Euler-Cromer time integration scheme
